@@ -1,6 +1,6 @@
 {
   "v": 1,
-  "updated": "2026-10-10T07:28:19.384Z",
+  "updated": "2026-10-10T07:28:39.752Z",
   "added": [
     {
       "deck": "-1 DECK",
@@ -468,16 +468,16 @@
       "deck": "TANK TOP",
       "uid": "nmv22o9us1uj1",
       "panel": {
-        "code": "ERFANVFD1",
+        "code": "ERFANVFD",
         "x": 8993,
         "y": 361,
         "r": 74,
         "info": [
           {
             "item": "",
-            "name": "ER FAN VFD 1",
+            "name": "ER FAN VFD x2",
             "dim": "",
-            "qty": "",
+            "qty": "2",
             "mat": "",
             "mount": ""
           }
@@ -648,5 +648,5 @@
       ]
     }
   },
-  "dirty": false
+  "dirty": true
 }
