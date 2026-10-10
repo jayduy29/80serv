@@ -1,6 +1,6 @@
 {
   "v": 1,
-  "updated": "2026-10-10T07:17:39.128Z",
+  "updated": "2026-10-10T07:18:32.326Z",
   "added": [
     {
       "deck": "-1 DECK",
@@ -375,6 +375,26 @@
         "tx": 7754,
         "ty": -14516
       }
+    },
+    {
+      "deck": "WHEELHOUSE TOP DECK",
+      "uid": "nmv22bwsc1soc",
+      "panel": {
+        "code": "BATT1",
+        "x": 12009,
+        "y": -14502,
+        "r": 74,
+        "info": [
+          {
+            "item": "",
+            "name": "BATTERY BOX 1",
+            "dim": "",
+            "qty": "",
+            "mat": "",
+            "mount": ""
+          }
+        ]
+      }
     }
   ],
   "deleted": [],
@@ -441,5 +461,5 @@
     }
   },
   "edited": {},
-  "dirty": false
+  "dirty": true
 }
