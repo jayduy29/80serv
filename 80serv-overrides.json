@@ -1,6 +1,6 @@
 {
   "v": 1,
-  "updated": "2026-10-10T07:04:18.237Z",
+  "updated": "2026-10-10T07:07:18.645Z",
   "added": [
     {
       "deck": "-1 DECK",
@@ -66,6 +66,26 @@
         ],
         "tx": 13031,
         "ty": -3234
+      }
+    },
+    {
+      "deck": "TANK TOP",
+      "uid": "nmv21xgz11t6",
+      "panel": {
+        "code": "BATTPS",
+        "x": 8565,
+        "y": -1404,
+        "r": 74,
+        "info": [
+          {
+            "item": "",
+            "name": "BATTERY BOX PS",
+            "dim": "",
+            "qty": "",
+            "mat": "",
+            "mount": ""
+          }
+        ]
       }
     }
   ],
