@@ -1,9 +1,32 @@
 {
   "v": 1,
-  "updated": "2026-10-10T05:32:11.358Z",
-  "added": [],
+  "updated": "2026-10-10T05:33:30.131Z",
+  "added": [
+    {
+      "deck": "03-DECK",
+      "uid": "nmv1yjo2tfjq",
+      "panel": {
+        "code": "TEST1",
+        "x": 8497,
+        "y": -15295,
+        "r": 74,
+        "info": [
+          {
+            "item": "",
+            "name": "Test1",
+            "dim": "",
+            "qty": "",
+            "mat": "",
+            "mount": ""
+          }
+        ],
+        "tx": 8646,
+        "ty": -15518
+      }
+    }
+  ],
   "deleted": [],
   "moved": {},
   "edited": {},
-  "dirty": false
+  "dirty": true
 }
