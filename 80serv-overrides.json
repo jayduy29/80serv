@@ -1,6 +1,6 @@
 {
   "v": 1,
-  "updated": "2026-10-10T07:20:03.620Z",
+  "updated": "2026-10-10T07:20:45.705Z",
   "added": [
     {
       "deck": "-1 DECK",
@@ -418,6 +418,26 @@
         ],
         "tx": 13012,
         "ty": -14751
+      }
+    },
+    {
+      "deck": "BRIDGE DECK",
+      "uid": "nmv22erpg1qrz",
+      "panel": {
+        "code": "FD",
+        "x": 13932,
+        "y": -12806,
+        "r": 61,
+        "info": [
+          {
+            "item": "",
+            "name": "FIRE DETECTOR PANEL",
+            "dim": "",
+            "qty": "",
+            "mat": "",
+            "mount": ""
+          }
+        ]
       }
     }
   ],
