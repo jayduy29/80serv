@@ -1,28 +1,7 @@
 {
   "v": 1,
-  "updated": "2026-10-10T06:41:45.749Z",
-  "added": [
-    {
-      "deck": "03-DECK",
-      "uid": "nmv1yquaq1lfu",
-      "panel": {
-        "code": "TEST2",
-        "x": 8652,
-        "y": -15836,
-        "r": 74,
-        "info": [
-          {
-            "item": "",
-            "name": "Test3",
-            "dim": "",
-            "qty": "",
-            "mat": "",
-            "mount": ""
-          }
-        ]
-      }
-    }
-  ],
+  "updated": "2026-10-10T06:41:53.056Z",
+  "added": [],
   "deleted": [],
   "moved": {
     "-1 DECK#32@812EST1": {
