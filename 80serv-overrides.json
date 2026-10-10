@@ -1,6 +1,6 @@
 {
   "v": 1,
-  "updated": "2026-10-10T07:15:28.576Z",
+  "updated": "2026-10-10T07:15:55.242Z",
   "added": [
     {
       "deck": "-1 DECK",
@@ -265,6 +265,26 @@
         "tx": 8665,
         "ty": -14861
       }
+    },
+    {
+      "deck": "03-DECK",
+      "uid": "nmv228jl0uvi",
+      "panel": {
+        "code": "VSATRACK1",
+        "x": 8571,
+        "y": -15601,
+        "r": 74,
+        "info": [
+          {
+            "item": "",
+            "name": "VSAT RACK 1",
+            "dim": "",
+            "qty": "",
+            "mat": "",
+            "mount": ""
+          }
+        ]
+      }
     }
   ],
   "deleted": [],
@@ -331,5 +351,5 @@
     }
   },
   "edited": {},
-  "dirty": false
+  "dirty": true
 }
