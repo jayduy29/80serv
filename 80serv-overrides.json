@@ -1,6 +1,6 @@
 {
   "v": 1,
-  "updated": "2026-10-10T07:10:51.322Z",
+  "updated": "2026-10-10T07:11:35.777Z",
   "added": [
     {
       "deck": "-1 DECK",
@@ -132,6 +132,26 @@
         ],
         "tx": 8182,
         "ty": -14902
+      }
+    },
+    {
+      "deck": "03-DECK",
+      "uid": "nmv222zdp1bfr",
+      "panel": {
+        "code": "TELERACK",
+        "x": 8762,
+        "y": -14511,
+        "r": 74,
+        "info": [
+          {
+            "item": "",
+            "name": "TELEPHONE RACK",
+            "dim": "",
+            "qty": "",
+            "mat": "",
+            "mount": ""
+          }
+        ]
       }
     }
   ],
