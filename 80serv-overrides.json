@@ -1,6 +1,6 @@
 {
   "v": 1,
-  "updated": "2026-10-10T05:59:45.351Z",
+  "updated": "2026-10-10T06:03:15.714Z",
   "added": [
     {
       "deck": "03-DECK",
@@ -35,7 +35,7 @@
         "info": [
           {
             "item": "",
-            "name": "Test2",
+            "name": "Test3",
             "dim": "",
             "qty": "",
             "mat": "",
@@ -48,5 +48,5 @@
   "deleted": [],
   "moved": {},
   "edited": {},
-  "dirty": false
+  "dirty": true
 }
