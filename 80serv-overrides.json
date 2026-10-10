@@ -1,6 +1,6 @@
 {
   "v": 1,
-  "updated": "2026-10-10T07:15:59.266Z",
+  "updated": "2026-10-10T07:16:13.274Z",
   "added": [
     {
       "deck": "-1 DECK",
@@ -287,6 +287,28 @@
         "tx": 8234,
         "ty": -15287
       }
+    },
+    {
+      "deck": "03-DECK",
+      "uid": "nmv228vmlahj",
+      "panel": {
+        "code": "MFHFRACK",
+        "x": 8719,
+        "y": -15393,
+        "r": 74,
+        "info": [
+          {
+            "item": "",
+            "name": "MFHF RACK",
+            "dim": "",
+            "qty": "",
+            "mat": "",
+            "mount": ""
+          }
+        ],
+        "tx": 8336,
+        "ty": -15278
+      }
     }
   ],
   "deleted": [],
@@ -353,5 +375,5 @@
     }
   },
   "edited": {},
-  "dirty": false
+  "dirty": true
 }
