@@ -1,6 +1,6 @@
 {
   "v": 1,
-  "updated": "2026-10-10T07:19:46.682Z",
+  "updated": "2026-10-10T07:20:03.620Z",
   "added": [
     {
       "deck": "-1 DECK",
@@ -494,6 +494,19 @@
           "dim": "300X380X210mm",
           "qty": "1",
           "mat": "VISHIP",
+          "mount": "WALL MOUNTING"
+        }
+      ]
+    },
+    "WHEELHOUSE TOP DECK#1@86EF2": {
+      "code": "86EF1",
+      "info": [
+        {
+          "item": "36",
+          "name": "FUSE BOX FOR GMDSS BATTERY",
+          "dim": "300X380X210mm",
+          "qty": "1",
+          "mat": "TECHNO",
           "mount": "WALL MOUNTING"
         }
       ]
