@@ -1,0 +1,28 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "mcp": {
+    "servers": {
+      "zen": {
+        "type": "local",
+        "command": [
+          "uvx",
+          "--from",
+          "git+https://github.com/BeehiveInnovations/pal-mcp-server.git",
+          "--with",
+          "mcp==1.13.1",
+          "--with",
+          "pydantic==2.11.7",
+          "pal-mcp-server"
+        ],
+        "environment": {
+          "GEMINI_API_KEY": "{env:GEMINI_API_KEY}",
+          "OPENAI_API_KEY": "{env:OPENAI_API_KEY}",
+          "OPENROUTER_API_KEY": "{env:OPENROUTER_API_KEY}",
+          "XAI_API_KEY": "{env:XAI_API_KEY}",
+          "DISABLED_TOOLS": "analyze,refactor,testgen,secaudit,docgen,tracer",
+          "DEFAULT_MODEL": "auto"
+        }
+      }
+    }
+  }
+}
