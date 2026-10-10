@@ -1,6 +1,6 @@
 {
   "v": 1,
-  "updated": "2026-10-10T07:07:31.259Z",
+  "updated": "2026-10-10T07:07:57.562Z",
   "added": [
     {
       "deck": "-1 DECK",
@@ -89,6 +89,26 @@
         "tx": 8561,
         "ty": -1407
       }
+    },
+    {
+      "deck": "TANK TOP",
+      "uid": "nmv21yb0511pw",
+      "panel": {
+        "code": "BATTSB",
+        "x": 8492,
+        "y": 313,
+        "r": 74,
+        "info": [
+          {
+            "item": "",
+            "name": "BATTERY BOX SB",
+            "dim": "",
+            "qty": "",
+            "mat": "",
+            "mount": ""
+          }
+        ]
+      }
     }
   ],
   "deleted": [],
@@ -131,5 +151,5 @@
     }
   },
   "edited": {},
-  "dirty": false
+  "dirty": true
 }
