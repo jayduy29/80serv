@@ -1,6 +1,6 @@
 {
   "v": 1,
-  "updated": "2026-10-10T06:57:43.613Z",
+  "updated": "2026-10-10T07:03:40.531Z",
   "added": [
     {
       "deck": "-1 DECK",
@@ -45,6 +45,26 @@
         "tx": 9494,
         "ty": -3268
       }
+    },
+    {
+      "deck": "-1 DECK",
+      "uid": "nmv21ssod1vtd",
+      "panel": {
+        "code": "79A-13A3",
+        "x": 13093,
+        "y": -3758,
+        "r": 74,
+        "info": [
+          {
+            "item": "",
+            "name": "RESET BOX 3",
+            "dim": "",
+            "qty": "",
+            "mat": "",
+            "mount": ""
+          }
+        ]
+      }
     }
   ],
   "deleted": [],
@@ -87,5 +107,5 @@
     }
   },
   "edited": {},
-  "dirty": false
+  "dirty": true
 }
