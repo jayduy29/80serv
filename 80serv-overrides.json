@@ -1,7 +1,28 @@
 {
   "v": 1,
-  "updated": "2026-10-10T06:44:38.314Z",
-  "added": [],
+  "updated": "2026-10-10T06:45:35.325Z",
+  "added": [
+    {
+      "deck": "-1 DECK",
+      "uid": "nmv215jbr1soj",
+      "panel": {
+        "code": "79A-13A1",
+        "x": 10048,
+        "y": -2656,
+        "r": 74,
+        "info": [
+          {
+            "item": "",
+            "name": "ALARM PANEL ENGINE ROOM",
+            "dim": "",
+            "qty": "",
+            "mat": "",
+            "mount": ""
+          }
+        ]
+      }
+    }
+  ],
   "deleted": [],
   "moved": {
     "-1 DECK#32@812EST1": {
