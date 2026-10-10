@@ -54,7 +54,9 @@ aside h2,.list h2{font-size:12px;letter-spacing:1.2px;text-transform:uppercase;c
 .it.on{background:var(--ol);border-color:var(--o)}
 .it .c{flex:none;min-width:74px;text-align:center;background:#fff;color:var(--od);border:2px solid var(--o);border-radius:999px;font-weight:800;font-size:12.5px;padding:3px 6px}
 .it.on .c{background:var(--o);color:#fff}
-.it .t{font-size:12.5px;line-height:1.3}
+.it .wire-list-count{flex:none;align-self:center;margin-left:auto;color:var(--mut);font-size:10px;font-weight:600;white-space:nowrap}
+.it.on .wire-list-count{color:var(--od)}
+.it .t{flex:1;min-width:0;font-size:12.5px;line-height:1.3}
 .it .t small{display:block;color:var(--mut);font-size:11px;margin-top:2px}
 .empty{color:var(--mut);padding:18px;text-align:center}
 footer{display:flex;justify-content:space-between;gap:12px;padding:5px 16px;font-size:11.5px;color:var(--mut);border-top:1px solid var(--line);background:#fff}
@@ -179,8 +181,11 @@ aside h2{display:none}
 .wire-refresh{width:100%;border:1px solid var(--om);border-radius:8px;background:#fff;color:var(--od);padding:7px 9px;font:inherit;font-size:12px;font-weight:700;cursor:pointer;margin-bottom:8px}
 .wire-refresh:hover{background:var(--ol)}
 .wire-cabinets{display:flex;flex-direction:column;gap:5px}
-.wire-cabinet{display:flex;align-items:center;width:100%;text-align:left;border:1px solid var(--line);border-radius:8px;background:#fff;color:var(--ink);padding:9px 11px;font:inherit;font-weight:700;cursor:pointer}
+.wire-cabinet{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;text-align:left;border:1px solid var(--line);border-radius:8px;background:#fff;color:var(--ink);padding:9px 11px;font:inherit;font-weight:700;cursor:pointer}
 .wire-cabinet:hover,.wire-cabinet.active{border-color:var(--o);background:var(--ol);color:var(--od)}
+.wire-cabinet-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.wire-cabinet-count{flex:none;color:var(--mut);font-size:11px;font-weight:600;white-space:nowrap}
+.wire-cabinet.active .wire-cabinet-count{color:var(--od)}
 .wire-content{display:flex;flex-direction:column;min-width:0;min-height:0;background:#fff}
 .wire-toolbar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:12px 16px;border-bottom:1px solid var(--line)}
 .wire-toolbar h2{margin:0;font-size:18px}
@@ -583,7 +588,7 @@ function renderList(){
     const nm=nameOf(p),d=document.createElement("div");
     d.className="it"+(p===selP?" on":"");d.dataset.di=p.di;d.dataset.k=p.k;
     d.innerHTML="<span class='c'>"+esc(p.code)+"</span><span class='t'>"+(nm?esc(nm):"<i>(chưa có trong bảng chú giải)</i>")+
-      (q?"<span class='bd'>"+esc(nice(DATA.decks[p.di].name))+"</span>":"")+"</span>";
+      (q?"<span class='bd'>"+esc(nice(DATA.decks[p.di].name))+"</span>":"")+"</span><span class='wire-list-count'>"+esc(wireCountText(p.code))+"</span>";
     d.onclick=()=>{select(p,true);openWireManager(p.code)};
     box.appendChild(d);
   });
@@ -815,7 +820,15 @@ function openCfg(){
 /* ==================== QUẢN LÝ DÂY TỪ GOOGLE SHEETS ==================== */
 const WIRE_SPREADSHEET_ID="1Ug_siHaCCin_FwHJRmHbfjnQVKa-EUYg";
 const WIRE_HEADERS=["CABLE NUMBER","SOURCE","SOURCE PANEL SECTION","TARGET","CABLE TYPE","CONDUCTORS"];
-let WIRE_SHEETS=[],activeWireSheet=null,wireCables=[],wireRequestId=0,wireBlobUrls=[],wireSheetsLoading=null,wireExportRequestId=0,wireAutoRefresh=null,wireRequestedCabinet=null;
+let WIRE_SHEETS=[],activeWireSheet=null,wireCables=[],wireRequestId=0,wireBlobUrls=[],wireSheetsLoading=null,wireExportRequestId=0,wireAutoRefresh=null,wireRequestedCabinet=null,wireSheetCounts=Object.create(null),wireCountRequestId=0,wireCountsReady=false;
+
+function wireCountText(sheetName){
+  const countInfo=wireSheetCounts[sheetName];
+  if(countInfo&&countInfo.loading)return "Đang tải…";
+  if(countInfo&&countInfo.error)return "Không tải được";
+  if(countInfo)return countInfo.count?countInfo.count+" dây":"Chưa có dữ liệu";
+  return wireCountsReady?"Chưa có dữ liệu":"Đang tải…";
+}
 
 function clearWireExports(){
   wireExportRequestId++;
@@ -833,7 +846,12 @@ function renderWireCabinets(){
   WIRE_SHEETS.filter(sheet=>sheet.name.toLowerCase().includes(query)).forEach(sheet=>{
     const button=document.createElement("button");
     button.type="button";button.className="wire-cabinet"+(activeWireSheet&&activeWireSheet.name===sheet.name?" active":"");
-    button.textContent=sheet.name;button.setAttribute("aria-pressed",String(!!activeWireSheet&&activeWireSheet.name===sheet.name));
+    const name=document.createElement("span");name.className="wire-cabinet-name";name.textContent=sheet.name;
+    const count=document.createElement("span"),countInfo=wireSheetCounts[sheet.name];
+    count.className="wire-cabinet-count";
+    count.textContent=wireCountText(sheet.name);
+    if(countInfo&&countInfo.error)button.title="Không thể đếm dây: "+countInfo.error;
+    button.append(name,count);button.setAttribute("aria-pressed",String(!!activeWireSheet&&activeWireSheet.name===sheet.name));
     button.addEventListener("click",()=>{wireRequestedCabinet=null;loadWireSheet(sheet)});
     box.appendChild(button);
   });
@@ -855,6 +873,7 @@ async function refreshWireSheets(refreshData=true){
       if(!sheets.length)throw new Error("Không tìm thấy tên sheet trong bảng tính.");
       const namesChanged=sheets.length!==WIRE_SHEETS.length||sheets.some((sheet,index)=>!WIRE_SHEETS[index]||WIRE_SHEETS[index].name!==sheet.name);
       WIRE_SHEETS=sheets;
+      updateWireSheetCounts(sheets);
       renderWireCabinets();
       const selected=(wireRequestedCabinet&&sheets.find(sheet=>sheet.name===wireRequestedCabinet))
         ||sheets.find(sheet=>sheet.name===previousName)
@@ -886,6 +905,56 @@ async function refreshWireSheets(refreshData=true){
   return wireSheetsLoading;
 }
 
+async function fetchWireCables(sheet){
+  const url="https://docs.google.com/spreadsheets/d/"+WIRE_SPREADSHEET_ID+
+    "/gviz/tq?tqx=out:json&sheet="+encodeURIComponent(sheet.name);
+  const response=await fetch(url,{cache:"no-store"});
+  if(!response.ok)throw new Error("Google Sheets trả về HTTP "+response.status+".");
+  const text=await response.text();
+  const match=text.match(/google\.visualization\.Query\.setResponse\(([\s\S]*)\);\s*$/);
+  if(!match)throw new Error("Phản hồi không phải dữ liệu Google Sheets có thể đọc.");
+  const result=JSON.parse(match[1]);
+  if(result.status!=="ok"){
+    const detail=result.errors&&result.errors.length
+      ?(result.errors[0].detailed_message||result.errors[0].message)
+      :"Không đọc được sheet này.";
+    throw new Error(detail);
+  }
+  const rows=result.table&&result.table.rows||[];
+  return rows.map(row=>(row.c||[]).slice(0,6).map(cell=>{
+    const value=cell&&(cell.f!==undefined?cell.f:cell.v);
+    return value==null?"":String(value);
+  })).filter(cable=>String(cable[0]||"").trim());
+}
+
+function updateWireSheetCounts(sheets){
+  const requestId=++wireCountRequestId;
+  wireCountsReady=false;
+  wireSheetCounts=Object.create(null);
+  sheets.forEach(sheet=>{wireSheetCounts[sheet.name]={loading:true}});
+  renderWireCabinets();renderList();
+  let next=0;
+  const worker=async()=>{
+    while(next<sheets.length){
+      const sheet=sheets[next++];
+      try{
+        const cables=await fetchWireCables(sheet);
+        if(requestId!==wireCountRequestId)return;
+        wireSheetCounts[sheet.name]={count:cables.length};
+      }catch(error){
+        if(requestId!==wireCountRequestId)return;
+        wireSheetCounts[sheet.name]={error:error.message};
+      }
+      renderWireCabinets();renderList();
+    }
+  };
+  return Promise.all(Array.from({length:Math.min(4,sheets.length)},worker)).then(()=>{
+    if(requestId!==wireCountRequestId)return;
+    wireCountsReady=true;
+    renderWireCabinets();renderList();
+  });
+}
+
 function renderWireRows(){
   const body=$("wireRows"),fragment=document.createDocumentFragment();
   body.innerHTML="";
@@ -911,33 +980,15 @@ async function loadWireSheet(sheet){
   $("wireOpenSheet").hidden=false;
   setWireStatus("Đang tải danh sách dây…");
   try{
-    const url="https://docs.google.com/spreadsheets/d/"+WIRE_SPREADSHEET_ID+
-      "/gviz/tq?tqx=out:json&sheet="+encodeURIComponent(sheet.name);
-    const response=await fetch(url,{cache:"no-store"});
-    if(!response.ok)throw new Error("Google Sheets trả về HTTP "+response.status+".");
-    const text=await response.text();
-    const match=text.match(/google\.visualization\.Query\.setResponse\(([\s\S]*)\);\s*$/);
-    if(!match)throw new Error("Phản hồi không phải dữ liệu Google Sheets có thể đọc.");
-    const result=JSON.parse(match[1]);
-    if(result.status!=="ok"){
-      const detail=result.errors&&result.errors.length
-        ?(result.errors[0].detailed_message||result.errors[0].message)
-        :"Không đọc được sheet này.";
-      throw new Error(detail);
-    }
-    const rows=result.table&&result.table.rows||[];
-    const cables=rows.map(row=>(row.c||[]).slice(0,6).map(cell=>{
-      const value=cell&&(cell.f!==undefined?cell.f:cell.v);
-      return value==null?"":String(value);
-    })).filter(cable=>String(cable[0]||"").trim());
+    const cables=await fetchWireCables(sheet);
     if(requestId!==wireRequestId)return;
-    wireCables=cables;renderWireRows();
+    wireCables=cables;wireSheetCounts[sheet.name]={count:cables.length};renderWireCabinets();renderWireRows();
     setWireStatus(cables.length
       ?"Đang hiển thị các cột A–F. Google Sheets chỉ được đọc, không bị chỉnh sửa."
       :"Sheet này không có dây nào có mã cáp.");
   }catch(error){
     if(requestId!==wireRequestId)return;
-    wireCables=[];renderWireRows();
+    wireCables=[];wireSheetCounts[sheet.name]={error:error.message};renderWireCabinets();renderWireRows();
     setWireStatus("Không tải được sheet "+sheet.name+". Kiểm tra kết nối và quyền chia sẻ Google Sheets (Bất kỳ ai có liên kết – Người xem). "+error.message,true);
   }
 }
@@ -1247,6 +1298,7 @@ async function boot(){
 })();
 initWireManager();
 boot();
+refreshWireSheets(false);
 </script>
 </body>
 </html>
