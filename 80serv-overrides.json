@@ -1,6 +1,6 @@
 {
   "v": 1,
-  "updated": "2026-10-10T07:19:09.056Z",
+  "updated": "2026-10-10T07:19:46.682Z",
   "added": [
     {
       "deck": "-1 DECK",
@@ -484,6 +484,20 @@
       "ty": -15457
     }
   },
-  "edited": {},
-  "dirty": false
+  "edited": {
+    "WHEELHOUSE TOP DECK#0@86EF1": {
+      "code": "86EF2",
+      "info": [
+        {
+          "item": "35",
+          "name": "FUSE BOX FOR NAUTICAL 24VDC",
+          "dim": "300X380X210mm",
+          "qty": "1",
+          "mat": "VISHIP",
+          "mount": "WALL MOUNTING"
+        }
+      ]
+    }
+  },
+  "dirty": true
 }
