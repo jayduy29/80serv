@@ -1,6 +1,6 @@
 {
   "v": 1,
-  "updated": "2026-10-10T06:47:13.151Z",
+  "updated": "2026-10-10T06:51:45.736Z",
   "added": [
     {
       "deck": "-1 DECK",
@@ -22,6 +22,26 @@
         ],
         "tx": 10052,
         "ty": -2662
+      }
+    },
+    {
+      "deck": "-1 DECK",
+      "uid": "nmv21dh4uy47",
+      "panel": {
+        "code": "79A0-13U1",
+        "x": 9131,
+        "y": -3629,
+        "r": 74,
+        "info": [
+          {
+            "item": "",
+            "name": "WATCH ENTRANCE UNIT",
+            "dim": "",
+            "qty": "",
+            "mat": "",
+            "mount": ""
+          }
+        ]
       }
     }
   ],
