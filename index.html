@@ -993,15 +993,11 @@ function renderWireRows(){
     const cableColumn=document.createElement("div");cableColumn.className="wire-mobile-column";
     const cableHeading=document.createElement("span");cableHeading.className="wire-mobile-label";cableHeading.textContent="Cable Number";
     const number=document.createElement("span");number.className="wire-mobile-number";number.textContent=cable[0]||"—";
-    const type=document.createElement("div");type.className="wire-mobile-detail";
-    const typeHeading=document.createElement("span");typeHeading.className="wire-mobile-label";typeHeading.textContent="Cable Type";
-    const typeValue=document.createElement("span");typeValue.textContent=cable[4]||"—";
-    type.append(typeHeading,typeValue);
-    const conductors=document.createElement("div");conductors.className="wire-mobile-detail";
-    const conductorsHeading=document.createElement("span");conductorsHeading.className="wire-mobile-label";conductorsHeading.textContent="Conductors";
-    const conductorsValue=document.createElement("span");conductorsValue.textContent=cable[5]||"—";
-    conductors.append(conductorsHeading,conductorsValue);
-    cableColumn.append(cableHeading,number,type,conductors);
+    const typeAndConductors=document.createElement("div");typeAndConductors.className="wire-mobile-detail";
+    const typeAndConductorsHeading=document.createElement("span");typeAndConductorsHeading.className="wire-mobile-label";typeAndConductorsHeading.textContent="Cable Type / Conductors";
+    const typeAndConductorsValue=document.createElement("span");typeAndConductorsValue.textContent=(cable[4]||"—")+" / "+(cable[5]||"—");
+    typeAndConductors.append(typeAndConductorsHeading,typeAndConductorsValue);
+    cableColumn.append(cableHeading,number,typeAndConductors);
     mobileCard.append(cableColumn,
       makeColumn("Source",cable[1]),
       makeColumn("Source Panel Section",cable[2]),
