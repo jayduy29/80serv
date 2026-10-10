@@ -1,6 +1,6 @@
 {
   "v": 1,
-  "updated": "2026-10-10T06:13:47.809Z",
+  "updated": "2026-10-10T06:30:20.918Z",
   "added": [
     {
       "deck": "03-DECK",
@@ -46,7 +46,14 @@
     }
   ],
   "deleted": [],
-  "moved": {},
+  "moved": {
+    "-1 DECK#32@812EST1": {
+      "x": 10398,
+      "y": -3787,
+      "tx": 10121,
+      "ty": -2659
+    }
+  },
   "edited": {},
-  "dirty": false
+  "dirty": true
 }
