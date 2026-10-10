@@ -52,9 +52,12 @@ aside h2,.list h2{font-size:12px;letter-spacing:1.2px;text-transform:uppercase;c
 .it{display:flex;gap:10px;align-items:flex-start;padding:9px 10px;border-radius:10px;cursor:pointer;border:1px solid transparent}
 .it:hover{background:var(--ol)}
 .it.on{background:var(--ol);border-color:var(--o)}
-.it .c{flex:none;min-width:74px;text-align:center;background:#fff;color:var(--od);border:2px solid var(--o);border-radius:999px;font-weight:800;font-size:12.5px;padding:3px 6px}
+.it .c{flex:none;min-width:74px;text-align:center;background:#fff;color:var(--od);border:2px solid var(--o);border-radius:999px;font:inherit;font-weight:800;font-size:12.5px;padding:3px 6px;cursor:pointer}
+.it .c:hover{background:var(--ol)}
 .it.on .c{background:var(--o);color:#fff}
-.it .wire-list-count{flex:none;align-self:center;margin-left:auto;color:var(--mut);font-size:10px;font-weight:600;white-space:nowrap}
+.it .wire-list-count{flex:none;align-self:center;margin-left:auto;color:var(--mut);font:inherit;font-size:10px;font-weight:600;white-space:nowrap}
+.it button.wire-list-count{border:0;background:transparent;padding:4px;cursor:pointer}
+.it button.wire-list-count:hover{color:var(--od);text-decoration:underline}
 .it.on .wire-list-count{color:var(--od)}
 .it .t{flex:1;min-width:0;font-size:12.5px;line-height:1.3}
 .it .t small{display:block;color:var(--mut);font-size:11px;margin-top:2px}
@@ -91,7 +94,8 @@ footer .cp{font-weight:600;color:var(--od);white-space:nowrap}
  .tools{top:8px;right:8px}.tools button{width:34px;height:34px;font-size:16px}
  .card{left:8px;right:8px;bottom:8px;max-width:none;max-height:62%;overflow:auto;padding:9px 12px}
  .card .nm{font-size:13px;margin:5px 0 3px}.card .meta{font-size:11.5px}
- .it{padding:8px 6px}
+ .it{padding:8px 6px;gap:7px}.it .c{min-width:70px}
+ .it .wire-list-count{font-size:12px}
  footer{padding:4px 10px;justify-content:center;font-size:11px}footer .src{display:none}
 }
 /* ===== CHẾ ĐỘ SỬA, LƯU FILE & ĐỒNG BỘ GITHUB ===== */
@@ -202,6 +206,7 @@ aside h2{display:none}
 .wire-table th{position:sticky;top:0;z-index:1;background:#FFF7F1;color:var(--od);font-size:11px;white-space:nowrap}
 .wire-table td:first-child{font-weight:700;white-space:nowrap}
 .wire-table tbody tr:hover{background:#FFFAF6}
+.wire-mobile-card{display:none}
 .wire-empty{padding:24px;text-align:center;color:var(--mut)}
 .wire-exports{display:flex;gap:8px;flex-wrap:wrap;padding:10px 16px;border-top:1px solid var(--line);background:#fff}
 .wire-export-link{display:inline-block;border:1px solid var(--om);border-radius:8px;padding:7px 10px;color:var(--od);font-size:12px;font-weight:700;text-decoration:none}
@@ -210,15 +215,25 @@ aside h2{display:none}
 @media(max-width:760px){
  .wire-top{padding:9px 12px}.wire-top h1{font-size:16px}
  .wire-layout{grid-template-columns:minmax(0,1fr);grid-template-rows:auto minmax(0,1fr)}
- .wire-sidebar{padding:8px;border-right:0;border-bottom:1px solid var(--line)}
+ .wire-sidebar{display:block;overflow-x:hidden;overflow-y:auto;padding:8px;border-right:0;border-bottom:1px solid var(--line)}
  .wire-sidebar h2{display:none}
  .wire-sidebar input{margin-bottom:6px}
- .wire-cabinets{flex-direction:row;overflow-x:auto;padding-bottom:3px}
- .wire-cabinet{width:auto;flex:none}
+ .wire-cabinets{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));max-height:132px;overflow-y:auto;overflow-x:hidden;padding:0 2px 3px}
+ .wire-cabinet{width:100%;min-width:0;padding:8px}
  .wire-toolbar{padding:9px 10px}.wire-toolbar h2{font-size:16px}
  .wire-actions{margin-left:0;width:100%}.wire-btn{flex:1}
- .wire-table{min-width:920px;font-size:12px}
- .wire-table th,.wire-table td{padding:7px}
+ .wire-table-wrap{overflow-x:hidden}
+ .wire-table,.wire-table tbody,.wire-table tr{display:block;width:100%;min-width:0}
+ .wire-table{font-size:15px}
+ .wire-table thead{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;clip-path:inset(50%)}
+ .wire-table tbody tr{margin:8px 0;padding:8px;border:1px solid var(--line);border-radius:10px;background:#fff}
+ .wire-table tbody tr:hover{background:#FFFAF6}
+ .wire-table td{display:none}
+ .wire-mobile-card{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1.5fr) minmax(0,.9fr) minmax(0,1.5fr);gap:8px}
+ .wire-mobile-column{min-width:0;font-size:15px;line-height:1.3;overflow-wrap:anywhere;word-break:break-word}
+ .wire-mobile-label{display:block;margin-bottom:5px;color:var(--mut);font-size:11px;font-weight:700;line-height:1.2}
+ .wire-mobile-number{display:block;margin-bottom:8px;color:var(--od);font-size:15px;font-weight:800}
+ .wire-mobile-detail+.wire-mobile-detail{margin-top:8px;padding-top:7px;border-top:1px solid var(--line)}
  .wire-status{padding:7px 10px}
 }
 </style>
@@ -269,7 +284,7 @@ aside h2{display:none}
         <div class="wire-actions">
           <a id="wireOpenSheet" class="wire-btn" target="_blank" rel="noopener noreferrer" hidden>Xem Google Sheet ↗</a>
           <button id="wireCopy" class="wire-btn" type="button" disabled>📋 Sao chép</button>
-          <button id="wireA4" class="wire-btn primary" type="button" disabled>🖼 Tạo ảnh A4</button>
+          <button id="wireA4" class="wire-btn primary" type="button" disabled>🖼 Tạo ảnh 9:16</button>
         </div>
       </div>
       <div class="wire-status" id="wireStatus" role="status" aria-live="polite">Chọn một tủ để tải danh sách dây.</div>
@@ -587,9 +602,17 @@ function renderList(){
   list.forEach(p=>{
     const nm=nameOf(p),d=document.createElement("div");
     d.className="it"+(p===selP?" on":"");d.dataset.di=p.di;d.dataset.k=p.k;
-    d.innerHTML="<span class='c'>"+esc(p.code)+"</span><span class='t'>"+(nm?esc(nm):"<i>(chưa có trong bảng chú giải)</i>")+
-      (q?"<span class='bd'>"+esc(nice(DATA.decks[p.di].name))+"</span>":"")+"</span><span class='wire-list-count'>"+esc(wireCountText(p.code))+"</span>";
-    d.onclick=()=>{select(p,true);openWireManager(p.code)};
+    const code=document.createElement("button");code.type="button";code.className="c";code.textContent=p.code;
+    code.title="Hiện vị trí "+p.code+" trên sơ đồ";code.addEventListener("click",()=>select(p,true));
+    const info=document.createElement("span");info.className="t";
+    info.innerHTML=(nm?esc(nm):"<i>(chưa có trong bảng chú giải)</i>")+
+      (q?"<span class='bd'>"+esc(nice(DATA.decks[p.di].name))+"</span>":"");
+    const wireCount=document.createElement(wireSheetCounts[p.code]&&wireSheetCounts[p.code].count>0?"button":"span");
+    wireCount.className="wire-list-count";wireCount.textContent=wireCountText(p.code);
+    if(wireCount.tagName==="BUTTON"){
+      wireCount.type="button";wireCount.title="Mở danh sách dây";wireCount.addEventListener("click",()=>openWireManager(p.code));
+    }
+    d.append(code,info,wireCount);
     box.appendChild(d);
   });
   if(!list.length)box.innerHTML="<div class='empty'>Không có tủ phù hợp</div>";
@@ -960,8 +983,33 @@ function renderWireRows(){
   body.innerHTML="";
   wireCables.forEach(cable=>{
     const row=document.createElement("tr");
-    cable.forEach(value=>{
-      const cell=document.createElement("td");cell.textContent=value;row.appendChild(cell);
+    const mobileCard=document.createElement("div");mobileCard.className="wire-mobile-card";
+    const makeColumn=(label,value,className)=>{
+      const column=document.createElement("div");column.className="wire-mobile-column"+(className?" "+className:"");
+      const heading=document.createElement("span");heading.className="wire-mobile-label";heading.textContent=label;
+      const content=document.createElement("span");content.textContent=value||"—";
+      column.append(heading,content);return column;
+    };
+    const cableColumn=document.createElement("div");cableColumn.className="wire-mobile-column";
+    const cableHeading=document.createElement("span");cableHeading.className="wire-mobile-label";cableHeading.textContent="Cable Number";
+    const number=document.createElement("span");number.className="wire-mobile-number";number.textContent=cable[0]||"—";
+    const type=document.createElement("div");type.className="wire-mobile-detail";
+    const typeHeading=document.createElement("span");typeHeading.className="wire-mobile-label";typeHeading.textContent="Cable Type";
+    const typeValue=document.createElement("span");typeValue.textContent=cable[4]||"—";
+    type.append(typeHeading,typeValue);
+    const conductors=document.createElement("div");conductors.className="wire-mobile-detail";
+    const conductorsHeading=document.createElement("span");conductorsHeading.className="wire-mobile-label";conductorsHeading.textContent="Conductors";
+    const conductorsValue=document.createElement("span");conductorsValue.textContent=cable[5]||"—";
+    conductors.append(conductorsHeading,conductorsValue);
+    cableColumn.append(cableHeading,number,type,conductors);
+    mobileCard.append(cableColumn,
+      makeColumn("Source",cable[1]),
+      makeColumn("Source Panel Section",cable[2]),
+      makeColumn("Target",cable[3]));
+    row.appendChild(mobileCard);
+    cable.forEach((value,index)=>{
+      const cell=document.createElement("td");cell.textContent=value;cell.dataset.label=WIRE_HEADERS[index]||"";
+      row.appendChild(cell);
     });
     fragment.appendChild(row);
   });
@@ -1052,23 +1100,23 @@ function wrapWireText(context,text,maxWidth,maxLines){
 
 function renderWirePage(sheetName,pageNumber,totalPages,cables){
   const canvas=document.createElement("canvas");
-  canvas.width=3508;canvas.height=2480;
+  canvas.width=2160;canvas.height=3840;
   const context=canvas.getContext("2d");
   if(!context)throw new Error("Không thể khởi tạo bộ vẽ ảnh trong trình duyệt.");
-  const left=100,top=205,headerHeight=78,rowHeight=65;
-  const widths=[500,640,470,800,350,500];
+  const left=70,top=230,headerHeight=90,rowHeight=100;
+  const widths=[230,400,300,520,260,310];
   const tableWidth=widths.reduce((sum,width)=>sum+width,0);
   context.fillStyle="#fff";context.fillRect(0,0,canvas.width,canvas.height);
-  context.fillStyle="#2B2B2B";context.font="700 42px Arial,sans-serif";
-  context.fillText("DANH SÁCH DÂY ĐIỆN — "+sheetName,left,92);
-  context.fillStyle="#7A6F68";context.font="22px Arial,sans-serif";
-  context.fillText("Trang "+pageNumber+" / "+totalPages+"  •  Tối đa 30 dây  •  80M SERV",left,145);
+  context.fillStyle="#2B2B2B";context.font="700 48px Arial,sans-serif";
+  context.fillText("DANH SÁCH DÂY ĐIỆN — "+sheetName,left,105);
+  context.fillStyle="#7A6F68";context.font="26px Arial,sans-serif";
+  context.fillText("Trang "+pageNumber+" / "+totalPages+"  •  Tối đa 30 dây  •  80M SERV",left,165);
   let x=left;
   WIRE_HEADERS.forEach((label,index)=>{
     context.fillStyle="#F26B1D";context.fillRect(x,top,widths[index],headerHeight);
-    context.fillStyle="#fff";context.font="700 17px Arial,sans-serif";
-    const lines=wrapWireText(context,label,widths[index]-24,2);
-    lines.forEach((line,lineIndex)=>context.fillText(line,x+12,top+34+lineIndex*22));
+    context.fillStyle="#fff";context.font="700 24px Arial,sans-serif";
+    const lines=wrapWireText(context,label,widths[index]-20,2);
+    lines.forEach((line,lineIndex)=>context.fillText(line,x+10,top+36+lineIndex*28));
     x+=widths[index];
   });
   cables.forEach((cable,rowIndex)=>{
@@ -1079,15 +1127,15 @@ function renderWirePage(sheetName,pageNumber,totalPages,cables){
       context.strokeStyle="#EADFD6";context.lineWidth=1;
       context.strokeRect(cellX,y,widths[columnIndex],rowHeight);
       context.fillStyle=columnIndex===0?"#C94E08":"#2B2B2B";
-      context.font=columnIndex===0?"700 20px Arial,sans-serif":"20px Arial,sans-serif";
-      const lines=wrapWireText(context,value,widths[columnIndex]-24,2);
-      const lineHeight=25,startY=y+(rowHeight-lines.length*lineHeight)/2+19;
-      lines.forEach((line,lineIndex)=>context.fillText(line,cellX+12,startY+lineIndex*lineHeight));
+      context.font=columnIndex===0?"700 24px Arial,sans-serif":"24px Arial,sans-serif";
+      const lines=wrapWireText(context,value,widths[columnIndex]-20,2);
+      const lineHeight=29,startY=y+(rowHeight-lines.length*lineHeight)/2+22;
+      lines.forEach((line,lineIndex)=>context.fillText(line,cellX+10,startY+lineIndex*lineHeight));
       cellX+=widths[columnIndex];
     });
   });
-  context.fillStyle="#7A6F68";context.font="16px Arial,sans-serif";
-  context.fillText("Nguồn: Google Sheets · Chỉ lấy dữ liệu cột A–F · "+new Date().toLocaleDateString("vi-VN"),left,2380);
+  context.fillStyle="#7A6F68";context.font="20px Arial,sans-serif";
+  context.fillText("Nguồn: Google Sheets · Chỉ lấy dữ liệu cột A–F · "+new Date().toLocaleDateString("vi-VN"),left,3780);
   return new Promise((resolve,reject)=>canvas.toBlob(blob=>{
     if(blob)resolve(blob);else reject(new Error("Trình duyệt không tạo được tệp PNG."));
   },"image/png"));
@@ -1098,7 +1146,7 @@ async function createWireImages(){
   const button=$("wireA4"),sheet=activeWireSheet,cables=wireCables.slice();
   button.disabled=true;clearWireExports();
   const requestId=wireExportRequestId;
-  setWireStatus("Đang tạo ảnh A4…");
+  setWireStatus("Đang tạo ảnh dọc 9:16…");
   try{
     const pages=[];
     for(let start=0;start<cables.length;start+=30)pages.push(cables.slice(start,start+30));
@@ -1109,12 +1157,12 @@ async function createWireImages(){
       const url=URL.createObjectURL(blob);wireBlobUrls.push(url);
       const link=document.createElement("a");
       link.className="wire-export-link";link.href=url;
-      link.download="80M-"+sheet.name+"-A4-"+(index+1)+".png";
-      link.textContent="⬇ Tải ảnh A4 · "+(index+1)+"/"+pages.length;
+      link.download="80M-"+sheet.name+"-9x16-"+(index+1)+".png";
+      link.textContent="⬇ Tải ảnh 9:16 · "+(index+1)+"/"+pages.length;
       exports.appendChild(link);
     }
     exports.hidden=false;
-    setWireStatus("Đã tạo "+pages.length+" ảnh A4, mỗi ảnh tối đa 30 dây. Tải từng ảnh ở cuối danh sách.");
+    setWireStatus("Đã tạo "+pages.length+" ảnh dọc 9:16, mỗi ảnh tối đa 30 dây. Tải từng ảnh ở cuối danh sách.");
   }catch(error){if(requestId===wireExportRequestId)setWireStatus("Không tạo được ảnh A4. "+error.message,true)}
   finally{button.disabled=!wireCables.length}
 }
