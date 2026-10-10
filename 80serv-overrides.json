@@ -1,6 +1,6 @@
 {
   "v": 1,
-  "updated": "2026-10-10T07:28:15.861Z",
+  "updated": "2026-10-10T07:28:19.384Z",
   "added": [
     {
       "deck": "-1 DECK",
@@ -469,8 +469,8 @@
       "uid": "nmv22o9us1uj1",
       "panel": {
         "code": "ERFANVFD1",
-        "x": 9109,
-        "y": 2,
+        "x": 8993,
+        "y": 361,
         "r": 74,
         "info": [
           {
@@ -648,5 +648,5 @@
       ]
     }
   },
-  "dirty": true
+  "dirty": false
 }
