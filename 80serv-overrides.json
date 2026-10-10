@@ -1,6 +1,6 @@
 {
   "v": 1,
-  "updated": "2026-10-10T07:11:39.705Z",
+  "updated": "2026-10-10T07:11:58.609Z",
   "added": [
     {
       "deck": "-1 DECK",
@@ -155,6 +155,26 @@
         "tx": 8279,
         "ty": -14872
       }
+    },
+    {
+      "deck": "03-DECK",
+      "uid": "nmv223gzo3iy",
+      "panel": {
+        "code": "PARACKA",
+        "x": 8877,
+        "y": -14604,
+        "r": 74,
+        "info": [
+          {
+            "item": "",
+            "name": "PA RACK A",
+            "dim": "",
+            "qty": "",
+            "mat": "",
+            "mount": ""
+          }
+        ]
+      }
     }
   ],
   "deleted": [],
@@ -197,5 +217,5 @@
     }
   },
   "edited": {},
-  "dirty": false
+  "dirty": true
 }
