@@ -1,6 +1,6 @@
 {
   "v": 1,
-  "updated": "2026-10-10T09:43:34.766Z",
+  "updated": "2026-10-10T09:44:24.172Z",
   "added": [
     {
       "deck": "-1 DECK",
@@ -506,6 +506,26 @@
         ],
         "tx": 9860,
         "ty": -761
+      }
+    },
+    {
+      "deck": "TANK TOP",
+      "uid": "nmv27jhr8gtp",
+      "panel": {
+        "code": "79A-13A2",
+        "x": 9015,
+        "y": -1971,
+        "r": 74,
+        "info": [
+          {
+            "item": "",
+            "name": "RESET BOX 2",
+            "dim": "",
+            "qty": "",
+            "mat": "",
+            "mount": ""
+          }
+        ]
       }
     }
   ],
