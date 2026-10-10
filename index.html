@@ -215,7 +215,7 @@ aside h2{display:none}
 .hbtn.label{width:auto;padding:0 11px;font-size:13px;font-weight:700}
 @media(max-width:760px){
  .wire-top{padding:9px 12px}.wire-top h1{font-size:16px}
- .wire-layout{grid-template-columns:minmax(0,1fr);grid-template-rows:auto minmax(0,1fr)}
+ .wire-layout{grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(0,1fr) minmax(0,2fr)}
  .wire-sidebar{display:block;overflow-x:hidden;overflow-y:auto;padding:8px;border-right:0;border-bottom:1px solid var(--line)}
  .wire-sidebar h2{display:none}
  .wire-sidebar input{margin-bottom:6px}
@@ -590,7 +590,7 @@ function openDeck(i){
     el("circle",{cx:p.x,cy:p.y,r:p.r*1.7,fill:"rgba(0,0,0,0)"},g);
     const fs=Math.min(p.r*.55,p.r*1.75/(p.code.length*.62));
     const t=el("text",{x:p.x,y:p.y,"font-size":fs},g);t.textContent=p.code;
-    g.addEventListener("click",e=>{e.stopPropagation();if(targeting){cancelTarget();return}if(adding){cancelAdd();return}if(!moved){select(p,false);openWireManager(p.code)}});
+    g.addEventListener("click",e=>{e.stopPropagation();if(targeting){cancelTarget();return}if(adding){cancelAdd();return}if(!moved){select(p,false);if(wireSheetCounts[p.code]&&wireSheetCounts[p.code].count>0)openWireManager(p.code)}});
     p.g=g;
   });
 }
