@@ -1,6 +1,6 @@
 {
   "v": 1,
-  "updated": "2026-10-10T07:22:10.506Z",
+  "updated": "2026-10-10T07:22:31.936Z",
   "added": [
     {
       "deck": "-1 DECK",
@@ -440,6 +440,26 @@
         ],
         "tx": 13291,
         "ty": -12554
+      }
+    },
+    {
+      "deck": "MAIN DECK",
+      "uid": "nmv22h1oc76z",
+      "panel": {
+        "code": "EMCYBATT",
+        "x": 10530,
+        "y": -7345,
+        "r": 74,
+        "info": [
+          {
+            "item": "",
+            "name": "EMCY BATT",
+            "dim": "",
+            "qty": "",
+            "mat": "",
+            "mount": ""
+          }
+        ]
       }
     }
   ],
