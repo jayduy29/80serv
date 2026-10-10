@@ -1,6 +1,6 @@
 {
   "v": 1,
-  "updated": "2026-10-10T07:14:21.193Z",
+  "updated": "2026-10-10T07:14:43.460Z",
   "added": [
     {
       "deck": "-1 DECK",
@@ -243,6 +243,26 @@
         "tx": 8665,
         "ty": -14920
       }
+    },
+    {
+      "deck": "03-DECK",
+      "uid": "nmv2270704ud",
+      "panel": {
+        "code": "UPS2",
+        "x": 9238,
+        "y": -14979,
+        "r": 74,
+        "info": [
+          {
+            "item": "",
+            "name": "UPS 2",
+            "dim": "",
+            "qty": "",
+            "mat": "",
+            "mount": ""
+          }
+        ]
+      }
     }
   ],
   "deleted": [],
@@ -291,5 +311,5 @@
     }
   },
   "edited": {},
-  "dirty": false
+  "dirty": true
 }
