@@ -1,6 +1,6 @@
 {
   "v": 1,
-  "updated": "2026-10-10T07:16:47.697Z",
+  "updated": "2026-10-10T07:17:22.034Z",
   "added": [
     {
       "deck": "-1 DECK",
@@ -331,6 +331,26 @@
         "tx": 8012,
         "ty": -15549
       }
+    },
+    {
+      "deck": "03-DECK",
+      "uid": "nmv22aejoz01",
+      "panel": {
+        "code": "AHU1",
+        "x": 6938,
+        "y": -15005,
+        "r": 74,
+        "info": [
+          {
+            "item": "",
+            "name": "AHU 1",
+            "dim": "",
+            "qty": "",
+            "mat": "",
+            "mount": ""
+          }
+        ]
+      }
     }
   ],
   "deleted": [],
@@ -397,5 +417,5 @@
     }
   },
   "edited": {},
-  "dirty": false
+  "dirty": true
 }
