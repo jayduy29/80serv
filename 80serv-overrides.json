@@ -1,29 +1,7 @@
 {
   "v": 1,
-  "updated": "2026-10-10T06:41:18.356Z",
+  "updated": "2026-10-10T06:41:45.749Z",
   "added": [
-    {
-      "deck": "03-DECK",
-      "uid": "nmv1y5z7bkoc",
-      "panel": {
-        "code": "TEST1",
-        "x": 8536,
-        "y": -15458,
-        "r": 74,
-        "info": [
-          {
-            "item": "",
-            "name": "Test1",
-            "dim": "",
-            "qty": "",
-            "mat": "",
-            "mount": ""
-          }
-        ],
-        "tx": 8400,
-        "ty": -15263
-      }
-    },
     {
       "deck": "03-DECK",
       "uid": "nmv1yquaq1lfu",
