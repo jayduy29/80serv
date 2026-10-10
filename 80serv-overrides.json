@@ -1,6 +1,6 @@
 {
   "v": 1,
-  "updated": "2026-10-10T07:18:35.241Z",
+  "updated": "2026-10-10T07:19:05.611Z",
   "added": [
     {
       "deck": "-1 DECK",
@@ -397,6 +397,26 @@
         "tx": 12743,
         "ty": -14751
       }
+    },
+    {
+      "deck": "WHEELHOUSE TOP DECK",
+      "uid": "nmv22cmh0ekr",
+      "panel": {
+        "code": "BATT2",
+        "x": 13232,
+        "y": -14024,
+        "r": 74,
+        "info": [
+          {
+            "item": "",
+            "name": "BATTERT BOX 2",
+            "dim": "",
+            "qty": "",
+            "mat": "",
+            "mount": ""
+          }
+        ]
+      }
     }
   ],
   "deleted": [],
@@ -463,5 +483,5 @@
     }
   },
   "edited": {},
-  "dirty": false
+  "dirty": true
 }
