@@ -207,6 +207,7 @@ aside h2{display:none}
 .wire-table td:first-child{font-weight:700;white-space:nowrap}
 .wire-table tbody tr:hover{background:#FFFAF6}
 .wire-mobile-card{display:none}
+.wire-mobile-header{display:none}
 .wire-empty{padding:24px;text-align:center;color:var(--mut)}
 .wire-exports{display:flex;gap:8px;flex-wrap:wrap;padding:10px 16px;border-top:1px solid var(--line);background:#fff}
 .wire-export-link{display:inline-block;border:1px solid var(--om);border-radius:8px;padding:7px 10px;color:var(--od);font-size:12px;font-weight:700;text-decoration:none}
@@ -226,14 +227,15 @@ aside h2{display:none}
  .wire-table,.wire-table tbody,.wire-table tr{display:block;width:100%;min-width:0}
  .wire-table{font-size:10px}
  .wire-table thead{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;clip-path:inset(50%)}
+ .wire-mobile-header{position:sticky;top:0;z-index:2;display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1.5fr) minmax(0,.9fr) minmax(0,1.5fr);gap:8px;padding:8px 10px;background:#FFF7F1;border-bottom:1px solid var(--line);color:var(--od);font-size:10px;font-weight:700}
+ .wire-mobile-header span{min-width:0;overflow-wrap:anywhere}
  .wire-table tbody tr{margin:8px 0;padding:8px;border:1px solid var(--line);border-radius:10px;background:#fff}
  .wire-table tbody tr:hover{background:#FFFAF6}
  .wire-table td{display:none}
  .wire-mobile-card{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1.5fr) minmax(0,.9fr) minmax(0,1.5fr);gap:8px}
  .wire-mobile-column{min-width:0;font-size:10px;line-height:1.3;overflow-wrap:anywhere;word-break:break-word}
- .wire-mobile-label{display:block;margin-bottom:5px;color:var(--mut);font-size:10px;font-weight:700;line-height:1.2}
- .wire-mobile-number{display:block;margin-bottom:8px;color:var(--od);font-size:10px;font-weight:800}
- .wire-mobile-detail+.wire-mobile-detail{margin-top:8px;padding-top:7px;border-top:1px solid var(--line)}
+ .wire-mobile-number{display:block;margin-bottom:5px;color:var(--od);font-size:10px;font-weight:800}
+ .wire-mobile-detail{overflow-wrap:anywhere}
  .wire-status{padding:7px 10px}
 }
 </style>
@@ -289,6 +291,12 @@ aside h2{display:none}
       </div>
       <div class="wire-status" id="wireStatus" role="status" aria-live="polite">Chọn một tủ để tải danh sách dây.</div>
       <div class="wire-table-wrap">
+        <div class="wire-mobile-header" aria-hidden="true">
+          <span>Cable Number<br>Cable Type / Conductors</span>
+          <span>Source</span>
+          <span>Source Panel Section</span>
+          <span>Target</span>
+        </div>
         <table class="wire-table">
           <thead><tr><th>CABLE NUMBER</th><th>SOURCE</th><th>SOURCE PANEL SECTION</th><th>TARGET</th><th>CABLE TYPE</th><th>CONDUCTORS</th></tr></thead>
           <tbody id="wireRows"></tbody>
@@ -984,24 +992,19 @@ function renderWireRows(){
   wireCables.forEach(cable=>{
     const row=document.createElement("tr");
     const mobileCard=document.createElement("div");mobileCard.className="wire-mobile-card";
-    const makeColumn=(label,value,className)=>{
-      const column=document.createElement("div");column.className="wire-mobile-column"+(className?" "+className:"");
-      const heading=document.createElement("span");heading.className="wire-mobile-label";heading.textContent=label;
-      const content=document.createElement("span");content.textContent=value||"—";
-      column.append(heading,content);return column;
+    const makeColumn=value=>{
+      const column=document.createElement("div");column.className="wire-mobile-column";column.textContent=value||"—";
+      return column;
     };
     const cableColumn=document.createElement("div");cableColumn.className="wire-mobile-column";
-    const cableHeading=document.createElement("span");cableHeading.className="wire-mobile-label";cableHeading.textContent="Cable Number";
     const number=document.createElement("span");number.className="wire-mobile-number";number.textContent=cable[0]||"—";
     const typeAndConductors=document.createElement("div");typeAndConductors.className="wire-mobile-detail";
-    const typeAndConductorsHeading=document.createElement("span");typeAndConductorsHeading.className="wire-mobile-label";typeAndConductorsHeading.textContent="Cable Type / Conductors";
-    const typeAndConductorsValue=document.createElement("span");typeAndConductorsValue.textContent=(cable[4]||"—")+" / "+(cable[5]||"—");
-    typeAndConductors.append(typeAndConductorsHeading,typeAndConductorsValue);
-    cableColumn.append(cableHeading,number,typeAndConductors);
+    typeAndConductors.textContent=(cable[4]||"—")+" / "+(cable[5]||"—");
+    cableColumn.append(number,typeAndConductors);
     mobileCard.append(cableColumn,
-      makeColumn("Source",cable[1]),
-      makeColumn("Source Panel Section",cable[2]),
-      makeColumn("Target",cable[3]));
+      makeColumn(cable[1]),
+      makeColumn(cable[2]),
+      makeColumn(cable[3]));
     row.appendChild(mobileCard);
     cable.forEach((value,index)=>{
       const cell=document.createElement("td");cell.textContent=value;cell.dataset.label=WIRE_HEADERS[index]||"";
