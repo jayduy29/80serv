@@ -1,6 +1,6 @@
 {
   "v": 1,
-  "updated": "2026-10-10T07:17:25.010Z",
+  "updated": "2026-10-10T07:17:36.241Z",
   "added": [
     {
       "deck": "-1 DECK",
@@ -353,6 +353,26 @@
         "tx": 7826,
         "ty": -14817
       }
+    },
+    {
+      "deck": "03-DECK",
+      "uid": "nmv22apik1700",
+      "panel": {
+        "code": "AHU2",
+        "x": 6800,
+        "y": -14452,
+        "r": 74,
+        "info": [
+          {
+            "item": "",
+            "name": "AHU 2",
+            "dim": "",
+            "qty": "",
+            "mat": "",
+            "mount": ""
+          }
+        ]
+      }
     }
   ],
   "deleted": [],
@@ -419,5 +439,5 @@
     }
   },
   "edited": {},
-  "dirty": false
+  "dirty": true
 }
