@@ -1,6 +1,6 @@
 {
   "v": 1,
-  "updated": "2026-10-10T07:08:02.053Z",
+  "updated": "2026-10-10T07:10:46.078Z",
   "added": [
     {
       "deck": "-1 DECK",
@@ -111,6 +111,26 @@
         "tx": 8575,
         "ty": -284
       }
+    },
+    {
+      "deck": "03-DECK",
+      "uid": "nmv221x1214zw",
+      "panel": {
+        "code": "79A-13A4",
+        "x": 8713,
+        "y": -14360,
+        "r": 74,
+        "info": [
+          {
+            "item": "",
+            "name": "RESET BOX 4",
+            "dim": "",
+            "qty": "",
+            "mat": "",
+            "mount": ""
+          }
+        ]
+      }
     }
   ],
   "deleted": [],
@@ -153,5 +173,5 @@
     }
   },
   "edited": {},
-  "dirty": false
+  "dirty": true
 }
