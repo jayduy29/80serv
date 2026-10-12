@@ -1,6 +1,6 @@
 {
   "v": 1,
-  "updated": "2026-10-12T11:41:19.602Z",
+  "updated": "2026-10-12T11:42:27.432Z",
   "added": [
     {
       "deck": "-1 DECK",
@@ -572,6 +572,26 @@
         ],
         "tx": 12594,
         "ty": -12597
+      }
+    },
+    {
+      "deck": "BRIDGE DECK",
+      "uid": "nmv56n0kihpw",
+      "panel": {
+        "code": "791GMDSS",
+        "x": 13498,
+        "y": -13628,
+        "r": 61,
+        "info": [
+          {
+            "item": "",
+            "name": "GMDSS CONSOLE",
+            "dim": "",
+            "qty": "",
+            "mat": "",
+            "mount": ""
+          }
+        ]
       }
     }
   ],
