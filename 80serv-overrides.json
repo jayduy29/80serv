@@ -1,6 +1,6 @@
 {
   "v": 1,
-  "updated": "2026-10-12T11:35:14.290Z",
+  "updated": "2026-10-12T11:38:33.454Z",
   "added": [
     {
       "deck": "-1 DECK",
@@ -528,6 +528,26 @@
         ],
         "tx": 8973,
         "ty": -1412
+      }
+    },
+    {
+      "deck": "BRIDGE DECK",
+      "uid": "nmv56i0131apt",
+      "panel": {
+        "code": "791CFWD",
+        "x": 13929,
+        "y": -12441,
+        "r": 61,
+        "info": [
+          {
+            "item": "",
+            "name": "CEILING FWD CONSOLE",
+            "dim": "",
+            "qty": "",
+            "mat": "",
+            "mount": ""
+          }
+        ]
       }
     }
   ],
