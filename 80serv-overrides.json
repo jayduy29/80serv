@@ -1,6 +1,6 @@
 {
   "v": 1,
-  "updated": "2026-10-12T11:57:19.203Z",
+  "updated": "2026-10-12T15:00:04.406Z",
   "added": [
     {
       "deck": "-1 DECK",
@@ -827,6 +827,19 @@
           "dim": "300X380X210mm",
           "qty": "1",
           "mat": "TECHNO",
+          "mount": "WALL MOUNTING"
+        }
+      ]
+    },
+    "03-DECK#5@79A3": {
+      "code": "79A3",
+      "info": [
+        {
+          "item": "59",
+          "name": "ALARM PANEL TECHNICAL SPACE",
+          "dim": "600X800X300mm",
+          "qty": "1",
+          "mat": "VISHIP",
           "mount": "WALL MOUNTING"
         }
       ]
