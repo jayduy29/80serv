@@ -1,6 +1,6 @@
 {
   "v": 1,
-  "updated": "2026-10-12T07:35:32.392Z",
+  "updated": "2026-10-12T07:36:04.620Z",
   "added": [
     {
       "deck": "-1 DECK",
@@ -402,14 +402,14 @@
       "deck": "WHEELHOUSE TOP DECK",
       "uid": "nmv22cmh0ekr",
       "panel": {
-        "code": "BATT2",
+        "code": "86EF2-00-14B1",
         "x": 13232,
         "y": -14024,
         "r": 74,
         "info": [
           {
             "item": "",
-            "name": "BATTERT BOX 2",
+            "name": "GMDSS BATTERY",
             "dim": "",
             "qty": "",
             "mat": "",
