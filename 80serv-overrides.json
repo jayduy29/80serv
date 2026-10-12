@@ -1,6 +1,6 @@
 {
   "v": 1,
-  "updated": "2026-10-12T15:12:48.962Z",
+  "updated": "2026-10-12T15:14:41.237Z",
   "added": [
     {
       "deck": "-1 DECK",
@@ -915,6 +915,19 @@
           "item": "57",
           "name": "ALARM PANEL ENGINE ROOM",
           "dim": "800X1000X300mm",
+          "qty": "1",
+          "mat": "VISHIP",
+          "mount": "WALL MOUNTING"
+        }
+      ]
+    },
+    "-1 DECK#27@79A2": {
+      "code": "79A2",
+      "info": [
+        {
+          "item": "58",
+          "name": "ALARM PANEL BOW ROOM",
+          "dim": "600X800X300mm",
           "qty": "1",
           "mat": "VISHIP",
           "mount": "WALL MOUNTING"
