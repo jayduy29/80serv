@@ -1,6 +1,6 @@
 {
   "v": 1,
-  "updated": "2026-10-12T15:02:43.699Z",
+  "updated": "2026-10-12T15:03:13.605Z",
   "added": [
     {
       "deck": "-1 DECK",
@@ -866,6 +866,19 @@
           "dim": "1200X600X210mm",
           "qty": "1",
           "mat": "VISHIP",
+          "mount": "WALL MOUNTING"
+        }
+      ]
+    },
+    "03-DECK#3@515WW": {
+      "code": "515WW",
+      "info": [
+        {
+          "item": "123",
+          "name": "WINDOW WIPER PDB1",
+          "dim": "500X500X250mm",
+          "qty": "1",
+          "mat": "DNA",
           "mount": "WALL MOUNTING"
         }
       ]
