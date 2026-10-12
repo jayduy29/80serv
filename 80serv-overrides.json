@@ -1,6 +1,6 @@
 {
   "v": 1,
-  "updated": "2026-10-12T15:02:33.562Z",
+  "updated": "2026-10-12T15:02:43.699Z",
   "added": [
     {
       "deck": "-1 DECK",
@@ -862,7 +862,7 @@
       "info": [
         {
           "item": "45",
-          "name": "230V NAUTICAL EQUIPMENT DB",
+          "name": "230V NAUTICAL EQUIPMENT DB PANEL",
           "dim": "1200X600X210mm",
           "qty": "1",
           "mat": "VISHIP",
