@@ -1,6 +1,6 @@
 {
   "v": 1,
-  "updated": "2026-10-12T11:39:03.741Z",
+  "updated": "2026-10-12T11:41:12.860Z",
   "added": [
     {
       "deck": "-1 DECK",
@@ -550,6 +550,26 @@
         ],
         "tx": 13517,
         "ty": -12539
+      }
+    },
+    {
+      "deck": "BRIDGE DECK",
+      "uid": "nmv56lf13zpt",
+      "panel": {
+        "code": "791AFTC",
+        "x": 12574,
+        "y": -12603,
+        "r": 61,
+        "info": [
+          {
+            "item": "",
+            "name": "WHEELHOUSE AFT CONSOLE",
+            "dim": "",
+            "qty": "",
+            "mat": "",
+            "mount": ""
+          }
+        ]
       }
     }
   ],
