@@ -1,6 +1,6 @@
 {
   "v": 1,
-  "updated": "2026-10-12T15:03:13.605Z",
+  "updated": "2026-10-12T15:09:21.418Z",
   "added": [
     {
       "deck": "-1 DECK",
@@ -880,6 +880,19 @@
           "qty": "1",
           "mat": "DNA",
           "mount": "WALL MOUNTING"
+        }
+      ]
+    },
+    "-1 DECK#26@79A0": {
+      "code": "79A0",
+      "info": [
+        {
+          "item": "56",
+          "name": "ALARM PANEL SWB ROOM",
+          "dim": "1600X2100X600mm",
+          "qty": "1",
+          "mat": "VISHIP",
+          "mount": "DECK MOUNTING"
         }
       ]
     }
