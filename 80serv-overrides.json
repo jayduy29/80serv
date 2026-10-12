@@ -1,6 +1,6 @@
 {
   "v": 1,
-  "updated": "2026-10-12T07:34:40.323Z",
+  "updated": "2026-10-12T07:35:32.392Z",
   "added": [
     {
       "deck": "-1 DECK",
@@ -380,14 +380,14 @@
       "deck": "WHEELHOUSE TOP DECK",
       "uid": "nmv22bwsc1soc",
       "panel": {
-        "code": "BATT1",
+        "code": "86EF1-00-14B1",
         "x": 12009,
         "y": -14502,
         "r": 74,
         "info": [
           {
             "item": "",
-            "name": "BATTERY BOX 1",
+            "name": "NAUTICAL BATTERY",
             "dim": "",
             "qty": "",
             "mat": "",
