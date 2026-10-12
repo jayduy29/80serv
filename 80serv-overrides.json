@@ -1,6 +1,6 @@
 {
   "v": 1,
-  "updated": "2026-10-12T09:36:31.666Z",
+  "updated": "2026-10-12T11:33:41.088Z",
   "added": [
     {
       "deck": "-1 DECK",
@@ -424,7 +424,7 @@
       "deck": "BRIDGE DECK",
       "uid": "nmv22erpg1qrz",
       "panel": {
-        "code": "FD",
+        "code": "811FD",
         "x": 13932,
         "y": -12806,
         "r": 61,
