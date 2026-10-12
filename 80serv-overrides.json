@@ -1,6 +1,6 @@
 {
   "v": 1,
-  "updated": "2026-10-12T15:00:04.406Z",
+  "updated": "2026-10-12T15:01:22.751Z",
   "added": [
     {
       "deck": "-1 DECK",
@@ -838,6 +838,19 @@
           "item": "59",
           "name": "ALARM PANEL TECHNICAL SPACE",
           "dim": "600X800X300mm",
+          "qty": "1",
+          "mat": "VISHIP",
+          "mount": "WALL MOUNTING"
+        }
+      ]
+    },
+    "03-DECK#6@86E3": {
+      "code": "86E3",
+      "info": [
+        {
+          "item": "41",
+          "name": "24VDC NAUTICAL EQUIPMENT DB PANEL",
+          "dim": "1200X600X210mm",
           "qty": "1",
           "mat": "VISHIP",
           "mount": "WALL MOUNTING"
