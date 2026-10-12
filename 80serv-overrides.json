@@ -1,6 +1,6 @@
 {
   "v": 1,
-  "updated": "2026-10-12T11:43:11.685Z",
+  "updated": "2026-10-12T11:44:19.868Z",
   "added": [
     {
       "deck": "-1 DECK",
@@ -594,6 +594,26 @@
         ],
         "tx": 12944,
         "ty": -12888
+      }
+    },
+    {
+      "deck": "BRIDGE DECK",
+      "uid": "nmv56pfbr677",
+      "panel": {
+        "code": "791FWDC",
+        "x": 13962,
+        "y": -12100,
+        "r": 61,
+        "info": [
+          {
+            "item": "",
+            "name": "WHEELHOUSE FWD CONSOLE",
+            "dim": "",
+            "qty": "",
+            "mat": "",
+            "mount": ""
+          }
+        ]
       }
     }
   ],
