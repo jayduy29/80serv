@@ -1,6 +1,6 @@
 {
   "v": 1,
-  "updated": "2026-10-12T15:01:22.751Z",
+  "updated": "2026-10-12T15:02:33.562Z",
   "added": [
     {
       "deck": "-1 DECK",
@@ -850,6 +850,19 @@
         {
           "item": "41",
           "name": "24VDC NAUTICAL EQUIPMENT DB PANEL",
+          "dim": "1200X600X210mm",
+          "qty": "1",
+          "mat": "VISHIP",
+          "mount": "WALL MOUNTING"
+        }
+      ]
+    },
+    "03-DECK#7@87NA": {
+      "code": "87NA",
+      "info": [
+        {
+          "item": "45",
+          "name": "230V NAUTICAL EQUIPMENT DB",
           "dim": "1200X600X210mm",
           "qty": "1",
           "mat": "VISHIP",
