@@ -1,6 +1,6 @@
 {
   "v": 1,
-  "updated": "2026-10-13T12:56:25.494Z",
+  "updated": "2026-10-13T14:03:38.120Z",
   "added": [
     {
       "deck": "-1 DECK",
@@ -954,6 +954,32 @@
           "item": "42",
           "name": "EDG STARTING BATTERY COMMUTATION",
           "dim": "500X700X210mm",
+          "qty": "1",
+          "mat": "VISHIP",
+          "mount": "WALL MOUNTING"
+        }
+      ]
+    },
+    "-1 DECK#14@405SR.1": {
+      "code": "405SR-00-10U1",
+      "info": [
+        {
+          "item": "97",
+          "name": "ANTI ROLLING SYSTEM CENTRAL STATION",
+          "dim": "600X600X400mm",
+          "qty": "1",
+          "mat": "VISHIP",
+          "mount": "WALL MOUNTING"
+        }
+      ]
+    },
+    "-1 DECK#15@405SR.2": {
+      "code": "405SR-00-10U2",
+      "info": [
+        {
+          "item": "98",
+          "name": "ANTI ROLLING SYSTEM SUB-STATION",
+          "dim": "600X600X400mm",
           "qty": "1",
           "mat": "VISHIP",
           "mount": "WALL MOUNTING"
