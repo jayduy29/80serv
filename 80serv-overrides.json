@@ -1,6 +1,6 @@
 {
   "v": 1,
-  "updated": "2026-10-21T12:44:51.404Z",
+  "updated": "2026-10-21T12:45:16.161Z",
   "added": [
     {
       "deck": "-1 DECK",
@@ -630,6 +630,26 @@
           {
             "item": "",
             "name": "ENGINE CONTROL ROOM CONSOLE",
+            "dim": "",
+            "qty": "",
+            "mat": "",
+            "mount": ""
+          }
+        ]
+      }
+    },
+    {
+      "deck": "-1 DECK",
+      "uid": "nmvi3ugjchkt",
+      "panel": {
+        "code": "87P1",
+        "x": 9778,
+        "y": -1706,
+        "r": 74,
+        "info": [
+          {
+            "item": "",
+            "name": "DECK EQUIP SWITCHBOARD 400V",
             "dim": "",
             "qty": "",
             "mat": "",
