@@ -179,7 +179,6 @@ main>aside h2{display:none}
 .wire-app{position:fixed;inset:0;z-index:30;display:flex;flex-direction:column;background:#FBFAF8;color:var(--ink)}
 .wire-top .hdbtns{margin-left:auto}
 .wire-top #wireLogo,.wire-top #wireTtl{cursor:pointer}
-.wire-badge{background:#fff;color:var(--od);border-radius:999px;padding:5px 14px;font-weight:700;font-size:13px;white-space:nowrap}
 .wire-layout{flex:1;min-height:0;display:grid;grid-template-columns:250px minmax(0,1fr)}
 .wire-sidebar{background:#fff;border-right:1px solid var(--line);padding:12px;overflow:visible}
 .wire-search{position:relative;margin-bottom:11px}
@@ -274,20 +273,17 @@ footer .hbtn{width:28px;height:28px;font-size:14px;background:var(--ol);color:va
 footer .hbtn.on{background:var(--o);color:#fff}
 footer .hbtn.label{width:auto;padding:0 11px;font-size:12.5px}
 footer .badge{background:var(--ol);padding:2px 10px;font-size:12px}
-.wire-top .wire-close{width:auto;height:34px;padding:0 11px;font-size:13px;font-weight:700}
 @media(max-width:900px){
  header,.wire-top{flex-wrap:wrap;padding:6px 10px;gap:6px 8px}
  .logo{width:34px;height:34px;padding:1px;box-shadow:0 0 0 2px rgba(255,255,255,.45)}
  header h1,.wire-top h1{font-size:14.5px}header small,.wire-top small{font-size:11px;margin-top:0}
  .hdbtns{margin-left:auto}
  .hbtn.label{height:32px;padding:0 10px;font-size:12.5px}
- .wire-badge{padding:3px 10px;font-size:12px}
  .srch{order:5;flex:1 1 100%}
  .srch input{padding:6px 14px;font-size:15px}
  .hint{display:none}
  .list .hd{padding:6px 12px 0}
  footer{padding:3px 8px}
- .wire-top .wire-close{height:32px}
 }
 </style>
 </head>
@@ -324,7 +320,6 @@ footer .badge{background:var(--ol);padding:2px 10px;font-size:12px}
     <div class="logo" id="wireLogo" title="Quay về sơ đồ"></div>
     <div><h1 id="wireTtl" title="Quay về sơ đồ"></h1><small id="wireSub"></small></div>
     <div class="hdbtns">
-      <span class="wire-badge">📋 Dây điện</span>
       <button id="wireClose" class="hbtn label wire-close" type="button" title="Quay về sơ đồ">🗺 Sơ đồ</button>
     </div>
   </div>
