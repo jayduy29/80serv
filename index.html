@@ -10,12 +10,12 @@
 *{box-sizing:border-box}
 html,body{height:100%;margin:0;-webkit-text-size-adjust:100%;font-family:"Segoe UI",Roboto,Arial,sans-serif;color:var(--ink);background:var(--bg)}
 body{display:flex;flex-direction:column;height:100dvh}
-header{display:flex;align-items:center;gap:14px;padding:8px 18px;background:linear-gradient(90deg,var(--o),#FF8A3D);color:#fff;box-shadow:0 2px 8px rgba(201,78,8,.35);z-index:5}
+header,.wire-top{display:flex;align-items:center;gap:14px;padding:8px 18px;background:linear-gradient(90deg,var(--o),#FF8A3D);color:#fff;box-shadow:0 2px 8px rgba(201,78,8,.35);z-index:5;flex:none}
 .logo{width:52px;height:52px;border-radius:50%;background:#fff;padding:2px;flex:none;box-shadow:0 0 0 3px rgba(255,255,255,.45)}
 .logo img{width:100%;height:100%;object-fit:contain;display:block}
 .logo.ph{display:flex;align-items:center;justify-content:center;color:var(--o);font-weight:800}
-header h1{margin:0;font-size:19px;letter-spacing:.3px;line-height:1.2}
-header small{display:block;font-weight:400;opacity:.92;font-size:12.5px;margin-top:2px}
+header h1,.wire-top h1{margin:0;font-size:19px;letter-spacing:.3px;line-height:1.2}
+header small,.wire-top small{display:block;font-weight:400;opacity:.92;font-size:12.5px;margin-top:2px}
 .srch{flex:1;max-width:430px;margin-left:auto;position:relative}
 .srch input{width:100%;border:0;border-radius:999px;padding:9px 16px;font:inherit;font-size:16px;outline:none;color:var(--ink);background:#fff;box-shadow:inset 0 0 0 2px rgba(255,255,255,.6)}
 .srch input:focus{box-shadow:0 0 0 3px rgba(255,255,255,.7)}
@@ -177,10 +177,9 @@ main>aside h2{display:none}
 .sug .st small{display:block;color:var(--mut);font-size:11px}
 .sug .sn{padding:12px;text-align:center;color:var(--mut);font-size:12.5px}
 .wire-app{position:fixed;inset:0;z-index:30;display:flex;flex-direction:column;background:#FBFAF8;color:var(--ink)}
-.wire-top{display:flex;align-items:center;gap:12px;padding:12px 18px;background:linear-gradient(90deg,var(--o),#FF8A3D);color:#fff;box-shadow:0 2px 8px rgba(201,78,8,.25)}
-.wire-top h1{margin:0;font-size:18px}
-.wire-top p{margin:3px 0 0;font-size:12px;opacity:.9}
-.wire-top .wire-close{margin-left:auto}
+.wire-top .hdbtns{margin-left:auto}
+.wire-top #wireLogo,.wire-top #wireTtl{cursor:pointer}
+.wire-badge{background:#fff;color:var(--od);border-radius:999px;padding:5px 14px;font-weight:700;font-size:13px;white-space:nowrap}
 .wire-layout{flex:1;min-height:0;display:grid;grid-template-columns:250px minmax(0,1fr)}
 .wire-sidebar{background:#fff;border-right:1px solid var(--line);padding:12px;overflow:visible}
 .wire-search{position:relative;margin-bottom:11px}
@@ -220,7 +219,6 @@ main>aside h2{display:none}
 .wire-export-link:hover{background:var(--ol)}
 .hbtn.label{width:auto;padding:0 11px;font-size:13px;font-weight:700}
 @media(max-width:760px){
- .wire-top{padding:9px 12px}.wire-top h1{font-size:16px}
  .wire-layout{grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(0,1fr) minmax(0,2fr)}
  .wire-sidebar{display:flex;flex-wrap:wrap;gap:6px;align-items:flex-start;overflow:visible;padding:8px;border-right:0;border-bottom:1px solid var(--line)}
  .wire-sidebar h2{font-size:10px;margin:0 0 4px;letter-spacing:.6px}
@@ -250,9 +248,6 @@ main>aside h2{display:none}
 .wire-status{position:fixed;left:10px;right:10px;bottom:12px;z-index:50;border:1px solid var(--om);border-radius:10px;box-shadow:0 4px 16px rgba(0,0,0,.22);background:#fff}
 .wire-status.error{border-color:#e8b9b9}
 @media(max-width:760px){
- .wire-top{padding:6px 12px;min-height:0}
- .wire-top h1{font-size:15px}.wire-sub{display:none}
- .wire-top .wire-close{width:32px;height:32px;font-size:15px}
  .wire-layout{display:flex;flex-direction:column;position:relative}
  .wire-sidebar{flex:none;display:flex;flex-wrap:wrap;gap:6px;align-items:flex-start;padding:6px 8px;overflow:visible}
  .wire-sidebar input{flex:1;min-width:0;margin:0;padding:6px 10px;font-size:15px}
@@ -279,13 +274,14 @@ footer .hbtn{width:28px;height:28px;font-size:14px;background:var(--ol);color:va
 footer .hbtn.on{background:var(--o);color:#fff}
 footer .hbtn.label{width:auto;padding:0 11px;font-size:12.5px}
 footer .badge{background:var(--ol);padding:2px 10px;font-size:12px}
-.wire-top .wire-close{width:auto;height:34px;padding:0 11px;font-size:13px;font-weight:700;margin-left:auto}
+.wire-top .wire-close{width:auto;height:34px;padding:0 11px;font-size:13px;font-weight:700}
 @media(max-width:900px){
- header{flex-wrap:wrap;padding:6px 10px;gap:6px 8px}
+ header,.wire-top{flex-wrap:wrap;padding:6px 10px;gap:6px 8px}
  .logo{width:34px;height:34px;padding:1px;box-shadow:0 0 0 2px rgba(255,255,255,.45)}
- header h1{font-size:14.5px}header small{font-size:11px;margin-top:0}
+ header h1,.wire-top h1{font-size:14.5px}header small,.wire-top small{font-size:11px;margin-top:0}
  .hdbtns{margin-left:auto}
  .hbtn.label{height:32px;padding:0 10px;font-size:12.5px}
+ .wire-badge{padding:3px 10px;font-size:12px}
  .srch{order:5;flex:1 1 100%}
  .srch input{padding:6px 14px;font-size:15px}
  .hint{display:none}
@@ -325,8 +321,12 @@ footer .badge{background:var(--ol);padding:2px 10px;font-size:12px}
 </main>
 <section class="wire-app" id="wireApp" hidden aria-label="Quản lý dây điện">
   <div class="wire-top">
-    <div><h1>Danh sách dây điện</h1><p class="wire-sub">Mỗi sheet là một tủ điện · chỉ đọc từ Google Sheets</p></div>
-    <button id="wireClose" class="hbtn label wire-close" type="button" title="Quay về sơ đồ">🗺 Sơ đồ</button>
+    <div class="logo" id="wireLogo" title="Quay về sơ đồ"></div>
+    <div><h1 id="wireTtl" title="Quay về sơ đồ"></h1><small id="wireSub"></small></div>
+    <div class="hdbtns">
+      <span class="wire-badge">📋 Dây điện</span>
+      <button id="wireClose" class="hbtn label wire-close" type="button" title="Quay về sơ đồ">🗺 Sơ đồ</button>
+    </div>
   </div>
   <div class="wire-layout">
     <aside class="wire-sidebar">
@@ -434,9 +434,20 @@ const NS="http://www.w3.org/2000/svg";
 const M=DATA.meta;
 $("ttl").textContent=M.ship+" – "+M.title;
 $("sub").textContent="Bố trí tủ & bảng điện theo tầng";
+if($("wireTtl"))$("wireTtl").textContent=M.ship+" – "+M.title;
+if($("wireSub"))$("wireSub").textContent="Bố trí tủ & bảng điện theo tầng";
 const stripRev=s=>String(s==null?"":s).replace(/\s*[-_]\s*Rev\s*9(?=\D|$)/ig,"");
 $("foot").textContent="Nguồn: "+stripRev(M.file)+"  •  tạo ngày "+M.built+"  •  Chọn tầng → bấm ô tròn trên bản vẽ (hoặc chọn trong danh mục) để xem tên đầy đủ của tủ";
-(function(){const l=$("logo");if(LOGO){const i=new Image();i.src=LOGO;i.alt="STC";l.appendChild(i)}else{l.classList.add("ph");l.textContent="STC"}})();
+(function(){
+  const l=$("logo"),wl=$("wireLogo");
+  if(LOGO){
+    const i=new Image();i.src=LOGO;i.alt="STC";l.appendChild(i);
+    if(wl){const i2=new Image();i2.src=LOGO;i2.alt="STC";wl.appendChild(i2)}
+  }else{
+    l.classList.add("ph");l.textContent="STC";
+    if(wl){wl.classList.add("ph");wl.textContent="STC"}
+  }
+})();
 
 /* ==================== 1. MẬT KHẨU + DỮ LIỆU SỬA (lưu file / GitHub) ==================== */
 const PW="290991";
@@ -1503,6 +1514,8 @@ function initWireManager(){
   loadWireCache();
   $("wireBtn").addEventListener("click",()=>openWireManager());
   $("wireClose").addEventListener("click",closeWireManager);
+  if($("wireLogo"))$("wireLogo").addEventListener("click",closeWireManager);
+  if($("wireTtl"))$("wireTtl").addEventListener("click",closeWireManager);
   const filter=$("wireFilter"),cabBox=$("wireCabinets"),numIn=$("wireNum"),numBox=$("wireNumSug");
   filter.addEventListener("input",()=>{renderWireCabinets();openDrop(cabBox,filter)});
   filter.addEventListener("focus",()=>{renderWireCabinets();openDrop(cabBox,filter)});
