@@ -651,9 +651,10 @@ function openDeck(i){
     el("circle",{cx:p.x,cy:p.y,r:p.r*1.7,fill:"rgba(0,0,0,0)"},g);
     const fs=Math.min(p.r*.55,p.r*1.75/(p.code.length*.62));
     const t=el("text",{x:p.x,y:p.y,"font-size":fs},g);t.textContent=p.code;
-    g.addEventListener("click",e=>{e.stopPropagation();if(targeting){cancelTarget();return}if(adding){cancelAdd();return}if(!moved){select(p,false);if(wireSheetCounts[p.code]&&wireSheetCounts[p.code].count>0)openWireManager(p.code)}});
+    g.addEventListener("click",e=>{e.stopPropagation();if(targeting){cancelTarget();return}if(adding){cancelAdd();return}if(!moved){select(p,false);if(hasWireSheet(p.code))openWireManager(p.code)}});
     p.g=g;
   });
+  if(window.loadDeckWireCounts)window.loadDeckWireCounts();
 }
 
 function renderList(){
@@ -676,10 +677,11 @@ function renderList(){
     const info=document.createElement("span");info.className="t";
     info.innerHTML=(nm?esc(nm):"<i>(chưa có trong bảng chú giải)</i>")+
       (q?"<span class='bd'>"+esc(nice(DATA.decks[p.di].name))+"</span>":"");
-    const wireCount=document.createElement(wireSheetCounts[p.code]&&wireSheetCounts[p.code].count>0?"button":"span");
+    const hasSheet=hasWireSheet(p.code);
+    const wireCount=document.createElement(hasSheet?"button":"span");
     wireCount.className="wire-list-count";wireCount.textContent=wireCountText(p.code);
     if(wireCount.tagName==="BUTTON"){
-      wireCount.type="button";wireCount.title="Mở danh sách dây";wireCount.addEventListener("click",()=>openWireManager(p.code));
+      wireCount.type="button";wireCount.title="Mở danh sách dây của tủ "+p.code;wireCount.addEventListener("click",()=>openWireManager(p.code));
     }
     const parts=[code,info];
     if(p.tx!=null){                 /* tủ đã ghim vị trí đầu nối → nút ghim đỏ, đặt trước số lượng dây */
@@ -919,22 +921,101 @@ function openCfg(){
 }
 
 /* ==================== 9. GẮN SỰ KIỆN CHO NÚT ==================== */
-/* ==================== QUẢN LÝ DÂY TỪ GOOGLE SHEETS ==================== */
+/* ==================== QUẢN LÝ DÂY TỪ GOOGLE SHEETS (TỐI ƯU HOÁ & BỘ NHỚ ĐỆM) ==================== */
 const WIRE_SPREADSHEET_ID="1Ug_siHaCCin_FwHJRmHbfjnQVKa-EUYg";
 const WIRE_HEADERS=["CABLE NUMBER","SOURCE","SOURCE PANEL SECTION","TARGET","CABLE TYPE","CONDUCTORS"];
-/* Sheet "total" KHÔNG phải tủ — chỉ dùng để tra theo số dây, không đưa vào danh sách tủ */
 const isTotalSheet=name=>/^total$/i.test(String(name==null?"":name).trim());
-/* Hàng tiêu đề lặp lại trong sheet (CABLE NUMBER, SOURCE, ...) KHÔNG phải dây — bỏ khỏi danh sách */
 const isWireHeaderRow=cable=>/^cable\s*number$/i.test(String((cable&&cable[0])||"").trim());
+
+const WIRE_STORAGE_KEY_SHEETS="wire_sheets_cache_v2";
+const WIRE_STORAGE_KEY_COUNTS="wire_counts_cache_v2";
+const WIRE_STORAGE_KEY_TOTAL="wire_total_cache_v2";
+const WIRE_STORAGE_KEY_TIME="wire_cache_time_v2";
+const WIRE_CABLES_CACHE=new Map();
+
+const WIRE_SEED={"total":{"name":"total","gid":"1694325836"},"sheets":[{"name":"87P0","gid":"1081959547"},{"name":"87P1","gid":"904600982"},{"name":"87P2","gid":"363034862"},{"name":"87P3","gid":"1987704355"},{"name":"87P31","gid":"69982308"},{"name":"87P4","gid":"605535304"},{"name":"87P41","gid":"1374379320"},{"name":"87P5","gid":"1004692018"},{"name":"87P6","gid":"955736859"},{"name":"87P61","gid":"1917356724"},{"name":"87P7","gid":"1359945306"},{"name":"87P8","gid":"2103554744"},{"name":"87P9","gid":"1042570337"},{"name":"89P10","gid":"1062085023"},{"name":"89P1","gid":"1004286220"},{"name":"89P2","gid":"1300231225"},{"name":"86SC","gid":"1269182751"},{"name":"89L0","gid":"1431416855"},{"name":"89L1","gid":"1527840294"},{"name":"89L2","gid":"1122236109"},{"name":"89L3","gid":"1282212786"},{"name":"89L4","gid":"335742635"},{"name":"89L5","gid":"146434245"},{"name":"89L6","gid":"1995300240"},{"name":"89L7","gid":"1835882368"},{"name":"89L9","gid":"1063513409"},{"name":"89L10","gid":"182705410"},{"name":"89P3","gid":"1887139670"},{"name":"87EP0","gid":"731562777"},{"name":"89EL0","gid":"1586609600"},{"name":"89EL1","gid":"1818420737"},{"name":"89EL2","gid":"1531403955"},{"name":"89EL3","gid":"1496230289"},{"name":"89EL4","gid":"17713505"},{"name":"86EF1","gid":"1487359031"},{"name":"86EF2","gid":"695460429"},{"name":"87UP1","gid":"1689517564"},{"name":"87UP2","gid":"807994489"},{"name":"86E1","gid":"1402518280"},{"name":"86E2","gid":"2113058103"},{"name":"86E3","gid":"577834081"},{"name":"86E4","gid":"88701597"},{"name":"86E5","gid":"1588260951"},{"name":"86E6","gid":"60450529"},{"name":"87NA","gid":"1927826801"},{"name":"50HE","gid":"1425804113"},{"name":"87TP","gid":"946958770"},{"name":"574S1","gid":"500868045"},{"name":"574S2","gid":"1598635897"},{"name":"801S","gid":"432139776"},{"name":"803S1","gid":"1679543037"},{"name":"803S2","gid":"757087581"},{"name":"813S1","gid":"650791234"},{"name":"813S3","gid":"1220902447"},{"name":"813S2","gid":"174281798"},{"name":"79A0","gid":"1914305104"},{"name":"79A1","gid":"1040491613"},{"name":"79A2","gid":"2108936210"},{"name":"79A3","gid":"227770624"},{"name":"811SP","gid":"1882140446"},{"name":"571S1","gid":"1804291792"},{"name":"403S1","gid":"1914473484"},{"name":"403S2","gid":"1450554709"},{"name":"403S3","gid":"144252311"},{"name":"403S4","gid":"2065041019"},{"name":"403A1","gid":"2144932885"},{"name":"403A2","gid":"1879680093"},{"name":"403F1","gid":"1689263694"},{"name":"403F2","gid":"1924745689"},{"name":"634S1","gid":"2098982609"},{"name":"634S2","gid":"2081634061"},{"name":"408DP","gid":"656248790"},{"name":"408JC","gid":"1271161770"},{"name":"404ICB1","gid":"334068906"},{"name":"404ICB2","gid":"1655110179"},{"name":"404ICB3","gid":"1086557952"},{"name":"404ICT1","gid":"1795062829"},{"name":"404ICT2","gid":"1306194868"},{"name":"404ICT3","gid":"1526600750"},{"name":"634PCS1","gid":"793475071"},{"name":"634PCS2","gid":"1914418186"},{"name":"634PCS3","gid":"1747755966"},{"name":"634PCS4","gid":"200983587"},{"name":"812EST1","gid":"1483484618"},{"name":"404DV1","gid":"107169220"},{"name":"404DV2","gid":"590906102"},{"name":"404DV3","gid":"115763079"},{"name":"TR1","gid":"639183567"},{"name":"TR2","gid":"1319088466"},{"name":"ETR1","gid":"597557759"},{"name":"ETR2","gid":"1192364133"},{"name":"SCTR","gid":"2095798447"},{"name":"517AC1&2","gid":"881978579"},{"name":"517AC3&5","gid":"578299906"},{"name":"517AC4","gid":"757232608"},{"name":"278AF","gid":"523546918"},{"name":"405SR-1","gid":"1681956840"},{"name":"405SR-2","gid":"354613077"},{"name":"425PA-A","gid":"485546129"},{"name":"425PA-B","gid":"206546501"},{"name":"432WL","gid":"362571130"},{"name":"437TW","gid":"607197544"},{"name":"815WM","gid":"2030627918"},{"name":"815CO2.1","gid":"1826312735"},{"name":"815CO2.2","gid":"1662129642"},{"name":"814FF","gid":"1012060955"},{"name":"822LA","gid":"787323606"},{"name":"574FD1","gid":"565538595"},{"name":"574FD2","gid":"1237588459"},{"name":"514WW","gid":"990855362"},{"name":"544CR","gid":"1668103113"},{"name":"544MR","gid":"346233117"},{"name":"437TW1","gid":"1849934784"},{"name":"437TW2","gid":"877714225"},{"name":"437TW3","gid":"242110782"},{"name":"437MW1.1","gid":"1991857250"},{"name":"437MW1.2","gid":"1656992427"},{"name":"437MW1.3","gid":"216417044"},{"name":"437MW2.1","gid":"2042482078"},{"name":"437MW2.2","gid":"699817719"},{"name":"437MW2.3","gid":"1910258688"},{"name":"822BFS","gid":"691557715"},{"name":"517AC-P","gid":"512221742"},{"name":"515WW","gid":"647809091"}],"counts":{"87P0":202,"87P3":45,"87P31":3,"87P4":7,"87P2":27,"87P41":9,"87P1":76,"87P5":3,"87P6":6,"87P7":18,"87P61":5,"87P8":10,"89P1":14,"89P10":31,"87P9":30,"89P2":14,"86SC":5,"89L0":49,"89L1":11,"89L2":17,"89L3":19,"89L4":23,"89L5":16,"89L6":21,"89L9":14,"89L10":12,"89L7":12,"87EP0":41,"89P3":8,"89EL0":28,"89EL1":16,"89EL3":9,"89EL2":12,"86EF1":4,"89EL4":14,"86EF2":4,"87UP1":9,"87UP2":10,"86E1":40,"86E2":43,"86E3":60,"86E4":17,"86E5":18,"86E6":18,"87NA":25,"87TP":2,"50HE":5,"574S1":8,"801S":5,"574S2":8,"803S1":6,"803S2":6,"813S1":5,"813S3":5,"813S2":9,"79A0":190,"79A1":127,"79A2":34,"79A3":34,"811SP":32,"571S1":9,"403S1":15,"403S3":15,"403S2":14,"403S4":14,"403A2":10,"403A1":10,"403F1":11,"403F2":11,"634S1":5,"634S2":5,"408DP":18,"404ICB2":9,"404ICB1":9,"408JC":8,"404ICB3":9,"404ICT1":10,"404ICT2":10,"634PCS2":30,"634PCS1":29,"404ICT3":10,"634PCS3":3,"634PCS4":2,"812EST1":20,"404DV1":17,"404DV2":17,"404DV3":17,"TR1":4,"TR2":4,"ETR1":3,"SCTR":0,"ETR2":3,"517AC1&2":3940,"517AC4":2,"278AF":8,"405SR-1":6,"405SR-2":3,"517AC3&5":3940,"425PA-A":15,"425PA-B":8,"432WL":5,"437TW":16,"815WM":28,"815CO2.1":0,"814FF":10,"815CO2.2":1,"574FD1":11,"822LA":8,"574FD2":6,"514WW":12,"544CR":0,"544MR":0,"437TW1":9,"437TW3":2,"437TW2":3,"437MW1.1":0,"437MW1.2":0,"437MW1.3":0,"437MW2.1":0,"437MW2.2":0,"437MW2.3":0,"517AC-P":0,"822BFS":5,"515WW":12}};
+
 let WIRE_SHEETS=[],activeWireSheet=null,wireCables=[],wireRequestId=0,wireBlobUrls=[],wireSheetsLoading=null,wireExportRequestId=0,wireAutoRefresh=null,wireRequestedCabinet=null,wireSheetCounts=Object.create(null),wireCountRequestId=0,wireCountsReady=false;
 let WIRE_TOTAL_SHEET=null,WIRE_TOTAL_CACHE=null,WIRE_TOTAL_LOADING=null,wireNumView=false,wireNumQuery="",wireNumTimer=null;
 
+function loadWireCache(){
+  WIRE_SHEETS = (WIRE_SEED.sheets || []).slice();
+  WIRE_TOTAL_SHEET = WIRE_SEED.total || { name: "total", gid: "1694325836" };
+  for(const k in WIRE_SEED.counts){
+    wireSheetCounts[k] = { count: WIRE_SEED.counts[k] };
+  }
+  wireCountsReady = true;
+
+  try{
+    const s = localStorage.getItem(WIRE_STORAGE_KEY_SHEETS);
+    if(s){
+      const o = JSON.parse(s);
+      if(Array.isArray(o.cabinets) && o.cabinets.length) WIRE_SHEETS = o.cabinets;
+      if(o.total) WIRE_TOTAL_SHEET = o.total;
+    }
+    const c = localStorage.getItem(WIRE_STORAGE_KEY_COUNTS);
+    if(c){
+      const parsedCounts = JSON.parse(c);
+      if(parsedCounts && typeof parsedCounts === "object"){
+        for(const k in parsedCounts){
+          if(parsedCounts[k] && typeof parsedCounts[k].count === "number") wireSheetCounts[k] = { count: parsedCounts[k].count };
+        }
+      }
+    }
+    const t = sessionStorage.getItem(WIRE_STORAGE_KEY_TOTAL);
+    if(t) WIRE_TOTAL_CACHE = JSON.parse(t);
+  }catch(e){}
+}
+
+function saveWireSheetsCache(){
+  try{
+    localStorage.setItem(WIRE_STORAGE_KEY_SHEETS, JSON.stringify({ cabinets: WIRE_SHEETS, total: WIRE_TOTAL_SHEET }));
+  }catch(e){}
+}
+
+let countSaveTimer=null;
+function saveWireCountsCache(){
+  try{
+    const toSave = Object.create(null);
+    for(const k in wireSheetCounts){
+      if(wireSheetCounts[k] && typeof wireSheetCounts[k].count === "number"){
+        toSave[k] = { count: wireSheetCounts[k].count };
+      }
+    }
+    localStorage.setItem(WIRE_STORAGE_KEY_COUNTS, JSON.stringify(toSave));
+    localStorage.setItem(WIRE_STORAGE_KEY_TIME, String(Date.now()));
+  }catch(e){}
+}
+function debouncedSaveCounts(){
+  clearTimeout(countSaveTimer);
+  countSaveTimer = setTimeout(saveWireCountsCache, 800);
+}
+
+let uiUpdateTimer=null;
+function debouncedRenderCounts(){
+  if(uiUpdateTimer) return;
+  uiUpdateTimer = setTimeout(()=>{
+    uiUpdateTimer = null;
+    renderWireCabinets();
+    renderList();
+    if(window.rebuildSug) window.rebuildSug();
+  }, 300);
+}
+
+function hasWireSheet(code){
+  if(!code) return false;
+  if(WIRE_SHEETS && WIRE_SHEETS.length) return WIRE_SHEETS.some(s => s.name === code);
+  const c = wireSheetCounts[code];
+  if(c && typeof c.count === "number") return c.count > 0;
+  return true;
+}
+
 function wireCountText(sheetName){
   const countInfo=wireSheetCounts[sheetName];
+  if(countInfo&&typeof countInfo.count==="number")return countInfo.count?countInfo.count+" dây":"0 dây";
   if(countInfo&&countInfo.loading)return "Đang tải…";
   if(countInfo&&countInfo.error)return "Không tải được";
-  if(countInfo)return countInfo.count?countInfo.count+" dây":"Chưa có dữ liệu";
-  return wireCountsReady?"Chưa có dữ liệu":"Đang tải…";
+  return wireCountsReady?"0 dây":"—";
 }
 
 function clearWireExports(){
@@ -980,30 +1061,79 @@ function renderWireCabinets(){
   if(!box.childElementCount)box.innerHTML="<div class='wire-empty'>Không tìm thấy tủ phù hợp.</div>";
 }
 
-async function refreshWireSheets(refreshData=true){
+function loadDeckWireCounts(){
+  if(!deck||!deck.panels||!WIRE_SHEETS.length)return;
+  const missing=deck.panels
+    .map(p=>WIRE_SHEETS.find(s=>s.name===p.code))
+    .filter(Boolean)
+    .filter(s=>!wireSheetCounts[s.name]||typeof wireSheetCounts[s.name].count!=="number");
+  if(missing.length)updateMissingCounts(missing);
+}
+window.loadDeckWireCounts=loadDeckWireCounts;
+
+async function updateMissingCounts(sheets,maxToFetch=Infinity){
+  const missing=sheets.filter(s=>s&&!isTotalSheet(s.name)&&(!wireSheetCounts[s.name]||wireSheetCounts[s.name].loading||typeof wireSheetCounts[s.name].count!=="number"));
+  if(!missing.length){wireCountsReady=true;return}
+  const toFetch=missing.slice(0,maxToFetch);
+  toFetch.forEach(s=>{if(!wireSheetCounts[s.name])wireSheetCounts[s.name]={loading:true}});
+  debouncedRenderCounts();
+
+  const requestId=++wireCountRequestId;
+  let next=0;
+  const worker=async()=>{
+    while(next<toFetch.length){
+      const sheet=toFetch[next++];
+      try{
+        const cables=await fetchWireCables(sheet);
+        if(requestId!==wireCountRequestId)return;
+        wireSheetCounts[sheet.name]={count:cables.length};
+      }catch(error){
+        if(requestId!==wireCountRequestId)return;
+        wireSheetCounts[sheet.name]={error:error.message};
+      }
+      debouncedRenderCounts();
+      debouncedSaveCounts();
+    }
+  };
+  await Promise.all(Array.from({length:Math.min(3,toFetch.length)},worker));
+  if(requestId===wireCountRequestId){
+    wireCountsReady=true;
+    debouncedRenderCounts();
+    saveWireCountsCache();
+  }
+}
+
+async function refreshWireSheets(refreshData=false){
   if(wireSheetsLoading)return wireSheetsLoading;
   wireSheetsLoading=(async()=>{
     const previousName=activeWireSheet&&activeWireSheet.name;
     setWireStatus("Đang đồng bộ danh sách tủ từ Google Sheets…");
     try{
       const url="https://docs.google.com/spreadsheets/d/"+WIRE_SPREADSHEET_ID+"/htmlview";
-      const response=await fetch(url,{cache:"no-store"});
+      const response=await fetch(url);
       if(!response.ok)throw new Error("Google Sheets trả về HTTP "+response.status+".");
       const html=await response.text();
       const sheets=[...html.matchAll(/items\.push\(\{name:\s*"([^"]+)"[\s\S]*?gid:\s*"(\d+)"/g)]
-        .map(match=>({name:match[1],gid:match[2]}));
+        .map(match=>({name:match[1].replace(/\\x26/g,"&"),gid:match[2]}));
       if(!sheets.length)throw new Error("Không tìm thấy tên sheet trong bảng tính.");
       const totalSheet=sheets.find(sheet=>isTotalSheet(sheet.name))||null;
       if(totalSheet)WIRE_TOTAL_SHEET=totalSheet;
       const cabinets=sheets.filter(sheet=>!isTotalSheet(sheet.name));
       const namesChanged=cabinets.length!==WIRE_SHEETS.length||cabinets.some((sheet,index)=>!WIRE_SHEETS[index]||WIRE_SHEETS[index].name!==sheet.name);
       WIRE_SHEETS=cabinets;
-      updateWireSheetCounts(WIRE_SHEETS);
+      saveWireSheetsCache();
       renderWireCabinets();
       if(window.rebuildSug)window.rebuildSug();
-      if(wireNumView){   /* đang tra theo số dây → giữ nguyên kết quả đang xem */
-        if(refreshData){const num=wireNumQuery;WIRE_TOTAL_CACHE=null;searchWireNumber(num)}
-        else setWireStatus(namesChanged?"Danh sách tủ đã được cập nhật từ Google Sheets.":"");
+
+      loadDeckWireCounts();
+
+      if(wireNumView){
+        if(refreshData){
+          const num=wireNumQuery;
+          WIRE_TOTAL_CACHE=null;
+          sessionStorage.removeItem(WIRE_STORAGE_KEY_TOTAL);
+          searchWireNumber(num);
+        }else setWireStatus(namesChanged?"Danh sách tủ đã được cập nhật từ Google Sheets.":"");
         return;
       }
       const selected=(wireRequestedCabinet&&WIRE_SHEETS.find(sheet=>sheet.name===wireRequestedCabinet))
@@ -1014,32 +1144,43 @@ async function refreshWireSheets(refreshData=true){
         $("wireTitle").textContent=wireRequestedCabinet;
         $("wireCount").textContent="";
         $("wireOpenSheet").hidden=true;
-        setWireStatus("Chưa có sheet tên "+wireRequestedCabinet+" trong Google Sheets. Khi sheet cùng mã tủ được thêm, danh sách sẽ tự tải.");
+        setWireStatus("Chưa có sheet tên "+wireRequestedCabinet+" trong Google Sheets.");
         return;
       }
-      if(refreshData||selected.name!==previousName)await loadWireSheet(selected);
+      if(refreshData||selected.name!==previousName)await loadWireSheet(selected,refreshData);
       else{
         activeWireSheet=selected;
         $("wireOpenSheet").href="https://docs.google.com/spreadsheets/d/"+WIRE_SPREADSHEET_ID+"/edit#gid="+selected.gid;
-        setWireStatus(namesChanged
-          ?"Danh sách tủ đã được cập nhật từ Google Sheets."
-          :"");
+        setWireStatus(namesChanged?"Danh sách tủ đã được cập nhật từ Google Sheets.":"");
       }
     }catch(error){
       renderWireCabinets();
-      const help="Kiểm tra kết nối và quyền chia sẻ (Bất kỳ ai có liên kết – Người xem). ";
+      const help="Kiểm tra kết nối và quyền chia sẻ Google Sheets. ";
       setWireStatus(WIRE_SHEETS.length
-        ?"Không thể đồng bộ danh sách sheet mới; vẫn giữ danh sách đã tải trước đó. "+help+error.message
+        ?"Không thể đồng bộ danh sách sheet mới; vẫn giữ dữ liệu đã lưu. "+help+error.message
         :"Không thể tải danh sách tủ từ Google Sheets. "+help+error.message,true);
     }
   })().finally(()=>{wireSheetsLoading=null});
   return wireSheetsLoading;
 }
 
-async function fetchWireCables(sheet){
+async function fetchWireCables(sheet,forceNetwork=false){
+  if(!sheet||!sheet.name)return [];
+  const name=sheet.name;
+  if(!forceNetwork){
+    if(WIRE_CABLES_CACHE.has(name))return WIRE_CABLES_CACHE.get(name);
+    try{
+      const s=sessionStorage.getItem("wire_sheet_"+name);
+      if(s){
+        const parsed=JSON.parse(s);
+        WIRE_CABLES_CACHE.set(name,parsed);
+        return parsed;
+      }
+    }catch(e){}
+  }
   const url="https://docs.google.com/spreadsheets/d/"+WIRE_SPREADSHEET_ID+
-    "/gviz/tq?tqx=out:json&sheet="+encodeURIComponent(sheet.name);
-  const response=await fetch(url,{cache:"no-store"});
+    "/gviz/tq?tqx=out:json&sheet="+encodeURIComponent(name)+(forceNetwork?("&_t="+Date.now()):"");
+  const response=await fetch(url);
   if(!response.ok)throw new Error("Google Sheets trả về HTTP "+response.status+".");
   const text=await response.text();
   const match=text.match(/google\.visualization\.Query\.setResponse\(([\s\S]*)\);\s*$/);
@@ -1052,54 +1193,40 @@ async function fetchWireCables(sheet){
     throw new Error(detail);
   }
   const rows=result.table&&result.table.rows||[];
-  return rows.map(row=>(row.c||[]).slice(0,6).map(cell=>{
+  const cables=rows.map(row=>(row.c||[]).slice(0,6).map(cell=>{
     const value=cell&&(cell.f!==undefined?cell.f:cell.v);
     return value==null?"":String(value);
   })).filter(cable=>String(cable[0]||"").trim()&&!isWireHeaderRow(cable));
-}
 
-function updateWireSheetCounts(sheets){
-  const requestId=++wireCountRequestId;
-  wireCountsReady=false;
-  wireSheetCounts=Object.create(null);
-  sheets.forEach(sheet=>{wireSheetCounts[sheet.name]={loading:true}});
-  renderWireCabinets();renderList();if(window.rebuildSug)window.rebuildSug();
-  let next=0;
-  const worker=async()=>{
-    while(next<sheets.length){
-      const sheet=sheets[next++];
-      try{
-        const cables=await fetchWireCables(sheet);
-        if(requestId!==wireCountRequestId)return;
-        wireSheetCounts[sheet.name]={count:cables.length};
-      }catch(error){
-        if(requestId!==wireCountRequestId)return;
-        wireSheetCounts[sheet.name]={error:error.message};
-      }
-      renderWireCabinets();renderList();if(window.rebuildSug)window.rebuildSug();
-    }
-  };
-  return Promise.all(Array.from({length:Math.min(4,sheets.length)},worker)).then(()=>{
-    if(requestId!==wireCountRequestId)return;
-    wireCountsReady=true;
-    renderWireCabinets();renderList();if(window.rebuildSug)window.rebuildSug();
-  });
+  WIRE_CABLES_CACHE.set(name,cables);
+  try{sessionStorage.setItem("wire_sheet_"+name,JSON.stringify(cables))}catch(e){}
+  return cables;
 }
 
 /* ===== TRA THEO SỐ DÂY (cột A của sheet "total") ===== */
-function totalSheetRef(){return WIRE_TOTAL_SHEET||{name:"total",gid:""}}
-async function fetchTotalSheet(){
-  if(WIRE_TOTAL_CACHE)return WIRE_TOTAL_CACHE;
+function totalSheetRef(){return WIRE_TOTAL_SHEET||{name:"total",gid:"1694325836"}}
+async function fetchTotalSheet(forceNetwork=false){
+  if(!forceNetwork&&WIRE_TOTAL_CACHE)return WIRE_TOTAL_CACHE;
+  if(!forceNetwork){
+    try{
+      const s=sessionStorage.getItem(WIRE_STORAGE_KEY_TOTAL);
+      if(s){WIRE_TOTAL_CACHE=JSON.parse(s);return WIRE_TOTAL_CACHE}
+    }catch(e){}
+  }
   if(WIRE_TOTAL_LOADING)return WIRE_TOTAL_LOADING;
-  WIRE_TOTAL_LOADING=fetchWireCables(totalSheetRef())
-    .then(rows=>{WIRE_TOTAL_CACHE=rows;return rows})
+  WIRE_TOTAL_LOADING=fetchWireCables(totalSheetRef(),forceNetwork)
+    .then(rows=>{
+      WIRE_TOTAL_CACHE=rows;
+      try{sessionStorage.setItem(WIRE_STORAGE_KEY_TOTAL,JSON.stringify(rows))}catch(e){}
+      return rows;
+    })
     .finally(()=>{WIRE_TOTAL_LOADING=null});
   return WIRE_TOTAL_LOADING;
 }
 function renderWireNumSug(rows,query){
   const box=$("wireNumSug"),q=String(query||"").trim().toLowerCase();
   box.innerHTML="";
-  if(!q){box.classList.remove("open");return}   /* chưa nhập gì → không hiển thị hộp gợi ý */
+  if(!q){box.classList.remove("open");return}
   const hits=rows.filter(r=>String(r[0]||"").toLowerCase().includes(q)).slice(0,50);
   if(!hits.length){box.innerHTML="<div class='wire-empty'>Không có số dây nào khớp.</div>";return}
   hits.forEach(r=>{
@@ -1113,33 +1240,39 @@ function renderWireNumSug(rows,query){
     box.appendChild(b);
   });
 }
+function displayWireNumberResults(num,found){
+  ++wireRequestId;
+  const total=totalSheetRef();
+  wireNumView=true;activeWireSheet=total;wireCables=found;
+  clearWireExports();
+  $("wireTitle").textContent=found.length>1?(num+" · "+found.length+" kết quả"):num;
+  if(total.gid){
+    $("wireOpenSheet").href="https://docs.google.com/spreadsheets/d/"+WIRE_SPREADSHEET_ID+"/edit#gid="+total.gid;
+    $("wireOpenSheet").hidden=false;
+  }else $("wireOpenSheet").hidden=true;
+  renderWireCabinets();renderWireRows();
+  closeWireDrops();
+  setWireStatus("Tìm thấy "+found.length+" dây có số "+num+" (nguồn: sheet TOTAL).");
+}
 async function searchWireNumber(raw){
   const num=String(raw||"").trim();
   if(!num)return;
   wireNumQuery=num;
+  const key=num.toUpperCase();
+  if(WIRE_TOTAL_CACHE){
+    const found=WIRE_TOTAL_CACHE.filter(r=>String(r[0]||"").trim().toUpperCase()===key);
+    if(!found.length){setWireStatus("Không tìm thấy số dây \""+num+"\" trong sheet TOTAL.",true);return}
+    displayWireNumberResults(num,found);
+    return;
+  }
   setWireStatus("Đang tìm số dây "+num+" trong sheet TOTAL…");
   try{
     const rows=await fetchTotalSheet();
-    const key=num.toUpperCase();
     const found=rows.filter(r=>String(r[0]||"").trim().toUpperCase()===key);
-    if(!found.length){
-      setWireStatus("Không tìm thấy số dây \""+num+"\" trong sheet TOTAL.",true);
-      return;
-    }
-    ++wireRequestId;
-    const total=totalSheetRef();
-    wireNumView=true;activeWireSheet=total;wireCables=found;
-    clearWireExports();
-    $("wireTitle").textContent=found.length>1?(num+" · "+found.length+" kết quả"):num;
-    if(total.gid){
-      $("wireOpenSheet").href="https://docs.google.com/spreadsheets/d/"+WIRE_SPREADSHEET_ID+"/edit#gid="+total.gid;
-      $("wireOpenSheet").hidden=false;
-    }else $("wireOpenSheet").hidden=true;
-    renderWireCabinets();renderWireRows();
-    closeWireDrops();
-    setWireStatus("Tìm thấy "+found.length+" dây có số "+num+" — hiển thị như khi tra theo tủ (nguồn: sheet TOTAL).");
+    if(!found.length){setWireStatus("Không tìm thấy số dây \""+num+"\" trong sheet TOTAL.",true);return}
+    displayWireNumberResults(num,found);
   }catch(error){
-    setWireStatus("Không đọc được sheet TOTAL. Kiểm tra kết nối và quyền chia sẻ Google Sheets (Bất kỳ ai có liên kết – Người xem). "+error.message,true);
+    setWireStatus("Không đọc được sheet TOTAL. Kiểm tra kết nối và quyền chia sẻ Google Sheets. "+error.message,true);
   }
 }
 
@@ -1175,26 +1308,50 @@ function renderWireRows(){
   $("wireA4").disabled=!wireCables.length;
 }
 
-async function loadWireSheet(sheet){
+async function loadWireSheet(sheet,forceNetwork=false){
   const requestId=++wireRequestId;
   wireNumView=false;wireNumQuery="";
-  activeWireSheet=sheet;wireCables=[];renderWireCabinets();renderWireRows();clearWireExports();
+  activeWireSheet=sheet;clearWireExports();
   $("wireTitle").textContent=sheet.name;
-  $("wireCount").textContent="";
   $("wireOpenSheet").href="https://docs.google.com/spreadsheets/d/"+WIRE_SPREADSHEET_ID+"/edit#gid="+sheet.gid;
   $("wireOpenSheet").hidden=false;
+
+  if(!forceNetwork){
+    let cached=WIRE_CABLES_CACHE.get(sheet.name);
+    if(!cached){
+      try{
+        const s=sessionStorage.getItem("wire_sheet_"+sheet.name);
+        if(s){cached=JSON.parse(s);WIRE_CABLES_CACHE.set(sheet.name,cached)}
+      }catch(e){}
+    }
+    if(cached){
+      wireCables=cached;
+      renderWireCabinets();
+      renderWireRows();
+      setWireStatus(wireCables.length?"":"Sheet này không có dây nào có mã cáp.");
+      return;
+    }
+  }
+
+  wireCables=[];renderWireCabinets();renderWireRows();
+  $("wireCount").textContent="";
   setWireStatus("Đang tải danh sách dây…");
   try{
-    const cables=await fetchWireCables(sheet);
+    const cables=await fetchWireCables(sheet,forceNetwork);
     if(requestId!==wireRequestId)return;
-    wireCables=cables;wireSheetCounts[sheet.name]={count:cables.length};renderWireCabinets();renderWireRows();
-    setWireStatus(cables.length
-      ?""
-      :"Sheet này không có dây nào có mã cáp.");
+    wireCables=cables;
+    wireSheetCounts[sheet.name]={count:cables.length};
+    renderWireCabinets();renderWireRows();
+    debouncedRenderCounts();
+    debouncedSaveCounts();
+    setWireStatus(cables.length?"":"Sheet này không có dây nào có mã cáp.");
   }catch(error){
     if(requestId!==wireRequestId)return;
-    wireCables=[];wireSheetCounts[sheet.name]={error:error.message};renderWireCabinets();renderWireRows();
-    setWireStatus("Không tải được sheet "+sheet.name+". Kiểm tra kết nối và quyền chia sẻ Google Sheets (Bất kỳ ai có liên kết – Người xem). "+error.message,true);
+    wireCables=[];
+    wireSheetCounts[sheet.name]={error:error.message};
+    renderWireCabinets();renderWireRows();
+    debouncedRenderCounts();
+    setWireStatus("Không tải được sheet "+sheet.name+". Kiểm tra kết nối và quyền chia sẻ Google Sheets. "+error.message,true);
   }
 }
 
@@ -1203,11 +1360,27 @@ function openWireManager(cabinetCode=null){
   wireNumView=false;wireNumQuery="";
   $("wireApp").hidden=false;$("wireBtn").classList.add("on");
   renderWireCabinets();
+
+  if(cabinetCode){
+    const target=WIRE_SHEETS.find(s=>s.name===cabinetCode);
+    if(target){
+      loadWireSheet(target);
+      return;
+    }
+  }else if(activeWireSheet){
+    loadWireSheet(activeWireSheet);
+    return;
+  }else if(WIRE_SHEETS.length>0){
+    loadWireSheet(WIRE_SHEETS[0]);
+    return;
+  }
   refreshWireSheets();
   if(wireAutoRefresh)clearInterval(wireAutoRefresh);
   wireAutoRefresh=setInterval(()=>{
-    if(!$("wireApp").hidden&&!wireSheetsLoading)refreshWireSheets(false);
-  },60000);
+    if(!$("wireApp").hidden&&!wireSheetsLoading){
+      if(!wireNumView&&activeWireSheet)loadWireSheet(activeWireSheet,true);
+    }
+  },120000);
 }
 
 function closeWireManager(){
@@ -1327,6 +1500,7 @@ async function createWireImages(){
 }
 
 function initWireManager(){
+  loadWireCache();
   $("wireBtn").addEventListener("click",()=>openWireManager());
   $("wireClose").addEventListener("click",closeWireManager);
   const filter=$("wireFilter"),cabBox=$("wireCabinets"),numIn=$("wireNum"),numBox=$("wireNumSug");
@@ -1361,7 +1535,7 @@ function initWireManager(){
     },600);
   });
   numIn.addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();clearTimeout(wireNumTimer);searchWireNumber(numIn.value)}});
-  $("wireRefresh").addEventListener("click",()=>refreshWireSheets());
+  $("wireRefresh").addEventListener("click",()=>refreshWireSheets(true));
   $("wireCopy").addEventListener("click",copyWireList);
   $("wireA4").addEventListener("click",createWireImages);
   document.addEventListener("keydown",event=>{
