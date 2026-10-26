@@ -76,8 +76,16 @@ footer .cp{font-weight:600;color:var(--od);white-space:nowrap}
 .mk.dim{opacity:.28}
 .ld{stroke:var(--o);stroke-width:1.2;stroke-dasharray:5 4;vector-effect:non-scaling-stroke;fill:none;opacity:.8}
 .td{fill:var(--o);stroke:#fff;stroke-width:1;vector-effect:non-scaling-stroke}
-@keyframes pulse{0%{r:var(--r0);opacity:.8}100%{r:var(--r1);opacity:0}}
-.pulse{fill:none;pointer-events:none;stroke:var(--o);stroke-width:3;vector-effect:non-scaling-stroke;animation:pulse 1.2s ease-out infinite}
+@keyframes pulse{0%{r:var(--r0,30px);opacity:.9;stroke-width:3.5}100%{r:var(--r1,90px);opacity:0;stroke-width:1}}
+.pulse{fill:none;pointer-events:none;stroke:var(--o);stroke-width:3;vector-effect:non-scaling-stroke;animation:pulse 1.3s cubic-bezier(.215,.61,.355,1) infinite}
+@keyframes mkPulse{0%,100%{filter:drop-shadow(0 0 0 rgba(201,78,8,0))}50%{filter:drop-shadow(0 0 7px rgba(201,78,8,.85))}}
+.mk.on{animation:mkPulse 1.2s ease-in-out infinite}
+.card-wire-wrap{margin-top:10px}
+.card-wire-btn{display:inline-flex;align-items:center;gap:8px;width:100%;justify-content:center;padding:8px 12px;background:var(--o);color:#fff;border:0;border-radius:9px;font:inherit;font-size:13px;font-weight:700;cursor:pointer;box-shadow:0 2px 8px rgba(201,78,8,.25);transition:background .15s,transform .15s;box-sizing:border-box}
+.card-wire-btn:hover{background:var(--od);transform:translateY(-1px)}
+.card-wire-btn:active{transform:translateY(0)}
+.card-wire-btn .cwb-icon{font-size:14px;flex:none}
+.card-wire-btn .cwb-cnt{background:rgba(255,255,255,.24);padding:2px 8px;border-radius:999px;font-size:11.5px;font-weight:600;margin-left:auto}
 .bd{flex:none;font-size:11px;font-weight:700;color:var(--od);background:var(--om);border-radius:6px;padding:1px 7px;margin-left:6px;vertical-align:1px;white-space:nowrap}
 .hint{font-size:12px;color:var(--mut);padding:2px 14px 8px}
 @media(max-width:900px){
@@ -212,6 +220,10 @@ main>aside h2{display:none}
 .wire-table tbody tr:hover{background:#FFFAF6}
 .wire-mobile-card{display:none}
 .wire-mobile-header{display:none}
+.wire-map-link{display:inline-flex;align-items:center;gap:4px;background:#FFF2E8;color:var(--od);border:1px solid var(--om);border-radius:6px;padding:3px 7px;font:inherit;font-size:inherit;font-weight:600;cursor:pointer;text-align:left;line-height:1.25;transition:all .15s ease;word-break:break-word}
+.wire-map-link:hover{background:var(--o);color:#fff;border-color:var(--od);box-shadow:0 2px 6px rgba(201,78,8,.25)}
+.wire-map-link .wml-ico{font-size:11px;flex:none}
+.wire-map-link.mobile{width:100%;padding:3px 5px}
 .wire-empty{padding:24px;text-align:center;color:var(--mut)}
 .wire-exports{display:flex;gap:8px;flex-wrap:wrap;padding:10px 16px;border-top:1px solid var(--line);background:#fff}
 .wire-export-link{display:inline-block;border:1px solid var(--om);border-radius:8px;padding:7px 10px;color:var(--od);font-size:12px;font-weight:700;text-decoration:none}
@@ -490,6 +502,57 @@ function reindex(){
   }));
 }
 function byUid(id){for(let i=0;i<ALL.length;i++)if(ALL[i].uid===id)return ALL[i];return null}
+const norm=s=>String(s==null?"":s).trim().toLowerCase();
+
+/* Tìm tủ trên sơ đồ theo tên sheet hoặc mã tủ (khớp đúng trước, tiền tố sau) */
+function panelOf(name){
+  const k=norm(name);if(!k)return null;
+  const starts=[];
+  for(let i=0;i<ALL.length;i++){
+    const c=norm(ALL[i].code);
+    if(c===k)return ALL[i];
+    if(k.length>2&&c.indexOf(k)===0)starts.push(ALL[i]);
+  }
+  starts.sort((a,b)=>String(a.code).length-String(b.code).length||a.di-b.di);
+  return starts.length?starts[0]:null;
+}
+
+/* Tìm tủ đối tác từ chuỗi TARGET hoặc SOURCE trong bảng dây */
+function findPanelForTarget(str){
+  if(!str)return null;
+  const raw=String(str).trim();
+  if(!raw)return null;
+  const qm=raw.match(/["'“”„`]+([A-Za-z0-9\.\-_&]+)["'“”„`]+/);
+  if(qm){
+    const p=panelOf(qm[1]);
+    if(p)return p;
+  }
+  const direct=panelOf(raw);
+  if(direct)return direct;
+  const firstWord=raw.replace(/^[^A-Za-z0-9]+/, '').split(/[\s\-–—/:]+/)[0];
+  if(firstWord&&firstWord.length>=2){
+    const p=panelOf(firstWord);
+    if(p)return p;
+  }
+  for(let i=0;i<ALL.length;i++){
+    const code=String(ALL[i].code).trim();
+    if(code.length>=3){
+      const reg=new RegExp("(^|[^A-Za-z0-9])"+code.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")+"([^A-Za-z0-9]|$)","i");
+      if(reg.test(raw))return ALL[i];
+    }
+  }
+  return null;
+}
+
+/* Đóng tab dây điện và chuyển ngay tới tủ trên sơ đồ (có pulse nhấp nháy + zoom) */
+function locateCabinetOnDiagram(panel){
+  if(!panel)return;
+  closeWireManager();
+  if($("q")&&$("q").value){$("q").value="";renderList()}
+  requestAnimationFrame(()=>{
+    select(panel,true);
+  });
+}
 function patchOf(p){for(let i=0;i<(OV.added||[]).length;i++)if(OV.added[i].uid===p.uid)return OV.added[i].panel;return null}
 function applyOvr(o){
   if(!o)return;
@@ -657,7 +720,7 @@ function openDeck(i){
     el("circle",{cx:p.x,cy:p.y,r:p.r*1.7,fill:"rgba(0,0,0,0)"},g);
     const fs=Math.min(p.r*.55,p.r*1.75/(p.code.length*.62));
     const t=el("text",{x:p.x,y:p.y,"font-size":fs},g);t.textContent=p.code;
-    g.addEventListener("click",e=>{e.stopPropagation();if(targeting){cancelTarget();return}if(adding){cancelAdd();return}if(!moved){select(p,false);if(hasWireSheet(p.code))openWireManager(p.code)}});
+    g.addEventListener("click",e=>{e.stopPropagation();if(targeting){cancelTarget();return}if(adding){cancelAdd();return}if(!moved){select(p,false)}});
     p.g=g;
   });
   if(window.loadDeckWireCounts)window.loadDeckWireCounts();
@@ -713,14 +776,16 @@ function select(p,zoom){
   selP=p;
   document.querySelectorAll(".mk").forEach(g=>g.classList.toggle("on",+g.dataset.k===p.k));
   document.querySelectorAll(".it").forEach(i=>{const on=+i.dataset.di===p.di&&+i.dataset.k===p.k;i.classList.toggle("on",on);if(on&&!zoom&&i.scrollIntoView)i.scrollIntoView({block:"nearest"})});
-  el("circle",{class:"pulse",cx:p.x,cy:p.y,r:p.r*1.6},p.g);
-  if(p.tx!=null)el("circle",{class:"pulse",cx:p.tx,cy:p.ty,r:Math.max(p.r*.6,40)},p.g);
+  el("circle",{class:"pulse",cx:p.x,cy:p.y,r:p.r*1.6,style:"--r0:"+p.r+"px;--r1:"+(p.r*2.6)+"px"},p.g);
+  if(p.tx!=null)el("circle",{class:"pulse",cx:p.tx,cy:p.ty,r:Math.max(p.r*.6,40),style:"--r0:"+Math.max(p.r*.6,40)+"px;--r1:"+(Math.max(p.r*.6,40)*2.4)+"px"},p.g);
   let h="<button class='x' onclick='select(null)'>×</button><span class='code'>"+esc(p.code)+"</span><span class='bd'>"+esc(nice(deck.name))+"</span>";
   if(!p.info.length)h+="<div class='nm'>Chưa có trong bảng chú giải</div><div class='warn'>Mã này có trên bản vẽ nhưng không tìm thấy dòng tương ứng trong bảng danh mục.</div>";
   p.info.forEach((x,i)=>{
     if(i)h+="<hr>";
     h+="<div class='nm'>"+esc(x.name||"(chưa có tên trong bảng)")+"</div>";
   });
+  const cnt=wireCountText(p.code);
+  h+="<div class='card-wire-wrap'><button type='button' class='card-wire-btn' id='cardWireBtn' title='Mở danh sách dây của tủ "+esc(p.code)+"'><span class='cwb-icon'>📋</span> Xem dây tủ này<span class='cwb-cnt'>"+esc(cnt)+"</span></button></div>";
   if(EDIT){
     h+="<div class='cbtns'><button class='cb' onclick='editPoint()'>✎ Sửa tên / thông tin</button>"+
        (p.tx!=null?"<button class='cb' onclick='armTarget()'>↔ Sửa đầu nối</button><button class='cb danger' onclick='dropTarget()'>✂ Xoá dây nối</button>"
@@ -729,6 +794,8 @@ function select(p,zoom){
        "<div class='hintm'>Kéo điểm trên bản vẽ để dời vị trí"+(p.tx!=null?", kéo chấm cam để dời riêng đầu dây nối":"")+".</div>";
   }
   card.innerHTML=h;card.classList.add("show");
+  const cwb=$("cardWireBtn");
+  if(cwb)cwb.addEventListener("click",()=>openWireManager(p.code));
   if(zoom){   // phóng tới vị trí tủ trên sơ đồ
     const tx=p.tx!=null?(p.x+p.tx)/2:p.x,ty=p.tx!=null?(p.y+p.ty)/2:p.y;
     const r=svg.getBoundingClientRect(),asp=r.height/r.width;
@@ -1005,6 +1072,11 @@ function debouncedRenderCounts(){
     renderWireCabinets();
     renderList();
     if(window.rebuildSug) window.rebuildSug();
+    const cwb=$("cardWireBtn");
+    if(cwb&&selP){
+      const badge=cwb.querySelector(".cwb-cnt");
+      if(badge)badge.textContent=wireCountText(selP.code);
+    }
   }, 300);
 }
 
@@ -1288,8 +1360,18 @@ function renderWireRows(){
   wireCables.forEach(cable=>{
     const row=document.createElement("tr");
     const mobileCard=document.createElement("div");mobileCard.className="wire-mobile-card";
-    const makeColumn=value=>{
-      const column=document.createElement("div");column.className="wire-mobile-column";column.textContent=value||"—";
+    const makeColumn=(value,panel)=>{
+      const column=document.createElement("div");column.className="wire-mobile-column";
+      if(panel){
+        const btn=document.createElement("button");
+        btn.type="button";btn.className="wire-map-link mobile";
+        btn.title="Nhảy tới vị trí tủ "+panel.code+" trên sơ đồ ("+nice(DATA.decks[panel.di].name)+")";
+        btn.innerHTML="<span class='wml-ico'>🗺️</span><span class='wml-txt'>"+esc(value||panel.code)+"</span>";
+        btn.addEventListener("click",e=>{e.stopPropagation();locateCabinetOnDiagram(panel)});
+        column.appendChild(btn);
+      }else{
+        column.textContent=value||"—";
+      }
       return column;
     };
     const cableColumn=document.createElement("div");cableColumn.className="wire-mobile-column";
@@ -1297,13 +1379,36 @@ function renderWireRows(){
     const typeAndConductors=document.createElement("div");typeAndConductors.className="wire-mobile-detail";
     typeAndConductors.textContent=(cable[4]||"—")+" / "+(cable[5]||"—");
     cableColumn.append(number,typeAndConductors);
+
+    const targetPanel=findPanelForTarget(cable[3]);
+    const sourcePanel=(activeWireSheet&&cable[1]&&findPanelForTarget(cable[1])?.code!==activeWireSheet.name)?findPanelForTarget(cable[1]):null;
+
     mobileCard.append(cableColumn,
-      makeColumn(cable[1]),
-      makeColumn(cable[2]),
-      makeColumn(cable[3]));
+      makeColumn(cable[1],sourcePanel),
+      makeColumn(cable[2],null),
+      makeColumn(cable[3],targetPanel));
     row.appendChild(mobileCard);
+
     cable.forEach((value,index)=>{
-      const cell=document.createElement("td");cell.textContent=value;cell.dataset.label=WIRE_HEADERS[index]||"";
+      const cell=document.createElement("td");
+      cell.dataset.label=WIRE_HEADERS[index]||"";
+      if(index===3&&targetPanel){
+        const btn=document.createElement("button");
+        btn.type="button";btn.className="wire-map-link";
+        btn.title="Nhảy tới vị trí tủ "+targetPanel.code+" trên sơ đồ ("+nice(DATA.decks[targetPanel.di].name)+")";
+        btn.innerHTML="<span class='wml-ico'>🗺️</span><span class='wml-txt'>"+esc(value)+"</span>";
+        btn.addEventListener("click",e=>{e.stopPropagation();locateCabinetOnDiagram(targetPanel)});
+        cell.appendChild(btn);
+      }else if(index===1&&sourcePanel){
+        const btn=document.createElement("button");
+        btn.type="button";btn.className="wire-map-link";
+        btn.title="Nhảy tới vị trí tủ "+sourcePanel.code+" trên sơ đồ ("+nice(DATA.decks[sourcePanel.di].name)+")";
+        btn.innerHTML="<span class='wml-ico'>🗺️</span><span class='wml-txt'>"+esc(value)+"</span>";
+        btn.addEventListener("click",e=>{e.stopPropagation();locateCabinetOnDiagram(sourcePanel)});
+        cell.appendChild(btn);
+      }else{
+        cell.textContent=value;
+      }
       row.appendChild(cell);
     });
     fragment.appendChild(row);
@@ -1368,7 +1473,9 @@ function openWireManager(cabinetCode=null){
   renderWireCabinets();
 
   if(cabinetCode){
-    const target=WIRE_SHEETS.find(s=>s.name===cabinetCode);
+    const target=WIRE_SHEETS.find(s=>s.name===cabinetCode)
+      ||WIRE_SHEETS.find(s=>norm(s.name)===norm(cabinetCode))
+      ||WIRE_SHEETS.find(s=>norm(s.name).startsWith(norm(cabinetCode)));
     if(target){
       loadWireSheet(target);
       return;
@@ -1686,20 +1793,7 @@ async function boot(){
 /* ===== GỢI Ý TÌM KIẾM: TÊN TẤT CẢ TỦ (LẤY TỪ GOOGLE SHEETS) ===== */
 (function(){
   const q=$("q"),box=$("sug");let hv=-1,cur=[],swiped=false;
-  const norm=s=>String(s==null?"":s).trim().toLowerCase();
   function hide(){box.hidden=true;hv=-1}
-  /* tìm tủ trên sơ đồ theo tên sheet: khớp đúng trước, sau đó khớp tiền tố (437TW → 437TW1) */
-  function panelOf(sheetName){
-    const k=norm(sheetName);if(!k)return null;
-    const starts=[];
-    for(let i=0;i<ALL.length;i++){
-      const c=norm(ALL[i].code);
-      if(c===k)return ALL[i];
-      if(k.length>2&&c.indexOf(k)===0)starts.push(ALL[i]);
-    }
-    starts.sort((a,b)=>String(a.code).length-String(b.code).length||a.di-b.di);
-    return starts.length?starts[0]:null;
-  }
   function build(){
     const t=norm(q.value);
     const used=Object.create(null),items=[];
