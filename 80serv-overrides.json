@@ -1,6 +1,6 @@
 {
   "v": 1,
-  "updated": "2026-10-27T13:28:32.436Z",
+  "updated": "2026-10-27T13:29:06.688Z",
   "added": [
     {
       "deck": "-1 DECK",
@@ -727,6 +727,26 @@
         "tx": 13551,
         "ty": -12663
       }
+    },
+    {
+      "deck": "BRIDGE DECK",
+      "uid": "nmvqq1y9n17lg",
+      "panel": {
+        "code": "WH-S2",
+        "x": 13870,
+        "y": -12918,
+        "r": 61,
+        "info": [
+          {
+            "item": "",
+            "name": "WHEELHOSE FWD CONSOLE",
+            "dim": "",
+            "qty": "",
+            "mat": "",
+            "mount": ""
+          }
+        ]
+      }
     }
   ],
   "deleted": [
@@ -1127,5 +1147,5 @@
       ]
     }
   },
-  "dirty": false
+  "dirty": true
 }
