@@ -1,6 +1,6 @@
 {
   "v": 1,
-  "updated": "2026-10-27T13:33:17.971Z",
+  "updated": "2026-10-27T13:34:49.742Z",
   "added": [
     {
       "deck": "-1 DECK",
@@ -770,6 +770,26 @@
         ],
         "tx": 13443,
         "ty": -12810
+      }
+    },
+    {
+      "deck": "BRIDGE DECK",
+      "uid": "nmvqq9ayxxwm",
+      "panel": {
+        "code": "WH-S8",
+        "x": 14204,
+        "y": -12569,
+        "r": 61,
+        "info": [
+          {
+            "item": "",
+            "name": "CEILING FWD CONSOLE 8",
+            "dim": "",
+            "qty": "",
+            "mat": "",
+            "mount": ""
+          }
+        ]
       }
     }
   ],
