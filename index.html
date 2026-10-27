@@ -2353,29 +2353,29 @@ function renderWirePage(sheetName,pageNumber,totalPages,cables,allCables){
 
   // Nền trắng và dải cam viền trên
   ctx.fillStyle="#FFFFFF";ctx.fillRect(0,0,1080,1920);
-  ctx.fillStyle="#F97316";ctx.fillRect(0,0,1080,8);
+  ctx.fillStyle="#F97316";ctx.fillRect(0,0,1080,10);
 
-  // Huy hiệu ứng dụng
-  ctx.fillStyle="#FFF7ED";ctx.strokeStyle="#FDBA74";ctx.lineWidth=1.5;
-  drawCanvasRoundRect(ctx,40,26,230,32,6,true,true);
-  ctx.fillStyle="#C2410C";ctx.font="bold 13px sans-serif";
-  ctx.fillText("⚓ 80SERV – CỨU HỘ TÀU NGẦM",52,47);
+  // Huy hiệu ứng dụng to rõ
+  ctx.fillStyle="#FFF7ED";ctx.strokeStyle="#FDBA74";ctx.lineWidth=2;
+  drawCanvasRoundRect(ctx,40,26,260,38,8,true,true);
+  ctx.fillStyle="#C2410C";ctx.font="bold 15px sans-serif";
+  ctx.fillText("⚓ 80SERV – CỨU HỘ TÀU NGẦM",54,51);
 
-  // Tiêu đề tủ
-  ctx.fillStyle="#7C2D12";ctx.font="bold 28px sans-serif";
-  ctx.fillText("DANH SÁCH DÂY ĐIỆN — TỦ "+sheetName,40,96);
+  // Tiêu đề tủ chữ to
+  ctx.fillStyle="#7C2D12";ctx.font="bold 34px sans-serif";
+  ctx.fillText("DANH SÁCH DÂY ĐIỆN — TỦ "+sheetName,40,105);
 
-  // Phụ đề thông tin tầng, tổng số dây, trang và ngày tạo
+  // Phụ đề chữ to
   const panel=panelOf(sheetName);
   const deckName=panel&&panel.di!=null&&DATA.decks[panel.di]?DATA.decks[panel.di].name:"Chưa xác định";
-  ctx.fillStyle="#4B5563";ctx.font="14px sans-serif";
+  ctx.fillStyle="#374151";ctx.font="bold 16px sans-serif";
   const dateStr=new Date().toLocaleDateString("vi-VN");
   const totalCount=allCables?allCables.length:cables.length;
-  ctx.fillText("📍 Vị trí: "+deckName+"   •   📊 Tổng: "+totalCount+" dây   •   📄 Trang "+pageNumber+"/"+totalPages+"   •   🕒 "+dateStr,40,134);
+  ctx.fillText("📍 Vị trí: "+deckName+"   •   📊 Tổng: "+totalCount+" dây   •   📄 Trang "+pageNumber+"/"+totalPages+"   •   🕒 "+dateStr,40,146);
 
   // Cấu trúc bảng
-  const tableX=40,tableY=162,tableW=1000,headerH=46;
-  const col4W=130,col1W=210;
+  const tableX=40,tableY=175,tableW=1000,headerH=54;
+  const col4W=140,col1W=230;
 
   // Tính toán tỷ lệ độ rộng cột nguồn và đích
   let countSrc=0,sumSrc=0,countTgt=0,sumTgt=0;
@@ -2386,12 +2386,12 @@ function renderWirePage(sheetName,pageNumber,totalPages,cables,allCables){
     if(s&&s!=="—"){countSrc++;sumSrc+=s.length;}
     if(t&&t!=="—"){countTgt++;sumTgt+=t.length;}
   }
-  const remainingW=tableW-col1W-col4W;
+  const remainingW=tableW-col1W-col4W; // 630px
   let col2W=Math.round(remainingW/2),col3W=remainingW-col2W;
   if(countTgt===0){
-    col3W=80;col2W=remainingW-col3W;
+    col3W=85;col2W=remainingW-col3W;
   }else if(countSrc===0){
-    col2W=80;col3W=remainingW-col2W;
+    col2W=85;col3W=remainingW-col2W;
   }else{
     const ratio=Math.max(0.65,Math.min(1.5,Math.sqrt((sumSrc/(countSrc||1))/(sumTgt/(countTgt||1)||1))));
     col2W=Math.round(remainingW*(ratio/(ratio+1)));
@@ -2403,19 +2403,19 @@ function renderWirePage(sheetName,pageNumber,totalPages,cables,allCables){
 
   // Dòng đầu tiêu đề bảng
   ctx.fillStyle="#FFE8D6";ctx.fillRect(tableX,tableY,tableW,headerH);
-  ctx.fillStyle="#F57C00";ctx.fillRect(tableX,tableY+headerH-2,tableW,2);
+  ctx.fillStyle="#F57C00";ctx.fillRect(tableX,tableY+headerH-3,tableW,3);
 
   let hx=tableX;
   headers.forEach((h,idx)=>{
-    ctx.fillStyle="#8A2C00";ctx.font="bold 13.5px sans-serif";
+    ctx.fillStyle="#8A2C00";ctx.font="bold 16px sans-serif";
     if(idx===3){
       const tw=ctx.measureText(h).width;
-      ctx.fillText(h,hx+(colWidths[idx]-tw)/2,tableY+28);
+      ctx.fillText(h,hx+(colWidths[idx]-tw)/2,tableY+34);
     }else{
-      ctx.fillText(h,hx+10,tableY+28);
+      ctx.fillText(h,hx+12,tableY+34);
     }
     if(idx<3){
-      ctx.strokeStyle="#FED7AA";ctx.lineWidth=1;
+      ctx.strokeStyle="#FED7AA";ctx.lineWidth=1.5;
       ctx.beginPath();
       ctx.moveTo(hx+colWidths[idx],tableY);
       ctx.lineTo(hx+colWidths[idx],tableY+headerH);
@@ -2424,8 +2424,8 @@ function renderWirePage(sheetName,pageNumber,totalPages,cables,allCables){
     hx+=colWidths[idx];
   });
 
-  // Từng dòng dây
-  const rowH=cables.length<=15?68:(cables.length<=22?64:58);
+  // Từng dòng dây với chữ to
+  const rowH=cables.length<=12?92:(cables.length<=18?82:74);
   cables.forEach((c,rIdx)=>{
     const y=tableY+headerH+rIdx*rowH;
 
@@ -2450,14 +2450,14 @@ function renderWirePage(sheetName,pageNumber,totalPages,cables,allCables){
       ctx.stroke();
     }
 
-    // Cột 1: Mã cáp, loại/quy cách, nhà thầu
-    const c1x=tableX+8;
-    ctx.fillStyle="#C25E00";ctx.font="bold 13.5px monospace, sans-serif";
-    ctx.fillText(c[0]||"—",c1x,y+18);
+    // Cột 1: Mã cáp, loại/quy cách, nhà thầu (chữ to: 17px, 14px, 12.5px)
+    const c1x=tableX+10;
+    ctx.fillStyle="#C25E00";ctx.font="bold 17px monospace, sans-serif";
+    ctx.fillText(c[0]||"—",c1x,y+24);
 
-    ctx.fillStyle="#4B5563";ctx.font="11.5px sans-serif";
+    ctx.fillStyle="#374151";ctx.font="bold 14px sans-serif";
     const specStr=(c[3]||"—")+" / "+(c[4]||"—");
-    ctx.fillText(specStr,c1x,y+36);
+    ctx.fillText(specStr,c1x,y+48);
 
     const contractor=c[5]||"";
     if(contractor){
@@ -2466,50 +2466,50 @@ function renderWirePage(sheetName,pageNumber,totalPages,cables,allCables){
       else if(/nautic/i.test(contractor)){bg="#E8F0FE";border="#C2E7FF";text="#1967D2";}
       else if(/vkkt/i.test(contractor)){bg="#F3E8FD";border="#E1BEE7";text="#7627BB";}
 
-      ctx.font="bold 10px sans-serif";
+      ctx.font="bold 12.5px sans-serif";
       const tw=ctx.measureText(contractor).width;
-      ctx.fillStyle=bg;ctx.strokeStyle=border;ctx.lineWidth=1;
-      drawCanvasRoundRect(ctx,c1x,y+43,tw+10,16,3,true,true);
+      ctx.fillStyle=bg;ctx.strokeStyle=border;ctx.lineWidth=1.5;
+      drawCanvasRoundRect(ctx,c1x,y+57,tw+14,22,4,true,true);
       ctx.fillStyle=text;
-      ctx.fillText(contractor,c1x+5,y+55);
+      ctx.fillText(contractor,c1x+7,y+73);
     }
 
-    // Cột 2: Nguồn
-    const c2x=tableX+colWidths[0]+8;
-    ctx.fillStyle="#1F2937";ctx.font="12px sans-serif";
-    const lines2=wrapCanvasText(ctx,c[1]||"—",colWidths[1]-16);
-    const lineH=16;
-    const startY2=y+(rowH-lines2.length*lineH)/2+12;
+    // Cột 2: Nguồn (chữ to 15px bold, line-height 21px)
+    const c2x=tableX+colWidths[0]+10;
+    ctx.fillStyle="#111827";ctx.font="bold 15px sans-serif";
+    const lines2=wrapCanvasText(ctx,c[1]||"—",colWidths[1]-20);
+    const lineH=21;
+    const startY2=y+(rowH-lines2.length*lineH)/2+16;
     lines2.forEach((line,lIdx)=>{
       ctx.fillText(line,c2x,startY2+lIdx*lineH);
     });
 
-    // Cột 3: Đích
-    const c3x=tableX+colWidths[0]+colWidths[1]+8;
-    const lines3=wrapCanvasText(ctx,c[2]||"—",colWidths[2]-16);
-    const startY3=y+(rowH-lines3.length*lineH)/2+12;
+    // Cột 3: Đích (chữ to 15px bold, line-height 21px)
+    const c3x=tableX+colWidths[0]+colWidths[1]+10;
+    const lines3=wrapCanvasText(ctx,c[2]||"—",colWidths[2]-20);
+    const startY3=y+(rowH-lines3.length*lineH)/2+16;
     lines3.forEach((line,lIdx)=>{
       ctx.fillText(line,c3x,startY3+lIdx*lineH);
     });
 
-    // Cột 4: Đã kéo / Đã đấu
+    // Cột 4: Đã kéo / Đã đấu (huy hiệu to 114x24px, chữ 12px bold)
     const c4x=tableX+colWidths[0]+colWidths[1]+colWidths[2];
-    const pillW=104,pillH=20;
+    const pillW=114,pillH=24;
     const pillX=c4x+(colWidths[3]-pillW)/2;
-    const startPillY=y+(rowH-44)/2;
+    const startPillY=y+(rowH-54)/2;
 
     // Pill Kéo
     const keo=String(c[6]==null?"":c[6]).trim();
     const isKeo=keo==="1"||/^(1|x|v|ok|đã kéo|yes)$/i.test(keo);
     ctx.fillStyle=isKeo?"#E6F4EA":"#F1F3F4";
     ctx.strokeStyle=isKeo?"#CEEAD6":"#DADCE0";
-    ctx.lineWidth=1;
-    drawCanvasRoundRect(ctx,pillX,startPillY,pillW,pillH,4,true,true);
+    ctx.lineWidth=1.5;
+    drawCanvasRoundRect(ctx,pillX,startPillY,pillW,pillH,5,true,true);
     ctx.fillStyle=isKeo?"#137333":"#5F6368";
-    ctx.font="bold 10px sans-serif";
+    ctx.font="bold 12px sans-serif";
     const keoText=isKeo?"✔ Đã kéo":"Chưa kéo";
     const ktw=ctx.measureText(keoText).width;
-    ctx.fillText(keoText,pillX+(pillW-ktw)/2,startPillY+14);
+    ctx.fillText(keoText,pillX+(pillW-ktw)/2,startPillY+17);
 
     // Pill Đấu
     const dau=String(c[7]==null?"":c[7]).trim();
@@ -2519,19 +2519,19 @@ function renderWirePage(sheetName,pageNumber,totalPages,cables,allCables){
     if(isDau2){dauBg="#E6F4EA";dauBorder="#CEEAD6";dauColor="#137333";dauText="✔ Đấu 2/2";}
     else if(isDau1){dauBg="#FEF7E0";dauBorder="#FEEFC3";dauColor="#B06000";dauText="⏳ Đấu 1/2";}
 
-    ctx.fillStyle=dauBg;ctx.strokeStyle=dauBorder;
-    drawCanvasRoundRect(ctx,pillX,startPillY+24,pillW,pillH,4,true,true);
+    ctx.fillStyle=dauBg;ctx.strokeStyle=dauBorder;ctx.lineWidth=1.5;
+    drawCanvasRoundRect(ctx,pillX,startPillY+30,pillW,pillH,5,true,true);
     ctx.fillStyle=dauColor;
     const dtw=ctx.measureText(dauText).width;
-    ctx.fillText(dauText,pillX+(pillW-dtw)/2,startPillY+38);
+    ctx.fillText(dauText,pillX+(pillW-dtw)/2,startPillY+47);
   });
 
   // Viền khung ngoài bảng
-  ctx.strokeStyle="#CBD5E1";ctx.lineWidth=1.5;
+  ctx.strokeStyle="#CBD5E1";ctx.lineWidth=2;
   ctx.strokeRect(tableX,tableY,tableW,headerH+cables.length*rowH);
 
-  // Chân trang ảnh
-  ctx.fillStyle="#9CA3AF";ctx.font="12.5px sans-serif";
+  // Chân trang ảnh chữ to
+  ctx.fillStyle="#6B7280";ctx.font="bold 14px sans-serif";
   ctx.fillText("Hệ thống quản lý dây cáp điện 80SERV Cứu hộ tàu ngầm  •  80serv.vercel.app",40,1885);
 
   return new Promise((resolve,reject)=>{
@@ -2556,7 +2556,7 @@ function updateWireImgPreviewView(){
 
   $("wirePreviewImg").src=page.url;
   const titleName=activeWireSheet?activeWireSheet.name:(wireNumView?wireNumQuery:"");
-  $("wipSubtitle").textContent="Tủ "+titleName+" • Trang "+page.pageNumber+"/"+total+" ("+wireCables.length+" dây)";
+  $("wipSubtitle").textContent="Tủ "+titleName+" • Đang xem trang "+page.pageNumber+"/"+total+" (Tổng "+wireCables.length+" dây)";
 
   const nav=$("wipPageNav");
   if(total>1){
@@ -2564,56 +2564,76 @@ function updateWireImgPreviewView(){
     $("wipPageIndicator").textContent="Trang "+page.pageNumber+" / "+total;
     $("wipPrevBtn").disabled=(currentWirePageIndex===0);
     $("wipNextBtn").disabled=(currentWirePageIndex===total-1);
+    $("wipDownloadBtn").innerHTML="<span>⬇ Tải toàn bộ ("+total+" ảnh)</span>";
+    $("wipShareBtn").innerHTML="<span>📤 Chia sẻ toàn bộ ("+total+" ảnh)</span>";
   }else{
     nav.hidden=true;
+    $("wipDownloadBtn").innerHTML="<span>⬇ Tải ảnh về máy</span>";
+    $("wipShareBtn").innerHTML="<span>📤 Chia sẻ</span>";
   }
 }
 
-function downloadCurrentWireImage(){
+async function downloadAllWireImages(){
   if(!generatedWirePages.length)return;
-  const page=generatedWirePages[currentWirePageIndex];
-  const a=document.createElement("a");
-  a.href=page.url;
-  a.download=page.filename;
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-  setWireStatus("Đã tải ảnh "+page.filename+" về máy.");
+  const total=generatedWirePages.length;
+  setWireStatus("Đang tải toàn bộ "+total+" ảnh…");
+  for(let i=0;i<total;i++){
+    const page=generatedWirePages[i];
+    const a=document.createElement("a");
+    a.href=page.url;
+    a.download=page.filename;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    if(i<total-1){
+      await new Promise(r=>setTimeout(r,280));
+    }
+  }
+  setWireStatus("Đã tải xong toàn bộ "+total+" ảnh về máy!");
 }
 
-async function shareCurrentWireImage(){
+async function shareAllWireImages(){
   if(!generatedWirePages.length)return;
-  const page=generatedWirePages[currentWirePageIndex];
-  const file=new File([page.blob],page.filename,{type:"image/png"});
+  const total=generatedWirePages.length;
+  const files=generatedWirePages.map(page=>new File([page.blob],page.filename,{type:"image/png"}));
+  const titleName=activeWireSheet?activeWireSheet.name:(wireNumView?wireNumQuery:"80SERV");
+  const shareTitle="Danh sách dây tủ "+titleName+" (Toàn bộ "+total+" ảnh)";
+  const shareText="Danh sách dây cáp tủ "+titleName+" gồm "+total+" ảnh (Tàu 80SERV Cứu hộ tàu ngầm)";
 
-  if(navigator.canShare&&navigator.canShare({files:[file]})){
+  // 1. Chia sẻ toàn bộ tệp qua Web Share API (hỗ trợ trên Zalo, Viber, Telegram, iOS/Android...)
+  if(navigator.canShare&&navigator.canShare({files})){
     try{
       await navigator.share({
-        files:[file],
-        title:page.title,
-        text:"Danh sách dây cáp tủ "+(activeWireSheet?activeWireSheet.name:"")+" (Tàu 80SERV)"
+        files:files,
+        title:shareTitle,
+        text:shareText
       });
-      setWireStatus("Đã mở chia sẻ ảnh thành công!");
+      setWireStatus("Đã mở chia sẻ thành công toàn bộ "+total+" ảnh!");
+      return;
+    }catch(err){
+      if(err.name==="AbortError")return;
+      console.warn("navigator.share with all files failed:",err);
+    }
+  }
+
+  // 2. Nếu thiết bị chỉ cho phép chia sẻ 1 tệp cùng lúc
+  if(total>1&&navigator.canShare&&navigator.canShare({files:[files[0]]})){
+    try{
+      await navigator.share({
+        files:[files[0]],
+        title:shareTitle+" - Trang 1",
+        text:shareText
+      });
+      setWireStatus("Đã chia sẻ trang 1 (thiết bị không hỗ trợ gửi nhiều tệp một lúc).");
       return;
     }catch(err){
       if(err.name==="AbortError")return;
     }
   }
 
-  // Fallback 1: Clipboard
-  if(navigator.clipboard&&window.ClipboardItem){
-    try{
-      await navigator.clipboard.write([
-        new ClipboardItem({"image/png":page.blob})
-      ]);
-      alert("Đã sao chép ảnh vào bộ nhớ tạm (Clipboard)! Bạn có thể dán (Paste) trực tiếp vào Zalo, Viber, Word, Excel...");
-      return;
-    }catch(e){}
-  }
-
-  // Fallback 2: Direct download
-  downloadCurrentWireImage();
-  alert("Trình duyệt không hỗ trợ chia sẻ trực tiếp. Đã tự động tải ảnh về máy để bạn gửi!");
+  // 3. Fallback: Nếu không hỗ trợ Web Share API, tự động tải toàn bộ ảnh về máy
+  downloadAllWireImages();
+  alert("Trình duyệt không hỗ trợ chia sẻ cùng lúc "+total+" tệp. Hệ thống đã tự động tải toàn bộ "+total+" ảnh về máy để bạn gửi!");
 }
 
 async function createWireImages(){
@@ -2623,11 +2643,11 @@ async function createWireImages(){
   button.disabled=true;
   button.innerHTML="⏳<span class=\"wr-t\"> Đang tạo ảnh…</span>";
   clearWireExports();
-  setWireStatus("Đang khởi tạo ảnh danh sách dây 9:16…");
+  setWireStatus("Đang khởi tạo ảnh danh sách dây 9:16 chữ to…");
 
   try{
     const pages=[];
-    const pageSize=25; // 25 dây / trang 9:16
+    const pageSize=18; // 18 dây / trang 9:16 để đảm bảo chữ to rõ ràng
     for(let start=0;start<cables.length;start+=pageSize){
       pages.push(cables.slice(start,start+pageSize));
     }
@@ -2650,7 +2670,7 @@ async function createWireImages(){
       });
     }
 
-    setWireStatus("Đã tạo xong ảnh danh sách dây. Đang mở xem trước…");
+    setWireStatus("Đã tạo xong "+pages.length+" ảnh danh sách dây. Đang mở xem trước…");
     openWireImgPreviewModal();
   }catch(error){
     setWireStatus("Không tạo được ảnh: "+error.message,true);
@@ -2659,7 +2679,6 @@ async function createWireImages(){
     button.innerHTML="🖼<span class=\"wr-t\"> Tạo ảnh 9:16</span>";
   }
 }
-
 function showPasswordModal(){
   $("pwIn").value="";
   $("pwErr").hidden=true;
@@ -3039,8 +3058,8 @@ function initWireManager(){
   $("wireA4").addEventListener("click",createWireImages);
   $("wipCloseBtn").addEventListener("click",()=>hideOvl("wireImgOvl"));
   $("wipCancelBtn").addEventListener("click",()=>hideOvl("wireImgOvl"));
-  $("wipDownloadBtn").addEventListener("click",downloadCurrentWireImage);
-  $("wipShareBtn").addEventListener("click",shareCurrentWireImage);
+  $("wipDownloadBtn").addEventListener("click",downloadAllWireImages);
+  $("wipShareBtn").addEventListener("click",shareAllWireImages);
   $("wipPrevBtn").addEventListener("click",()=>{
     if(currentWirePageIndex>0){
       currentWirePageIndex--;
