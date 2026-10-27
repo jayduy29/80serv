@@ -1,0 +1,25 @@
+{
+  "name": "80SERV – Bố trí tủ điện",
+  "short_name": "80SERV",
+  "description": "Quản lý bố trí tủ điện và tra cứu dây điện tàu 80SERV",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#FFFFFF",
+  "theme_color": "#F26B1D",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

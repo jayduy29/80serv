@@ -5,6 +5,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>80SERV – Bố trí tủ điện</title>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#F26B1D">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="80SERV">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="icon" type="image/png" href="icon-192.png">
 <style>
 :root{--o:#F26B1D;--od:#C94E08;--ol:#FFF1E6;--om:#FFD9BF;--ink:#2B2B2B;--mut:#7A6F68;--line:#EADFD6;--bg:#FFFFFF}
 *{box-sizing:border-box}
@@ -209,6 +216,16 @@ main>aside h2{display:none}
 .wire-btn-excel:hover{background:var(--ol);border-style:solid}
 .wire-lock-hint{font-size:11px;color:var(--mut);margin-top:5px;cursor:pointer;display:flex;align-items:center;gap:4px;font-weight:600}
 .wire-lock-hint:hover{color:var(--od);text-decoration:underline}
+.app-install-modal{max-width:440px}
+.app-install-options{display:flex;flex-direction:column;gap:10px;margin-top:12px}
+.app-install-card{border:1px solid var(--om);background:var(--ol);border-radius:10px;padding:12px}
+.aic-head{display:flex;align-items:center;gap:10px}
+.aic-head .aic-icon{font-size:24px;flex:none}
+.aic-head b{display:block;font-size:13.5px;color:var(--ink)}
+.aic-head small{display:block;font-size:11.5px;color:var(--mut);margin-top:1px}
+.aic-guide{background:#fff;border-radius:8px;padding:8px 10px;margin-top:8px;font-size:12px;line-height:1.45;color:var(--ink);border:1px solid var(--om)}
+.aic-step{margin-bottom:4px}
+.aic-step:last-child{margin-bottom:0}
 .wire-cabinets{display:none;position:absolute;left:0;right:0;top:calc(100% + 5px);z-index:45;flex-direction:column;gap:5px;background:#fff;border:2px solid var(--o);border-radius:10px;box-shadow:0 10px 26px rgba(0,0,0,.25);max-height:min(52vh,430px);overflow-y:auto;overflow-x:hidden;padding:6px}
 .wire-cabinets.open{display:flex}
 .wire-cabinet{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;text-align:left;border:1px solid var(--line);border-radius:8px;background:#fff;color:var(--ink);padding:9px 11px;font:inherit;font-weight:700;cursor:pointer}
@@ -321,7 +338,10 @@ footer .badge{background:var(--ol);padding:2px 10px;font-size:12px}
   <div class="logo" id="logo"></div>
   <div><h1 id="ttl"></h1><small id="sub"></small></div>
   <div class="srch"><input id="q" type="search" placeholder="Tìm tủ theo mã hoặc tên (toàn tàu)..." autocomplete="off" autocapitalize="characters" spellcheck="false"><div class="sug" id="sug" hidden></div></div>
-  <div class="hdbtns"><button id="wireBtn" class="hbtn label" title="Mở danh sách dây điện — tìm theo tên tủ hoặc theo số dây">📋 Dây điện</button></div>
+  <div class="hdbtns">
+    <button id="installAppBtn" class="hbtn label" type="button" title="Tải hoặc cài đặt ứng dụng 80SERV về máy">📲 Tải app</button>
+    <button id="wireBtn" class="hbtn label" title="Mở danh sách dây điện — tìm theo tên tủ hoặc theo số dây">📋 Dây điện</button>
+  </div>
 </header>
 <main>
   <aside><h2>Tầng (Deck)</h2><div id="decks"></div></aside>
@@ -349,6 +369,7 @@ footer .badge{background:var(--ol);padding:2px 10px;font-size:12px}
     <div class="logo" id="wireLogo" title="Quay về sơ đồ"></div>
     <div><h1 id="wireTtl" title="Quay về sơ đồ"></h1><small id="wireSub"></small></div>
     <div class="hdbtns">
+      <button id="wireInstallAppBtn" class="hbtn label" type="button" title="Tải hoặc cài đặt ứng dụng 80SERV về máy">📲 Tải app</button>
       <button id="wireClose" class="hbtn label wire-close" type="button" title="Quay về sơ đồ">🗺 Sơ đồ</button>
     </div>
   </div>
@@ -459,6 +480,42 @@ footer .badge{background:var(--ol);padding:2px 10px;font-size:12px}
       <button class="btn ghost" id="cfSave">Lưu cấu hình</button>
       <button class="btn red" id="cfReset" title="Xoá toàn bộ thay đổi cục bộ, quay về bản gốc">↩ Huỷ thay đổi</button>
       <button class="btn ghost" id="cfClose">Đóng</button>
+    </div>
+  </div>
+</div>
+<!-- ===== MODAL: TẢI & CÀI ĐẶT ỨNG DỤNG ===== -->
+<div class="ovl" id="appOvl" hidden>
+  <div class="modal app-install-modal">
+    <h3>📲 Tải &amp; Cài đặt ứng dụng 80SERV</h3>
+    <p class="note">Cài đặt ứng dụng lên thiết bị để mở nhanh từ màn hình chính, chạy toàn màn hình và hoạt động mượt mà cả khi offline.</p>
+    <div class="app-install-options">
+      <div class="app-install-card" id="pwaCard">
+        <div class="aic-head">
+          <span class="aic-icon">⚡</span>
+          <div>
+            <b>Cài đặt App lên màn hình chính</b>
+            <small>Dành cho điện thoại (Android, iOS) và máy tính</small>
+          </div>
+        </div>
+        <button class="btn" id="btnPwaPrompt" type="button" style="width:100%;margin-top:10px">📲 Cài đặt ngay</button>
+        <div id="iosGuide" class="aic-guide" hidden>
+          <div class="aic-step">1. Bấm nút <b>Chia sẻ</b> (<span style="font-size:15px">⎋</span>) ở thanh dưới cùng Safari.</div>
+          <div class="aic-step">2. Cuộn xuống và chọn <b>"Thêm vào MH chính" (Add to Home Screen)</b>.</div>
+        </div>
+      </div>
+      <div class="app-install-card">
+        <div class="aic-head">
+          <span class="aic-icon">💾</span>
+          <div>
+            <b>Tải file HTML Offline</b>
+            <small>Chứa đầy đủ bản vẽ SVG, sơ đồ và toàn bộ 3.940 số dây</small>
+          </div>
+        </div>
+        <button class="btn ghost" id="btnDownloadHtml" type="button" style="width:100%;margin-top:10px">⬇ Tải file HTML về máy (.html)</button>
+      </div>
+    </div>
+    <div class="mb" style="margin-top:14px">
+      <button class="btn ghost" id="appOvlClose" type="button">Đóng</button>
     </div>
   </div>
 </div>
@@ -2769,7 +2826,103 @@ function exportXlsx(){
   }
 }
 if($("xlsxBtn"))$("xlsxBtn").onclick=exportXlsx;
+/* ==================== PWA INSTALL & OFFLINE HTML DOWNLOAD ==================== */
+let deferredInstallPrompt = null;
+window.addEventListener("beforeinstallprompt", e => {
+  e.preventDefault();
+  deferredInstallPrompt = e;
+  if ($("btnPwaPrompt")) $("btnPwaPrompt").textContent = "📲 Cài đặt ngay lên thiết bị";
+});
+
+function isIOS() {
+  return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+}
+
+function openAppInstallModal() {
+  const pwaBtn = $("btnPwaPrompt");
+  const iosGuide = $("iosGuide");
+  const isStandalone = window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone;
+
+  if (isIOS()) {
+    if (iosGuide) iosGuide.hidden = false;
+    if (pwaBtn) pwaBtn.hidden = true;
+  } else if (deferredInstallPrompt) {
+    if (iosGuide) iosGuide.hidden = true;
+    if (pwaBtn) {
+      pwaBtn.hidden = false;
+      pwaBtn.disabled = false;
+      pwaBtn.textContent = "📲 Cài đặt ngay lên thiết bị";
+    }
+  } else if (isStandalone) {
+    if (iosGuide) iosGuide.hidden = true;
+    if (pwaBtn) {
+      pwaBtn.hidden = false;
+      pwaBtn.disabled = true;
+      pwaBtn.textContent = "✔ Ứng dụng đã được cài đặt";
+    }
+  } else {
+    if (iosGuide) iosGuide.hidden = true;
+    if (pwaBtn) {
+      pwaBtn.hidden = false;
+      pwaBtn.disabled = false;
+      pwaBtn.textContent = "📲 Cài đặt / Thêm vào màn hình";
+    }
+  }
+  showOvl("appOvl");
+}
+
+function triggerPwaInstall() {
+  if (deferredInstallPrompt) {
+    deferredInstallPrompt.prompt();
+    deferredInstallPrompt.userChoice.then(choiceResult => {
+      if (choiceResult.outcome === "accepted") {
+        setStatus("Đang cài đặt ứng dụng 80SERV lên thiết bị…");
+        hideOvl("appOvl");
+      }
+      deferredInstallPrompt = null;
+    });
+  } else if (isIOS()) {
+    alert("Trên iPhone/iPad: Bấm nút Chia sẻ (ở thanh dưới cùng Safari) rồi chọn 'Thêm vào MH chính' (Add to Home Screen).");
+  } else {
+    alert("Để cài đặt app: Bạn có thể bấm vào menu 3 chấm (⋮) ở góc trên trình duyệt và chọn 'Cài đặt ứng dụng' hoặc 'Thêm vào màn hình chính'.");
+  }
+}
+
+function downloadOfflineHtml() {
+  try {
+    const html = "<!DOCTYPE html>\n" + document.documentElement.outerHTML;
+    const blob = new Blob([html], { type: "text/html;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "80SERV-Bo-tri-tu-va-day-dien.html";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+    setStatus("Đã tải file 80SERV-Bo-tri-tu-va-day-dien.html về máy!");
+    hideOvl("appOvl");
+  } catch (err) {
+    alert("Không thể tải file: " + err.message);
+  }
+}
+
+function initAppInstaller() {
+  if ($("installAppBtn")) $("installAppBtn").addEventListener("click", openAppInstallModal);
+  if ($("wireInstallAppBtn")) $("wireInstallAppBtn").addEventListener("click", openAppInstallModal);
+  if ($("appOvlClose")) $("appOvlClose").addEventListener("click", () => hideOvl("appOvl"));
+  if ($("btnPwaPrompt")) $("btnPwaPrompt").addEventListener("click", triggerPwaInstall);
+  if ($("btnDownloadHtml")) $("btnDownloadHtml").addEventListener("click", downloadOfflineHtml);
+
+  if ("serviceWorker" in navigator && (location.protocol === "https:" || location.hostname === "localhost" || location.hostname === "127.0.0.1")) {
+    window.addEventListener("load", () => {
+      navigator.serviceWorker.register("./sw.js").catch(() => {});
+    });
+  }
+}
+
 initWireManager();
+initAppInstaller();
 boot();
 refreshWireSheets(false);
 </script>
