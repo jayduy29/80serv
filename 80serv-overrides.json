@@ -1,6 +1,6 @@
 {
   "v": 1,
-  "updated": "2026-10-27T13:38:40.425Z",
+  "updated": "2026-10-27T13:39:28.684Z",
   "added": [
     {
       "deck": "-1 DECK",
@@ -556,14 +556,14 @@
       "deck": "BRIDGE DECK",
       "uid": "nmv56lf13zpt",
       "panel": {
-        "code": "791AFTC",
+        "code": "WH-S12",
         "x": 12167,
         "y": -12668,
         "r": 61,
         "info": [
           {
             "item": "",
-            "name": "WHEELHOUSE AFT CONSOLE",
+            "name": "CEILING AFT CONSOLE",
             "dim": "",
             "qty": "",
             "mat": "",
