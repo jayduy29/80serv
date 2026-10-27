@@ -488,7 +488,7 @@ footer .badge{background:var(--ol);padding:2px 10px;font-size:12px}
           <button id="wireResetLink" class="wire-link-reset" type="button" title="Khôi phục dữ liệu mặc định" hidden>↩ Mặc định</button>
         </div>
         <div class="wire-link-row">
-          <input id="wireSheetUrl" type="url" placeholder="Dán link Google Sheets..." autocomplete="off" spellcheck="false" aria-label="Link Google Sheets">
+          <input id="wireSheetUrl" type="url" placeholder="Dán link OneDrive / Excel..." autocomplete="off" spellcheck="false" aria-label="Link OneDrive hoặc Google Sheets">
           <button id="wireApplyLink" class="wire-btn-apply" type="button" title="Cập nhật dữ liệu từ link này">Cập nhật</button>
           <button id="wireLockBtn" class="wire-btn-lock" type="button" title="Mở khoá chế độ sửa">🔒</button>
         </div>
@@ -2155,6 +2155,129 @@ function updateWireEditUI(){
 }
 window.updateWireEditUI=updateWireEditUI;
 
+async function applyExcelBuffer(buffer,sourceName="Excel",optionalUrl=null){
+  if(!window.XLSX){
+    setWireStatus("Đang tải thư viện xử lý Excel…");
+    await new Promise((res,rej)=>{
+      const s=document.createElement("script");
+      s.src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js";
+      s.onload=res;
+      s.onerror=()=>rej(new Error("Không thể tải thư viện XLSX. Kiểm tra kết nối mạng."));
+      document.head.appendChild(s);
+    });
+  }
+  const wb=XLSX.read(buffer,{type:"array"});
+  const sheets=wb.SheetNames;
+  if(!sheets||!sheets.length)throw new Error("File Excel không có sheet nào.");
+
+  const cabinets=[];
+  let totalSheetObj=null;
+  const counts={};
+  const cablesMap=new Map();
+  let totalCables=[];
+
+  const cln=s=>String(s==null?"":s).replace(/\s+/g," ").trim();
+
+  sheets.forEach((name,idx)=>{
+    const ws=wb.Sheets[name];
+    if(!ws)return;
+    const rows=XLSX.utils.sheet_to_json(ws,{header:1,raw:false,defval:""});
+    if(!rows||!rows.length)return;
+
+    // Detect header row index and column positions
+    let colNum=0, colSrc=1, colTgt=3, colType=4, colSpec=5, colContr=9;
+    let headerRowIdx=-1;
+
+    for(let r=0;r<Math.min(rows.length,5);r++){
+      const row=rows[r];
+      if(!row||!row.length)continue;
+      const joined=row.map(cln).join(" ").toLowerCase();
+      if(joined.includes("cable")||joined.includes("cáp")||joined.includes("dây")){
+        headerRowIdx=r;
+        row.forEach((cellVal,cIdx)=>{
+          const v=cln(cellVal).toLowerCase();
+          if(/cable\s*number|mã cáp|số cáp|số dây/i.test(v)) colNum=cIdx;
+          else if(/^source|nguồn|từ/i.test(v)) colSrc=cIdx;
+          else if(/^target|đích|đến/i.test(v)) colTgt=cIdx;
+          else if(/cable\s*type|loại\s*cáp/i.test(v)) colType=cIdx;
+          else if(/conductor|spec|quy\s*cách|tiết\s*diện/i.test(v)) colSpec=cIdx;
+          else if(/dvtc|đơn\s*vị\s*thi\s*công|nhà\s*thầu|thầu/i.test(v)) colContr=cIdx;
+        });
+        break;
+      }
+    }
+
+    const startRow=headerRowIdx>=0?(headerRowIdx+1):1;
+    const cables=[];
+
+    for(let r=startRow;r<rows.length;r++){
+      const row=rows[r];
+      if(!row||!row.length)continue;
+      const num=cln(row[colNum]);
+      if(!num)continue;
+      const numLow=num.toLowerCase();
+      if(numLow.startsWith("cable")||numLow.startsWith("tổng")||numLow.startsWith("số dây")||numLow==="stt")continue;
+
+      const src=cln(row[colSrc]);
+      const tgt=cln(row[colTgt]);
+      const typ=cln(row[colType]);
+      const spc=cln(row[colSpec]);
+      const con=cln(row[colContr]);
+
+      cables.push([num,src,tgt,typ,spc,con]);
+    }
+
+    if(isTotalSheet(name)){
+      totalSheetObj={name,gid:String(idx)};
+      totalCables=cables;
+    }else{
+      cabinets.push({name,gid:String(idx)});
+      counts[name]=cables.length;
+      cablesMap.set(name,cables);
+    }
+  });
+
+  if(!cabinets.length&&!totalCables.length){
+    throw new Error("Không tìm thấy dữ liệu cáp hợp lệ trong file Excel.");
+  }
+
+  WIRE_SHEETS=cabinets;
+  if(totalSheetObj)WIRE_TOTAL_SHEET=totalSheetObj;
+  for(const k in counts){
+    wireSheetCounts[k]={count:counts[k]};
+  }
+  wireCountsReady=true;
+
+  WIRE_CABLES_CACHE.clear();
+  for(const [name,cables] of cablesMap.entries()){
+    WIRE_CABLES_CACHE.set(name,cables);
+    WIRE_CABLES_CACHE.set("wire_sheet_"+WIRE_SPREADSHEET_ID+"_"+name,cables);
+    WIRE_CABLES_CACHE.set("wire_sheet_"+DEFAULT_WIRE_SPREADSHEET_ID+"_"+name,cables);
+    try{
+      sessionStorage.setItem("wire_sheet_"+WIRE_SPREADSHEET_ID+"_"+name,JSON.stringify(cables));
+    }catch(err){}
+  }
+  if(totalCables.length){
+    WIRE_TOTAL_CACHE=totalCables;
+    try{
+      sessionStorage.setItem(WIRE_STORAGE_KEY_TOTAL+"_"+WIRE_SPREADSHEET_ID,JSON.stringify(totalCables));
+      sessionStorage.setItem(WIRE_STORAGE_KEY_TOTAL,JSON.stringify(totalCables));
+    }catch(err){}
+  }
+
+  saveWireSheetsCache();
+  saveWireCountsCache();
+  renderWireCabinets();
+  renderWireRows();
+  if(window.rebuildSug)window.rebuildSug();
+  loadDeckWireCounts();
+
+  if(WIRE_SHEETS.length>0)await loadWireSheet(WIRE_SHEETS[0]);
+  if($("wireResetLink"))$("wireResetLink").hidden=false;
+
+  return {cabinets,totalCables};
+}
+
 async function applyCustomSheetLink(){
   if(!EDIT){
     setWireStatus("🔒 Vui lòng mở khoá chế độ sửa (nhập mật khẩu) để cập nhật link dữ liệu.",true);
@@ -2165,17 +2288,47 @@ async function applyCustomSheetLink(){
   if(!input)return;
   const raw=input.value.trim();
   if(!raw){
-    setWireStatus("Vui lòng dán link hoặc ID Google Sheets (hoặc bấm ↩ Mặc định để quay về bản gốc).",true);
+    setWireStatus("Vui lòng dán link OneDrive hoặc Excel (hoặc bấm ↩ Mặc định để quay về bản gốc).",true);
     input.focus();
     return;
   }
+
+  // Handle OneDrive / SharePoint link
   if(/onedrive\.live\.com|1drv\.ms|sharepoint\.com/i.test(raw)){
-    setWireStatus("Link đã nhập là Microsoft OneDrive / Excel (.xlsx). Trình duyệt không thể đọc trực tiếp từ link OneDrive do bảo mật CORS. Toàn bộ dữ liệu của file 'checklist finall.xlsx' đã được cập nhật sẵn vào ứng dụng! Để dùng link online, hãy mở file trên Google Sheets và dán link Google Sheets vào đây.",true);
+    const btn=$("wireApplyLink");
+    if(btn){btn.disabled=true;btn.textContent="Đang tải…"}
+    setWireStatus("Đang kết nối & tải dữ liệu từ Microsoft OneDrive…");
+    try{
+      const proxyUrl="/api/onedrive?url="+encodeURIComponent(raw);
+      const resp=await fetch(proxyUrl);
+      if(!resp.ok){
+        const errJson=await resp.json().catch(()=>null);
+        throw new Error((errJson&&errJson.error)||"Máy chủ phản hồi mã lỗi HTTP "+resp.status);
+      }
+      const buffer=await resp.arrayBuffer();
+      if(!buffer||buffer.byteLength<1000){
+        throw new Error("Dữ liệu nhận về từ OneDrive không hợp lệ ("+(buffer?buffer.byteLength:0)+" bytes).");
+      }
+      const res=await applyExcelBuffer(buffer,"Microsoft OneDrive",raw);
+      WIRE_SPREADSHEET_ID=(raw===DEFAULT_ONEDRIVE_URL)?DEFAULT_WIRE_SPREADSHEET_ID:"ONEDRIVE_CUSTOM";
+      try{
+        localStorage.setItem(WIRE_STORAGE_KEY_SHEET_ID,WIRE_SPREADSHEET_ID);
+        localStorage.setItem(WIRE_STORAGE_KEY_SHEET_URL,raw);
+      }catch(e){}
+      syncSheetUrlInputs();
+      setWireStatus("✔ Đã cập nhật thành công từ Microsoft OneDrive ("+res.cabinets.length+" tủ, "+res.totalCables.length+" dây)!");
+    }catch(err){
+      console.error("OneDrive update error:", err);
+      setWireStatus("Không thể tải trực tiếp từ OneDrive: "+err.message+". Hãy chắc chắn file được chia sẻ chế độ 'Bất kỳ ai có liên kết' (Anyone with the link). Bạn cũng có thể chọn file trực tiếp bằng nút '📁 Nhập file Excel'.",true);
+    }finally{
+      if(btn){btn.disabled=false;btn.textContent="Cập nhật"}
+    }
     return;
   }
+
   const newId=extractSpreadsheetId(raw);
   if(!newId){
-    setWireStatus("Không nhận dạng được link hoặc ID Google Sheets hợp lệ. Link phải có dạng: https://docs.google.com/spreadsheets/d/...",true);
+    setWireStatus("Không nhận dạng được link Google Sheets hoặc OneDrive hợp lệ.",true);
     input.focus();
     return;
   }
@@ -2285,77 +2438,9 @@ function initExcelImporter(){
     if(!file)return;
     setWireStatus("Đang đọc file Excel: "+file.name+"…");
     try{
-      if(!window.XLSX){
-        setWireStatus("Đang tải thư viện xử lý Excel…");
-        await new Promise((res,rej)=>{
-          const s=document.createElement("script");
-          s.src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js";
-          s.onload=res;
-          s.onerror=()=>rej(new Error("Không thể tải thư viện XLSX. Kiểm tra kết nối mạng."));
-          document.head.appendChild(s);
-        });
-      }
       const buffer=await file.arrayBuffer();
-      const wb=XLSX.read(buffer,{type:"array"});
-      const sheets=wb.SheetNames;
-      if(!sheets||!sheets.length)throw new Error("File Excel không có sheet nào.");
-
-      const cabinets=[];
-      let totalSheetObj=null;
-      const counts={};
-      const cablesMap=new Map();
-      let totalCables=[];
-
-      sheets.forEach((name,idx)=>{
-        const ws=wb.Sheets[name];
-        const rows=XLSX.utils.sheet_to_json(ws,{header:1,raw:false,defval:""});
-        const cables=[];
-        const cln=s=>String(s||"").replace(/\s+/g," ").trim();
-        rows.forEach(r=>{
-          if(!r||!r.length)return;
-          const first=cln(r[0]);
-          if(!first)return;
-          const firstLow=first.toLowerCase();
-          if(firstLow.startsWith("cable")||firstLow.startsWith("tổng")||firstLow.startsWith("số dây"))return;
-          cables.push([cln(r[0]),cln(r[1]),cln(r[2]),cln(r[3]),cln(r[4]),cln(r[5])]);
-        });
-        if(isTotalSheet(name)){
-          totalSheetObj={name,gid:String(idx)};
-          totalCables=cables;
-        }else{
-          cabinets.push({name,gid:String(idx)});
-          counts[name]=cables.length;
-          cablesMap.set(name,cables);
-        }
-      });
-
-      WIRE_SHEETS=cabinets;
-      if(totalSheetObj)WIRE_TOTAL_SHEET=totalSheetObj;
-      for(const k in counts){
-        wireSheetCounts[k]={count:counts[k]};
-      }
-      wireCountsReady=true;
-
-      for(const [name,cables] of cablesMap.entries()){
-        WIRE_CABLES_CACHE.set(name,cables);
-        try{sessionStorage.setItem("wire_sheet_"+WIRE_SPREADSHEET_ID+"_"+name,JSON.stringify(cables));}catch(err){}
-      }
-      if(totalCables.length){
-        WIRE_TOTAL_CACHE=totalCables;
-        try{sessionStorage.setItem(WIRE_STORAGE_KEY_TOTAL+"_"+WIRE_SPREADSHEET_ID,JSON.stringify(totalCables));}catch(err){}
-      }
-
-      saveWireSheetsCache();
-      saveWireCountsCache();
-      renderWireCabinets();
-      renderWireRows();
-      if(window.rebuildSug)window.rebuildSug();
-      loadDeckWireCounts();
-
-      if(WIRE_SHEETS.length>0)loadWireSheet(WIRE_SHEETS[0]);
-
-      setWireStatus("✔ Đã nạp thành công file Excel "+file.name+" ("+cabinets.length+" tủ, "+totalCables.length+" dây)!");
-      if($("wireResetLink"))$("wireResetLink").hidden=false;
+      const res=await applyExcelBuffer(buffer,file.name);
+      setWireStatus("✔ Đã nạp thành công file Excel "+file.name+" ("+res.cabinets.length+" tủ, "+res.totalCables.length+" dây)!");
     }catch(err){
       setWireStatus("Lỗi đọc file Excel: "+err.message,true);
     }finally{
