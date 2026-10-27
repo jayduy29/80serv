@@ -1,6 +1,6 @@
 {
   "v": 1,
-  "updated": "2026-10-27T13:39:31.114Z",
+  "updated": "2026-10-27T13:40:09.349Z",
   "added": [
     {
       "deck": "-1 DECK",
@@ -578,7 +578,7 @@
       "deck": "BRIDGE DECK",
       "uid": "nmv56n0kihpw",
       "panel": {
-        "code": "791GMDSS",
+        "code": "WH-GMDSS",
         "x": 13498,
         "y": -13628,
         "r": 61,
