@@ -1,4 +1,4 @@
-const CACHE_NAME = '80serv-v4';
+const CACHE_NAME = '80serv-v5';
 const ASSETS = [
   './',
   './index.html',

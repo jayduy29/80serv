@@ -87,6 +87,10 @@ footer .cp{font-weight:600;color:var(--od);white-space:nowrap}
 .pulse{fill:none;pointer-events:none;stroke:var(--o);stroke-width:3;vector-effect:non-scaling-stroke;animation:pulse 1.3s cubic-bezier(.215,.61,.355,1) infinite}
 @keyframes mkPulse{0%,100%{filter:drop-shadow(0 0 0 rgba(201,78,8,0))}50%{filter:drop-shadow(0 0 7px rgba(201,78,8,.85))}}
 .mk.on{animation:mkPulse 1.2s ease-in-out infinite}
+.card-head{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.card-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.list-toggle-btn{border:1px solid var(--om);background:#fff;color:var(--od);font:inherit;font-size:12px;font-weight:700;padding:3px 9px;border-radius:6px;cursor:pointer;line-height:1.2}
+.list-toggle-btn:hover{background:var(--ol)}
 .card-wire-wrap{margin-top:10px}
 .card-wire-btn{display:inline-flex;align-items:center;gap:8px;width:100%;justify-content:center;padding:8px 12px;background:var(--o);color:#fff;border:0;border-radius:9px;font:inherit;font-size:13px;font-weight:700;cursor:pointer;box-shadow:0 2px 8px rgba(201,78,8,.25);transition:background .15s,transform .15s;box-sizing:border-box}
 .card-wire-btn:hover{background:var(--od);transform:translateY(-1px)}
@@ -96,25 +100,52 @@ footer .cp{font-weight:600;color:var(--od);white-space:nowrap}
 .bd{flex:none;font-size:11px;font-weight:700;color:var(--od);background:var(--om);border-radius:6px;padding:1px 7px;margin-left:6px;vertical-align:1px;white-space:nowrap}
 .hint{font-size:12px;color:var(--mut);padding:2px 14px 8px}
 @media(max-width:900px){
- header{flex-wrap:wrap;padding:8px 12px;gap:8px 10px}
- .logo{width:42px;height:42px}
- header h1{font-size:15px}header small{font-size:11.5px}
- .badge{margin-left:auto;padding:3px 10px;font-size:12px}
- .srch{order:5;flex:1 1 100%;max-width:none;margin-left:0}
- main{grid-template-columns:minmax(0,1fr);grid-template-rows:auto 44% minmax(0,1fr)}
- main>aside{display:flex;gap:8px;overflow-x:auto;padding:8px 10px;border-right:0;border-bottom:1px solid var(--line);-webkit-overflow-scrolling:touch}
- main>aside h2{display:none}
- #decks{display:flex;gap:8px}
- .deck{flex:none;width:auto;white-space:nowrap;margin:0;padding:7px 11px;gap:8px;font-size:14px}
- .list{border-left:0;border-top:2px solid var(--o)}
- .list .hd{padding:8px 12px 2px}.list h2{margin:0 0 4px}
- .dtitle{top:8px;left:8px;padding:4px 10px;font-size:13px}
- .tools{top:8px;right:8px}.tools button{width:34px;height:34px;font-size:16px}
- .card{left:8px;right:8px;bottom:8px;max-width:none;max-height:62%;overflow:auto;padding:9px 12px}
- .card .nm{font-size:13px;margin:5px 0 3px}.card .meta{font-size:11.5px}
- .it{padding:8px 6px;gap:7px}.it .c{min-width:70px}
- .it .wire-list-count{font-size:12px}
- footer{padding:4px 10px;justify-content:center;font-size:11px}footer .src{display:none}
+ header{flex-wrap:wrap;padding:6px 10px;gap:6px 8px}
+ .logo{width:32px;height:32px;padding:1px}
+ header h1{font-size:15px;line-height:1.15}
+ header small{display:none}
+ .hdbtns{margin-left:auto;gap:5px}
+ .hbtn{width:32px;height:32px;font-size:15px}
+ .hbtn.label{height:32px;padding:0 8px;font-size:12px}
+ .srch{order:5;flex:1 1 100%;max-width:none;margin:2px 0 0}
+ .srch input{padding:6px 12px;font-size:14px;height:34px;border-radius:8px}
+
+ main{grid-template-columns:minmax(0,1fr);grid-template-rows:auto 62% minmax(0,1fr);transition:grid-template-rows .2s ease}
+ body.diagram-max main{grid-template-rows:auto 1fr 40px}
+
+ main>aside{padding:4px 4px;border-bottom:1px solid var(--line)}
+ #decks{gap:3px}
+ .deck{padding:5px 2px;font-size:11px;border-radius:8px;gap:2px}
+ .deck .n{font-size:10px;padding:0 6px}
+
+ .dtitle{display:none}
+ .tools{top:auto;bottom:10px;right:10px;flex-direction:column;gap:5px;z-index:15}
+ .tools button{width:34px;height:34px;font-size:16px;border-radius:8px;background:rgba(255,255,255,.94);box-shadow:0 2px 8px rgba(0,0,0,.2)}
+ .tools button.on{background:var(--o);color:#fff}
+
+ .card{left:8px;right:8px;bottom:8px;max-width:none;padding:8px 10px;border-radius:10px;box-shadow:0 4px 18px rgba(0,0,0,.25);z-index:20}
+ .card-head{display:flex;align-items:center;gap:6px;margin-bottom:5px}
+ .card .code{font-size:12.5px;padding:2px 7px;border-radius:5px}
+ .card .nm{font-size:12.5px;font-weight:700;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--ink)}
+ .card .x{position:static;font-size:22px;line-height:1;padding:0 4px;color:var(--mut)}
+ .card-actions{display:flex;align-items:center;gap:6px;flex-wrap:nowrap}
+ .card-wire-btn{flex:1;min-width:0;padding:6px 9px;font-size:12px;border-radius:7px;gap:5px}
+ .card .cbtns{display:flex;gap:4px;flex:none;align-items:center;margin-top:0}
+ .cb{padding:4px 7px;font-size:11.5px;border-radius:6px}
+ .hintm{display:none}
+
+ .list{border-left:0;border-top:2px solid var(--o);display:flex;flex-direction:column;min-height:0}
+ body.diagram-max .list{overflow:hidden}
+ body.diagram-max .list .items, body.diagram-max .list .editbar, body.diagram-max .list .hint{display:none}
+
+ .list .hd{padding:6px 10px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;background:#faf8f5}
+ .list h2{margin:0;font-size:12px;letter-spacing:.8px}
+ .list-toggle-btn{border:0;background:var(--ol);color:var(--od);font:inherit;font-size:11.5px;font-weight:700;padding:3px 8px;border-radius:6px;cursor:pointer}
+ .list-toggle-btn:hover{background:var(--om)}
+
+ .it{padding:7px 6px;gap:6px}.it .c{min-width:66px;font-size:12px;padding:2px 4px}
+ .it .wire-list-count{font-size:11.5px}
+ footer{padding:3px 8px;font-size:10.5px}
 }
 /* ===== CHẾ ĐỘ SỬA, LƯU FILE & ĐỒNG BỘ GITHUB ===== */
 [hidden]{display:none!important}
@@ -320,16 +351,31 @@ footer .hbtn.on{background:var(--o);color:#fff}
 footer .hbtn.label{width:auto;padding:0 11px;font-size:12.5px}
 footer .badge{background:var(--ol);padding:2px 10px;font-size:12px}
 @media(max-width:900px){
- header,.wire-top{flex-wrap:wrap;padding:6px 10px;gap:6px 8px}
- .logo{width:34px;height:34px;padding:1px;box-shadow:0 0 0 2px rgba(255,255,255,.45)}
- header h1,.wire-top h1{font-size:14.5px}header small,.wire-top small{font-size:11px;margin-top:0}
- .hdbtns{margin-left:auto}
- .hbtn.label{height:32px;padding:0 10px;font-size:12.5px}
- .srch{order:5;flex:1 1 100%}
- .srch input{padding:6px 14px;font-size:15px}
+ header,.wire-top{flex-wrap:wrap;padding:4px 8px;gap:4px 6px}
+ .logo{width:28px;height:28px;padding:1px;box-shadow:0 0 0 2px rgba(255,255,255,.4)}
+ header h1,.wire-top h1{font-size:14px;line-height:1}
+ header small,.wire-top small{display:none!important}
+ .hdbtns{margin-left:auto;gap:4px}
+ .hbtn{width:28px;height:28px;font-size:13px;border-radius:6px}
+ .hbtn.label{height:28px;padding:0 7px;font-size:11px}
+ .srch{order:5;flex:1 1 100%;margin:2px 0 0}
+ .srch input{padding:4px 10px;font-size:13px;height:30px;border-radius:6px}
+ 
+ main{grid-template-columns:minmax(0,1fr);grid-template-rows:auto 65% minmax(0,1fr);transition:grid-template-rows .2s ease}
+ body.diagram-max main{grid-template-rows:auto 1fr 36px}
+
+ main>aside{padding:3px 4px;border-bottom:1px solid var(--line)}
+ #decks{gap:2px}
+ .deck{padding:3px 1px;font-size:10px;border-radius:6px;gap:1px}
+ .deck .n{font-size:9px;padding:0 4px}
+
  .hint{display:none}
- .list .hd{padding:6px 12px 0}
- footer{padding:3px 8px}
+ .list .hd{padding:5px 8px}
+ footer{padding:3px 8px;font-size:10px;height:28px;align-items:center}
+ footer .src{display:none!important}
+ footer .cp{font-size:10px}
+ footer .hbtn{width:24px;height:24px;font-size:12px}
+ footer .hbtn.label{height:24px;padding:0 6px;font-size:10.5px}
 }
 </style>
 </head>
@@ -341,6 +387,7 @@ footer .badge{background:var(--ol);padding:2px 10px;font-size:12px}
   <div class="hdbtns">
     <button id="installAppBtn" class="hbtn label" type="button" title="Tải hoặc cài đặt ứng dụng 80SERV về máy">📲 Tải app</button>
     <button id="wireBtn" class="hbtn label" title="Mở danh sách dây điện — tìm theo tên tủ hoặc theo số dây">📋 Dây điện</button>
+    <button id="pwBtnHdr" class="hbtn" type="button" title="Mở / khoá chế độ sửa (mật khẩu 0000)">🔒</button>
   </div>
 </header>
 <main>
@@ -348,11 +395,11 @@ footer .badge{background:var(--ol);padding:2px 10px;font-size:12px}
   <section class="view" id="view">
     <svg id="svg" xmlns="http://www.w3.org/2000/svg"><g id="plan"><path id="pp" fill="none" stroke="#6b625c" stroke-width="0.7" vector-effect="non-scaling-stroke" stroke-linecap="round"/></g><g id="marks"></g></svg>
     <div class="dtitle" id="dtitle"></div>
-    <div class="tools"><button id="zi" title="Phóng to">+</button><button id="zo" title="Thu nhỏ">−</button><button id="zf" title="Vừa khung">⤢</button></div>
+    <div class="tools"><button id="zi" title="Phóng to">+</button><button id="zo" title="Thu nhỏ">−</button><button id="zf" title="Vừa khung">⤢</button><button id="zMax" title="Phóng to toàn màn hình sơ đồ" type="button">⛶</button></div>
     <div class="card" id="card"></div>
   </section>
   <section class="list">
-    <div class="hd"><h2 id="lh">Danh mục tủ</h2></div><div class="hint" id="hint"></div>
+    <div class="hd" id="listHd"><h2 id="lh">Danh mục tủ</h2><button type="button" class="list-toggle-btn" id="listToggleBtn" title="Phóng to sơ đồ / Thu gọn danh mục">⛶ Toàn màn hình</button></div><div class="hint" id="hint"></div>
     <div class="editbar" id="editbar" style="display:none">
       <button class="eb" id="btnAdd" title="Thêm điểm thiết bị mới trên bản vẽ">＋ Thêm điểm</button>
       <button class="eb" id="btnFile" title="Tải file dữ liệu JSON về máy">💾 Lưu file JSON</button>
@@ -682,6 +729,30 @@ $("zi").onclick=()=>{const[a,b]=mid();zoomAt(.7,a,b)};
 $("zo").onclick=()=>{const[a,b]=mid();zoomAt(1.4,a,b)};
 $("zf").onclick=fit;
 
+function toggleDiagramMax(force){
+  const on=(typeof force==="boolean")?force:!document.body.classList.contains("diagram-max");
+  document.body.classList.toggle("diagram-max",on);
+  const btn=$("zMax"),tBtn=$("listToggleBtn");
+  if(btn){
+    btn.textContent=on?"🗗":"⛶";
+    btn.title=on?"Thu nhỏ về chia đôi":"Phóng to toàn màn hình sơ đồ";
+    btn.classList.toggle("on",on);
+  }
+  if(tBtn){
+    tBtn.textContent=on?"▾ Hiện danh mục tủ":"⛶ Toàn màn hình";
+  }
+  setTimeout(fit,60);
+}
+if($("zMax"))$("zMax").onclick=()=>toggleDiagramMax();
+if($("listToggleBtn"))$("listToggleBtn").onclick=(e)=>{e.stopPropagation();toggleDiagramMax()};
+if($("listHd"))$("listHd").onclick=(e)=>{
+  if(window.innerWidth<=900&&e.target.tagName!=="BUTTON")toggleDiagramMax();
+};
+if($("pwBtnHdr"))$("pwBtnHdr").onclick=()=>{
+  if(!EDIT)showPasswordModal();
+  else setEdit(false);
+};
+
 /* ==================== 4. KÉO CHUYỂN (1 ngón pan; 2 ngón zoom; KÉO ĐIỂM khi đang mở khoá) ==================== */
 const ptrs=new Map();let drag=null,pinch=null,moved=false,mk=null;
 svg.addEventListener("pointerdown",e=>{
@@ -870,20 +941,31 @@ function select(p,zoom){
   document.querySelectorAll(".it").forEach(i=>{const on=+i.dataset.di===p.di&&+i.dataset.k===p.k;i.classList.toggle("on",on);if(on&&!zoom&&i.scrollIntoView)i.scrollIntoView({block:"nearest"})});
   el("circle",{class:"pulse",cx:p.x,cy:p.y,r:p.r*1.6,style:"--r0:"+p.r+"px;--r1:"+(p.r*2.6)+"px"},p.g);
   if(p.tx!=null)el("circle",{class:"pulse",cx:p.tx,cy:p.ty,r:Math.max(p.r*.6,40),style:"--r0:"+Math.max(p.r*.6,40)+"px;--r1:"+(Math.max(p.r*.6,40)*2.4)+"px"},p.g);
-  let h="<button class='x' onclick='select(null)'>×</button><span class='code'>"+esc(p.code)+"</span><span class='bd'>"+esc(nice(deck.name))+"</span>";
-  if(!p.info.length)h+="<div class='nm'>Chưa có trong bảng chú giải</div><div class='warn'>Mã này có trên bản vẽ nhưng không tìm thấy dòng tương ứng trong bảng danh mục.</div>";
-  p.info.forEach((x,i)=>{
-    if(i)h+="<hr>";
-    h+="<div class='nm'>"+esc(x.name||"(chưa có tên trong bảng)")+"</div>";
-  });
+  let h="<div class='card-head'>";
+  h+="<span class='code'>"+esc(p.code)+"</span>";
+  if(!p.info.length){
+    h+="<span class='nm'>Chưa có trong chú giải</span>";
+  }else{
+    const names=p.info.map(x=>x.name).filter(Boolean);
+    h+="<span class='nm' title='"+esc(names.join(" • "))+"'>"+esc(names.join(" • ")||"Chưa có tên")+"</span>";
+  }
+  h+="<button class='x' type='button' onclick='select(null)' title='Đóng'>×</button>";
+  h+="</div>";
+
   const cnt=wireCountText(p.code);
-  h+="<div class='card-wire-wrap'><button type='button' class='card-wire-btn' id='cardWireBtn' title='Mở danh sách dây của tủ "+esc(p.code)+"'><span class='cwb-icon'>📋</span> Xem dây tủ này<span class='cwb-cnt'>"+esc(cnt)+"</span></button></div>";
+  h+="<div class='card-actions'>";
+  h+="<button type='button' class='card-wire-btn' id='cardWireBtn' title='Mở danh sách dây của tủ "+esc(p.code)+"'><span class='cwb-icon'>📋</span> Xem dây tủ này<span class='cwb-cnt'>"+esc(cnt)+"</span></button>";
   if(EDIT){
-    h+="<div class='cbtns'><button class='cb' onclick='editPoint()'>✎ Sửa tên / thông tin</button>"+
-       (p.tx!=null?"<button class='cb' onclick='armTarget()'>↔ Sửa đầu nối</button><button class='cb danger' onclick='dropTarget()'>✂ Xoá dây nối</button>"
-                  :"<button class='cb' onclick='armTarget()'>➕ Thêm dây nối</button>")+
-       "<button class='cb danger' onclick='delPoint()'>🗑 Xoá điểm</button></div>"+
-       "<div class='hintm'>Kéo điểm trên bản vẽ để dời vị trí"+(p.tx!=null?", kéo chấm cam để dời riêng đầu dây nối":"")+".</div>";
+    h+="<div class='cbtns'>"+
+       "<button class='cb' onclick='editPoint()' title='Sửa tên / thông tin'>✎ Sửa</button>"+
+       (p.tx!=null?"<button class='cb' onclick='armTarget()' title='Sửa đầu nối'>↔ Đầu nối</button><button class='cb danger' onclick='dropTarget()' title='Xoá dây nối'>✂ Xoá dây</button>"
+                  :"<button class='cb' onclick='armTarget()' title='Thêm dây nối'>➕ Dây nối</button>")+
+       "<button class='cb danger' onclick='delPoint()' title='Xoá điểm'>🗑 Xoá</button>"+
+       "</div>";
+  }
+  h+="</div>";
+  if(EDIT){
+    h+="<div class='hintm'>Kéo điểm trên bản vẽ để dời vị trí"+(p.tx!=null?", kéo chấm cam để dời riêng đầu dây nối":"")+".</div>";
   }
   card.innerHTML=h;card.classList.add("show");
   const cwb=$("cardWireBtn");
@@ -905,6 +987,10 @@ function setEdit(on){
   $("editbar").style.display=EDIT?"":"none";
   $("pwBtn").textContent=EDIT?"🔓":"🔒";
   $("pwBtn").classList.toggle("on",EDIT);
+  if($("pwBtnHdr")){
+    $("pwBtnHdr").textContent=EDIT?"🔓":"🔒";
+    $("pwBtnHdr").classList.toggle("on",EDIT);
+  }
   document.body.classList.toggle("edit",EDIT);
   if(!EDIT){cancelTarget();cancelAdd();if(selP)select(selP,false)}
   updStatus();
