@@ -90,6 +90,7 @@ def parse_xlsx_cables(xlsx_path):
                     t = c.find('{http://schemas.openxmlformats.org/spreadsheetml/2006/main}is/{http://schemas.openxmlformats.org/spreadsheetml/2006/main}t')
                     v = c.find('{http://schemas.openxmlformats.org/spreadsheetml/2006/main}v')
                     val = t.text if t is not None else (v.text if v is not None else '')
+                    val = ' '.join(val.split()) if val else ''
                     cells.append(val)
                 # Bỏ hàng tiêu đề hoặc hàng rỗng
                 if cells and cells[0].strip():
@@ -121,18 +122,16 @@ def update_index_html(total_obj, sheets_list, counts, all_cables, html_path="ind
     seed_json = json.dumps(new_seed, ensure_ascii=False, separators=(',', ':'))
     cables_json = json.dumps(all_cables, ensure_ascii=False, separators=(',', ':'))
 
-    # Thay thế WIRE_SEED và WIRE_SEED_CABLES trong index.html
-    seed_pattern = r'const WIRE_SEED=\{.*?\};'
-    if not re.search(seed_pattern, content):
+    # Thay thế khối WIRE_SEED và WIRE_SEED_CABLES trong index.html an toàn tuyệt đối bằng slice
+    seed_idx = content.find('const WIRE_SEED=')
+    if seed_idx == -1:
         raise RuntimeError("Không tìm thấy const WIRE_SEED trong index.html")
-    content = re.sub(seed_pattern, f'const WIRE_SEED={seed_json};', content, count=1)
+    after_seed = content.find('let WIRE_SHEETS=', seed_idx)
+    if after_seed == -1:
+        raise RuntimeError("Không tìm thấy let WIRE_SHEETS= sau WIRE_SEED trong index.html")
 
-    cables_pattern = r'const WIRE_SEED_CABLES=\{.*?\};'
-    if re.search(cables_pattern, content):
-        content = re.sub(cables_pattern, f'const WIRE_SEED_CABLES={cables_json};', content, count=1)
-    else:
-        # Nếu chưa có WIRE_SEED_CABLES, chèn ngay sau WIRE_SEED
-        content = content.replace(f'const WIRE_SEED={seed_json};', f'const WIRE_SEED={seed_json};\nconst WIRE_SEED_CABLES={cables_json};')
+    replacement = f"const WIRE_SEED={seed_json};\nconst WIRE_SEED_CABLES={cables_json};\n\n"
+    content = content[:seed_idx] + replacement + content[after_seed:]
 
     with open(html_path, "w", encoding="utf-8", newline="") as f:
         f.write(content)
