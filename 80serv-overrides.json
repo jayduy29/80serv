@@ -1,6 +1,6 @@
 {
   "v": 1,
-  "updated": "2026-10-27T13:38:06.231Z",
+  "updated": "2026-10-27T13:38:37.581Z",
   "added": [
     {
       "deck": "-1 DECK",
@@ -836,6 +836,26 @@
         ],
         "tx": 12640,
         "ty": -12584
+      }
+    },
+    {
+      "deck": "BRIDGE DECK",
+      "uid": "nmvqqe6rq1xks",
+      "panel": {
+        "code": "WH-S11",
+        "x": 12281,
+        "y": -12267,
+        "r": 61,
+        "info": [
+          {
+            "item": "",
+            "name": "AFT CONSOLE SB",
+            "dim": "",
+            "qty": "",
+            "mat": "",
+            "mount": ""
+          }
+        ]
       }
     }
   ],
