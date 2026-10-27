@@ -277,8 +277,6 @@ main>aside h2{display:none}
 .wire-btn-apply{flex:none;background:var(--o);color:#fff;border:1px solid var(--od);border-radius:8px;padding:7px 10px;font:inherit;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;transition:background .15s}
 .wire-btn-apply:hover{background:var(--od)}
 .wire-btn-apply:disabled{opacity:.5;cursor:not-allowed}
-.wire-btn-excel{display:block;width:100%;text-align:center;background:#fff;color:var(--od);border:1px dashed var(--o);border-radius:8px;padding:6px 9px;font:inherit;font-size:11.5px;font-weight:700;cursor:pointer;transition:all .15s}
-.wire-btn-excel:hover{background:var(--ol);border-style:solid}
 .wire-btn-lock{flex:none;background:var(--ol);color:var(--od);border:1px solid var(--om);border-radius:8px;padding:6px 10px;font:inherit;font-size:15px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;transition:.15s}
 .wire-btn-lock:hover{background:var(--om)}
 .wire-btn-lock.unlocked{background:#d4edda;border-color:#c3e6cb;color:#155724}
@@ -488,17 +486,11 @@ footer .badge{background:var(--ol);padding:2px 10px;font-size:12px}
           <button id="wireResetLink" class="wire-link-reset" type="button" title="Khôi phục dữ liệu mặc định" hidden>↩ Mặc định</button>
         </div>
         <div class="wire-link-row">
-          <input id="wireSheetUrl" type="url" placeholder="Dán link OneDrive / Excel..." autocomplete="off" spellcheck="false" aria-label="Link OneDrive hoặc Google Sheets">
+          <input id="wireSheetUrl" type="url" placeholder="Dán link OneDrive..." autocomplete="off" spellcheck="false" aria-label="Link OneDrive">
           <button id="wireApplyLink" class="wire-btn-apply" type="button" title="Cập nhật dữ liệu từ link này">Cập nhật</button>
           <button id="wireLockBtn" class="wire-btn-lock" type="button" title="Mở khoá chế độ sửa">🔒</button>
         </div>
-        <div class="wire-excel-wrap" style="margin-top:6px">
-          <label class="wire-btn-excel" id="wireExcelBtn" for="wireExcelFile" title="Chọn file Excel (.xlsx) từ máy tính">
-            📁 Nhập file Excel (.xlsx)
-          </label>
-          <input id="wireExcelFile" type="file" accept=".xlsx,.xls" hidden>
-        </div>
-      </div>
+</div>
     </aside>
     <section class="wire-content" aria-label="Dây trong tủ">
       <div class="wire-toolbar">
@@ -690,6 +682,22 @@ function reindex(){
 }
 function byUid(id){for(let i=0;i<ALL.length;i++)if(ALL[i].uid===id)return ALL[i];return null}
 const norm=s=>String(s==null?"":s).trim().toLowerCase();
+const cleanCode=s=>String(s==null?"":s).toLowerCase().replace(/[^a-z0-9]/g,"");
+function findWireSheet(code){
+  if(!code||!WIRE_SHEETS||!WIRE_SHEETS.length)return null;
+  const raw=String(code).trim();
+  const cNorm=cleanCode(raw);
+  if(!cNorm)return null;
+  let found=WIRE_SHEETS.find(s=>s.name===raw);
+  if(found)return found;
+  found=WIRE_SHEETS.find(s=>cleanCode(s.name)===cNorm);
+  if(found)return found;
+  found=WIRE_SHEETS.find(s=>{
+    const sn=cleanCode(s.name);
+    return sn.startsWith(cNorm)||cNorm.startsWith(sn);
+  });
+  return found||null;
+}
 
 /* Tìm tủ trên sơ đồ theo tên sheet hoặc mã tủ (khớp đúng trước, tiền tố sau) */
 function panelOf(name){
@@ -942,23 +950,43 @@ let currentDiagramWireCabinet=null;
 
 function getCabinetCables(code){
   if(!code)return[];
-  const kNorm=norm(code);
+  const cNorm=cleanCode(code);
   let rows=[];
   if(typeof WIRE_SEED_CABLES==="object"&&WIRE_SEED_CABLES&&WIRE_SEED_CABLES[code])rows=WIRE_SEED_CABLES[code];
   else if(WIRE_CABLES_CACHE.has(code))rows=WIRE_CABLES_CACHE.get(code);
-  else if(WIRE_SHEETS&&WIRE_SHEETS.length){
-    const s=WIRE_SHEETS.find(sh=>sh.name===code||norm(sh.name)===kNorm||norm(sh.name).startsWith(kNorm)||kNorm.startsWith(norm(sh.name)));
+
+  if(!rows.length){
+    const s=findWireSheet(code);
     if(s){
       const cached=WIRE_CABLES_CACHE.get(s.name)||(typeof WIRE_SEED_CABLES==="object"&&WIRE_SEED_CABLES&&WIRE_SEED_CABLES[s.name]);
       if(cached)rows=cached;
     }
   }
+
+  if(!rows.length&&typeof WIRE_SEED_CABLES==="object"&&WIRE_SEED_CABLES){
+    for(const k in WIRE_SEED_CABLES){
+      if(cleanCode(k)===cNorm){
+        rows=WIRE_SEED_CABLES[k];
+        break;
+      }
+    }
+  }
+
+  if(!rows.length){
+    for(const [k,v] of WIRE_CABLES_CACHE.entries()){
+      if(cleanCode(k)===cNorm){
+        rows=v;
+        break;
+      }
+    }
+  }
+
   if(!rows.length){
     const total=WIRE_TOTAL_CACHE||(typeof WIRE_SEED_CABLES==="object"&&WIRE_SEED_CABLES&&(WIRE_SEED_CABLES["TỔNG"]||WIRE_SEED_CABLES["total"]));
     if(total&&Array.isArray(total)){
       rows=total.filter(r=>{
-        const src=norm(r[1]||""),tgt=norm(r[2]||"");
-        return src===kNorm||tgt===kNorm||src.includes(kNorm)||tgt.includes(kNorm);
+        const src=cleanCode(r[1]||""),tgt=cleanCode(r[2]||"");
+        return src===cNorm||tgt===cNorm||src.includes(cNorm)||tgt.includes(cNorm);
       });
     }
   }
@@ -1519,28 +1547,39 @@ function debouncedRenderCounts(){
     if(window.rebuildSug) window.rebuildSug();
     const cwb=$("cardWireBtn");
     if(cwb&&selP){
-      const badge=cwb.querySelector(".cwb-cnt");
-      if(badge)badge.textContent=wireCountText(selP.code);
+      cwb.textContent=wireCountText(selP.code);
     }
   }, 300);
 }
 
 function hasWireSheet(code){
   if(!code) return false;
-  if(WIRE_SHEETS && WIRE_SHEETS.length){
-    return WIRE_SHEETS.some(s=>s.name===code||norm(s.name)===norm(code)||norm(s.name).startsWith(norm(code))||norm(code).startsWith(norm(s.name)));
-  }
-  const c = wireSheetCounts[code];
-  if(c && typeof c.count === "number") return c.count > 0;
-  return true;
+  if(findWireSheet(code)) return true;
+  const cables=getCabinetCables(code);
+  return (cables && cables.length > 0);
 }
 
 function wireCountText(sheetName){
   if(!sheetName) return "—";
   let countInfo=wireSheetCounts[sheetName];
   if(!countInfo){
-    const found=WIRE_SHEETS.find(s=>s.name===sheetName||norm(s.name)===norm(sheetName)||norm(s.name).startsWith(norm(sheetName))||norm(sheetName).startsWith(norm(s.name)));
+    const found=findWireSheet(sheetName);
     if(found)countInfo=wireSheetCounts[found.name];
+  }
+  if(!countInfo){
+    const cNorm=cleanCode(sheetName);
+    for(const k in wireSheetCounts){
+      if(cleanCode(k)===cNorm){
+        countInfo=wireSheetCounts[k];
+        break;
+      }
+    }
+  }
+  if(!countInfo||countInfo.count===0){
+    const cables=getCabinetCables(sheetName);
+    if(cables&&cables.length>0){
+      return cables.length+" dây";
+    }
   }
   if(countInfo&&typeof countInfo.count==="number")return countInfo.count?countInfo.count+" dây":"0 dây";
   if(countInfo&&countInfo.loading)return "Đang tải…";
@@ -1969,10 +2008,7 @@ function openWireManager(cabinetCode=null){
   syncSheetUrlInputs();
 
   if(cabinetCode){
-    const target=WIRE_SHEETS.find(s=>s.name===cabinetCode)
-      ||WIRE_SHEETS.find(s=>norm(s.name)===norm(cabinetCode))
-      ||WIRE_SHEETS.find(s=>norm(s.name).startsWith(norm(cabinetCode)))
-      ||WIRE_SHEETS.find(s=>norm(cabinetCode).startsWith(norm(s.name)));
+    const target=findWireSheet(cabinetCode);
     if(target){
       loadWireSheet(target);
       renderWireCabinets();
@@ -2319,7 +2355,7 @@ async function applyCustomSheetLink(){
       setWireStatus("✔ Đã cập nhật thành công từ Microsoft OneDrive ("+res.cabinets.length+" tủ, "+res.totalCables.length+" dây)!");
     }catch(err){
       console.error("OneDrive update error:", err);
-      setWireStatus("Không thể tải trực tiếp từ OneDrive: "+err.message+". Hãy chắc chắn file được chia sẻ chế độ 'Bất kỳ ai có liên kết' (Anyone with the link). Bạn cũng có thể chọn file trực tiếp bằng nút '📁 Nhập file Excel'.",true);
+      setWireStatus("Không thể tải trực tiếp từ OneDrive: "+err.message+". Hãy chắc chắn file được chia sẻ chế độ 'Bất kỳ ai có liên kết' (Anyone with the link).",true);
     }finally{
       if(btn){btn.disabled=false;btn.textContent="Cập nhật"}
     }
@@ -2419,35 +2455,6 @@ async function resetWireSpreadsheetSource(){
   setWireStatus("Đã khôi phục về bảng tính mặc định (checklist finall).");
 }
 
-function initExcelImporter(){
-  const fileInput=$("wireExcelFile");
-  if(!fileInput)return;
-  fileInput.addEventListener("click",(e)=>{
-    if(!EDIT){
-      e.preventDefault();
-      setWireStatus("🔒 Vui lòng mở khoá chế độ sửa để nạp file Excel.",true);
-      showPasswordModal();
-    }
-  });
-  fileInput.addEventListener("change",async(e)=>{
-    if(!EDIT){
-      fileInput.value="";
-      return;
-    }
-    const file=e.target.files&&e.target.files[0];
-    if(!file)return;
-    setWireStatus("Đang đọc file Excel: "+file.name+"…");
-    try{
-      const buffer=await file.arrayBuffer();
-      const res=await applyExcelBuffer(buffer,file.name);
-      setWireStatus("✔ Đã nạp thành công file Excel "+file.name+" ("+res.cabinets.length+" tủ, "+res.totalCables.length+" dây)!");
-    }catch(err){
-      setWireStatus("Lỗi đọc file Excel: "+err.message,true);
-    }finally{
-      fileInput.value="";
-    }
-  });
-}
 
 function initWireManager(){
   loadWireCache();
@@ -2516,7 +2523,6 @@ function initWireManager(){
   });
   $("wireCopy").addEventListener("click",copyWireList);
   $("wireA4").addEventListener("click",createWireImages);
-  initExcelImporter();
   document.addEventListener("keydown",event=>{
     if(event.key==="Escape"&&!$("wireApp").hidden)closeWireManager();
   });
