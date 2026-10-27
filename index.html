@@ -325,15 +325,19 @@ main>aside h2{display:none}
 .wire-btn:disabled{opacity:.5;cursor:not-allowed}
 .wire-status{padding:8px 16px;font-size:12px;color:var(--mut);border-bottom:1px solid var(--line)}
 .wire-status.error{color:#b3261e;background:#fff4f2}
-.wire-table-wrap{flex:1;min-height:0;overflow:auto}
+.wire-title-pin{display:inline-flex;align-items:center;justify-content:center;margin-left:5px;background:#FFF7F0;color:var(--od);border:1.5px solid var(--o);border-radius:6px;padding:2px 6px;font-size:13px;line-height:1;cursor:pointer;box-shadow:0 1px 3px rgba(247,127,0,.15);transition:all .15s ease;flex:none;touch-action:manipulation}
+.wire-title-pin:hover{background:var(--o);color:#fff;transform:scale(1.1);box-shadow:0 2px 6px rgba(247,127,0,.3)}
+.wire-title-pin:active{transform:scale(0.95)}
+.wire-table-wrap{flex:1;min-height:0;overflow:auto;padding:6px 10px}
+.wire-table-frame{border:1px solid #CBD5E1;border-radius:6px;overflow:hidden;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.04)}
 .wire-table{width:100%;border-collapse:collapse;font-size:10px}
-.wire-table th,.wire-table td{padding:9px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
-.wire-table th{position:sticky;top:0;z-index:1;background:#FFF7F1;color:var(--od);font-size:10px;white-space:nowrap}
+.wire-table th,.wire-table td{padding:8px 9px;border:1px solid #E2E8F0;text-align:left;vertical-align:top}
+.wire-table th{position:sticky;top:0;z-index:1;background:#FFE8D6;color:#8A2C00;font-size:10.5px;font-weight:800;white-space:nowrap;border-bottom:2px solid #F57C00}
 .wire-table td:first-child{font-weight:700;white-space:nowrap}
 .wire-table tbody tr:hover{background:#FFFAF6}
 .wire-mobile-card{display:none}
 .wire-mobile-header{display:none}
-.wire-map-link{display:inline-flex;align-items:center;gap:4px;background:#FFF2E8;color:var(--od);border:1px solid var(--om);border-radius:6px;padding:3px 7px;font:inherit;font-size:inherit;font-weight:600;cursor:pointer;text-align:left;line-height:1.25;transition:all .15s ease;word-break:break-word}
+.wire-map-link{display:inline-flex;align-items:center;gap:4px;background:#FFF2E8;color:var(--od);border:1px solid var(--om);border-radius:6px;padding:3px 7px;font:inherit;font-size:inherit;font-weight:600;cursor:pointer;text-align:left;line-height:1.25;transition:all .15s ease;word-break:normal;overflow-wrap:break-word}
 .wire-map-link:hover{background:var(--o);color:#fff;border-color:var(--od);box-shadow:0 2px 6px rgba(201,78,8,.25)}
 .wire-map-link .wml-ico{font-size:11px;flex:none}
 .wire-map-link.mobile{width:100%;padding:3px 5px}
@@ -352,17 +356,24 @@ main>aside h2{display:none}
  .wire-toolbar{padding:9px 10px}.wire-toolbar h2{font-size:16px}
  .wire-actions{margin-left:0;width:100%}.wire-btn{flex:1}
  .wire-table-wrap{overflow-x:hidden}
+ :root{--wire-cols:minmax(88px,1fr) minmax(0,1.4fr) minmax(0,1.4fr) 62px}
+ .wire-table-wrap{padding:4px 6px}
+ .wire-table-frame{border:1px solid #CBD5E1;border-radius:6px;overflow:hidden;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.04)}
  .wire-table,.wire-table tbody,.wire-table tr{display:block;width:100%;min-width:0}
- .wire-table{font-size:10px}
+ .wire-table{font-size:9.5px}
  .wire-table thead{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;clip-path:inset(50%)}
- .wire-mobile-header{position:sticky;top:0;z-index:2;display:grid;grid-template-columns:minmax(0,0.95fr) minmax(0,1.7fr) minmax(0,1.7fr) minmax(0,0.7fr);gap:4px;padding:4px 6px;background:#FFF7F1;border-bottom:1px solid var(--line);color:var(--od);font-size:10px;font-weight:700}
- .wire-mobile-header span{min-width:0;overflow-wrap:anywhere}
- .wire-table tbody tr{margin:2px 0;padding:4px 6px;border:1px solid var(--line);border-radius:6px;background:#fff}
- .wire-table tbody tr:hover{background:#FFFAF6}
+ .wire-mobile-header{position:sticky;top:0;z-index:2;display:grid;grid-template-columns:var(--wire-cols);gap:0;padding:0;background:#FFE8D6;border-bottom:2px solid #F57C00;color:#8A2C00;font-size:10px;font-weight:800}
+ .wire-mobile-header span{min-width:0;padding:5px 4px;border-right:1px solid #FED7AA;overflow-wrap:anywhere;display:flex;align-items:center}
+ .wire-mobile-header span:last-child{border-right:none;justify-content:center;text-align:center}
+ .wire-table tbody tr{margin:0;padding:0;border:none;border-bottom:1px solid #E2E8F0;border-radius:0;background:#fff}
+ .wire-table tbody tr:nth-child(even){background:#F8FAFC}
+ .wire-table tbody tr:last-child{border-bottom:none}
+ .wire-table tbody tr:hover{background:#FFF7ED}
  .wire-table td{display:none}
- .wire-mobile-card{display:grid;grid-template-columns:minmax(0,0.95fr) minmax(0,1.7fr) minmax(0,1.7fr) minmax(0,0.7fr);gap:4px}
- .wire-mobile-column{min-width:0;font-size:10px;line-height:1.22;overflow-wrap:anywhere;word-break:break-word}
- .wire-mobile-number{display:block;margin-bottom:2px;color:var(--od);font-size:10px;font-weight:800}
+ .wire-mobile-card{display:grid;grid-template-columns:var(--wire-cols);gap:0}
+ .wire-mobile-column{min-width:0;padding:4px 5px;border-right:1px solid #E2E8F0;font-size:9.5px;line-height:1.22;overflow-wrap:break-word;word-break:normal;display:flex;flex-direction:column;justify-content:center}
+ .wire-mobile-column:last-child{border-right:none;align-items:center;justify-content:center}
+ .wire-mobile-number{display:block;margin-bottom:1px;color:var(--od);font-size:9.5px;font-weight:800}
  .wire-mobile-detail{overflow-wrap:anywhere}
  .wire-status{padding:7px 10px}
 }
@@ -391,8 +402,7 @@ main>aside h2{display:none}
  .wire-actions{width:auto;margin-left:auto;flex:none;gap:5px}
  .wire-btn{flex:none;padding:6px 9px;font-size:14px;line-height:1.2}
  .wire-table-wrap{flex:1}
- .wire-mobile-header{padding:4px 6px}
- .wire-table tbody tr{margin:2px 0}
+ /* compacted table borders handled above */
 }
 
 /* ===== TRANG CHÍNH: ĐẦU TRANG GỌN, KHOÁ + REV XUỐNG CHÂN TRANG ===== */
@@ -510,7 +520,7 @@ footer .badge{background:var(--ol);padding:2px 10px;font-size:12px}
     </aside>
     <section class="wire-content" aria-label="Dây trong tủ">
       <div class="wire-toolbar">
-        <div><h2 id="wireTitle" role="button" tabindex="0" title="Chọn tủ">Chọn tủ điện</h2><span class="wire-count" id="wireCount"></span></div>
+        <div><h2 id="wireTitle" role="button" tabindex="0" title="Chọn tủ">Chọn tủ điện</h2><button id="wireCabinetPin" class="wire-title-pin" type="button" title="Nhảy tới vị trí tủ trên sơ đồ" hidden>📍</button><span class="wire-count" id="wireCount"></span></div>
         <div class="wire-actions">
           <button id="wireCopy" class="wire-btn" type="button" disabled>📋<span class="wr-t"> Sao chép</span></button>
           <button id="wireA4" class="wire-btn primary" type="button" disabled>🖼<span class="wr-t"> Tạo ảnh 9:16</span></button>
@@ -518,16 +528,18 @@ footer .badge{background:var(--ol);padding:2px 10px;font-size:12px}
       </div>
       <div class="wire-status" id="wireStatus" role="status" aria-live="polite">Chọn một tủ để tải danh sách dây.</div>
       <div class="wire-table-wrap">
-        <div class="wire-mobile-header" aria-hidden="true">
-          <span>ID / Loại / Nhà thầu</span>
-          <span>Nguồn</span>
-          <span>Đích</span>
-          <span>Đã kéo / Đã đấu</span>
+        <div class="wire-table-frame">
+          <div class="wire-mobile-header" aria-hidden="true">
+            <span>ID / Loại / Nhà thầu</span>
+            <span>Nguồn</span>
+            <span>Đích</span>
+            <span>Đã kéo / Đã đấu</span>
+          </div>
+          <table class="wire-table">
+            <thead><tr><th>ID / Loại / Nhà thầu</th><th>Nguồn</th><th>Đích</th><th>Đã kéo / Đã đấu</th></tr></thead>
+            <tbody id="wireRows"></tbody>
+          </table>
         </div>
-        <table class="wire-table">
-          <thead><tr><th>ID / Loại / Nhà thầu</th><th>Nguồn</th><th>Đích</th><th>Đã kéo / Đã đấu</th></tr></thead>
-          <tbody id="wireRows"></tbody>
-        </table>
       </div>
       <div class="wire-exports" id="wireExports" hidden></div>
     </section>
@@ -1947,7 +1959,58 @@ async function searchWireNumber(raw){
   }
 }
 
+function computeOptimalGridColumns(){
+  if(!wireCables||!wireCables.length){
+    return "minmax(85px,1fr) minmax(56px,1.4fr) minmax(56px,1.4fr) 62px";
+  }
+  let countSrc=0,sumSrc=0,maxSrc=0;
+  let countTgt=0,sumTgt=0,maxTgt=0;
+  for(let i=0;i<wireCables.length;i++){
+    const s=String(wireCables[i][1]||"").trim();
+    const t=String(wireCables[i][2]||"").trim();
+    if(s&&s!=="—"){countSrc++;sumSrc+=s.length;maxSrc=Math.max(maxSrc,s.length)}
+    if(t&&t!=="—"){countTgt++;sumTgt+=t.length;maxTgt=Math.max(maxTgt,t.length)}
+  }
+  const col4="62px";
+  // Nếu cả bảng hoàn toàn không có Đích
+  if(countTgt===0||maxTgt<=2){
+    return "minmax(88px,1.1fr) minmax(60px,2.8fr) 36px "+col4;
+  }
+  // Nếu cả bảng hoàn toàn không có Nguồn
+  if(countSrc===0||maxSrc<=2){
+    return "minmax(88px,1.1fr) 36px minmax(60px,2.8fr) "+col4;
+  }
+  // Cả hai cùng có dữ liệu: phân bổ tỉ lệ theo độ dài trung bình
+  const avgSrc=sumSrc/countSrc,avgTgt=sumTgt/countTgt;
+  let ratio=avgSrc/(avgTgt||1);
+  ratio=Math.max(0.65,Math.min(1.5,ratio));
+  const srcFr=(1.35*Math.sqrt(ratio)).toFixed(2);
+  const tgtFr=(1.35/Math.sqrt(ratio)).toFixed(2);
+  return "minmax(85px,1fr) minmax(56px,"+srcFr+"fr) minmax(56px,"+tgtFr+"fr) "+col4;
+}
+
+function updateCabinetPinBtn(cabinetCode){
+  const pinBtn=$("wireCabinetPin");
+  if(!pinBtn)return;
+  const panel=cabinetCode?panelOf(cabinetCode):null;
+  if(panel){
+    pinBtn.hidden=false;
+    const deckName=panel.di!=null&&DATA.decks[panel.di]?DATA.decks[panel.di].name:"";
+    pinBtn.title="Nhảy tới vị trí tủ "+panel.code+" trên sơ đồ"+(deckName?" ("+deckName+")":"");
+    pinBtn.onclick=(e)=>{
+      e.stopPropagation();
+      locateCabinetOnDiagram(panel);
+    };
+  }else{
+    pinBtn.hidden=true;
+    pinBtn.onclick=null;
+  }
+}
+
 function renderWireRows(){
+  const optimalCols=computeOptimalGridColumns();
+  document.documentElement.style.setProperty("--wire-cols",optimalCols);
+  updateCabinetPinBtn(activeWireSheet?activeWireSheet.name:(wireRequestedCabinet||null));
   const body=$("wireRows"),fragment=document.createDocumentFragment();
   body.innerHTML="";
   wireCables.forEach(cable=>{
