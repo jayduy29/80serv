@@ -64,47 +64,42 @@ def download_onedrive_file(share_url, output_path="checklist_finall.xlsx"):
 
 def parse_xlsx_cables(xlsx_path):
     print(f"[*] Đang phân tích file Excel: {xlsx_path}...")
-    with zipfile.ZipFile(xlsx_path) as z:
-        wb_xml = z.read('xl/workbook.xml')
-        wb_root = ET.fromstring(wb_xml)
+    import openpyxl
+    wb = openpyxl.load_workbook(xlsx_path, data_only=True)
+    
+    sheets_list = []
+    counts = {}
+    total_obj = {'name': 'TỔNG', 'gid': '0'}
+    all_cables = {}
+
+    for i, name in enumerate(wb.sheetnames):
+        ws = wb[name]
+        rows = list(ws.iter_rows(values_only=True))
+        if not rows:
+            continue
+        h_idx = 1 if len(rows) > 1 and rows[1][0] and 'cable' in str(rows[1][0]).lower() else 0
+        data_rows = rows[h_idx+1:]
         
-        sheets = [s.attrib['name'] for s in wb_root.findall('.//{http://schemas.openxmlformats.org/spreadsheetml/2006/main}sheet')]
-        
-        sheets_list = []
-        counts = {}
-        total_obj = {'name': 'TỔNG', 'gid': '0'}
-        all_cables = {}
-        
-        for i, name in enumerate(sheets):
-            fname = f'xl/worksheets/sheet{i+1}.xml'
-            try:
-                s_xml = z.read(fname)
-            except KeyError:
+        cables = []
+        for r in data_rows:
+            if not r or r[0] is None:
                 continue
-            s_root = ET.fromstring(s_xml)
-            rows = s_root.findall('.//{http://schemas.openxmlformats.org/spreadsheetml/2006/main}row')
-            cables = []
-            for r in rows:
-                cells = []
-                for c in r.findall('.//{http://schemas.openxmlformats.org/spreadsheetml/2006/main}c'):
-                    t = c.find('{http://schemas.openxmlformats.org/spreadsheetml/2006/main}is/{http://schemas.openxmlformats.org/spreadsheetml/2006/main}t')
-                    v = c.find('{http://schemas.openxmlformats.org/spreadsheetml/2006/main}v')
-                    val = t.text if t is not None else (v.text if v is not None else '')
-                    val = ' '.join(val.split()) if val else ''
-                    cells.append(val)
-                # Bỏ hàng tiêu đề hoặc hàng rỗng
-                if cells and cells[0].strip():
-                    first_cell = cells[0].strip().lower()
-                    if not first_cell.startswith('cable') and not first_cell.startswith('tổng') and not first_cell.startswith('số dây'):
-                        c6 = (cells + ['']*6)[:6]
-                        cables.append(c6)
-                    
-            all_cables[name] = cables
-            if name.lower() in ('total', 'tổng'):
-                total_obj = {'name': name, 'gid': '0'}
-            else:
-                sheets_list.append({'name': name, 'gid': str(i)})
-                counts[name] = len(cables)
+            c_num = str(r[0]).strip()
+            if not c_num or c_num.lower().startswith(('cable', 'tổng', 'số dây')):
+                continue
+            source = str(r[1]).strip() if len(r) > 1 and r[1] is not None else ""
+            target = str(r[3]).strip() if len(r) > 3 and r[3] is not None else ""
+            c_type = str(r[4]).strip() if len(r) > 4 and r[4] is not None else ""
+            spec = str(r[5]).strip() if len(r) > 5 and r[5] is not None else ""
+            contractor = str(r[9]).strip() if len(r) > 9 and r[9] is not None else ""
+            cables.append([c_num, source, target, c_type, spec, contractor])
+
+        all_cables[name] = cables
+        if name.lower() in ('total', 'tổng'):
+            total_obj = {'name': name, 'gid': '0'}
+        else:
+            sheets_list.append({'name': name, 'gid': str(i)})
+            counts[name] = len(cables)
 
     print(f"[+] Đã đọc: {len(sheets_list)} sheet tủ điện, tổng số dây: {len(all_cables.get('TỔNG', [])):,}")
     return total_obj, sheets_list, counts, all_cables
