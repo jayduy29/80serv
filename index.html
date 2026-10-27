@@ -94,44 +94,42 @@ footer .cp{font-weight:600;color:var(--od);white-space:nowrap}
 .card-head{display:flex;align-items:center;gap:8px;margin-bottom:6px}
 .card-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 
-/* ===== TABS & DANH SÁCH DÂY THIẾT BỊ NGAY TRÊN TAB SƠ ĐỒ ===== */
-.list-tabs{display:flex;align-items:center;gap:4px;flex:1;min-width:0;overflow-x:auto;-webkit-overflow-scrolling:touch}
-.list-tab{border:1px solid transparent;background:transparent;color:var(--mut);font:inherit;font-size:12px;font-weight:700;padding:4px 9px;border-radius:7px;cursor:pointer;white-space:nowrap;display:inline-flex;align-items:center;gap:4px}
-.list-tab:hover{background:var(--ol);color:var(--od)}
-.list-tab.on{background:#fff;color:var(--od);border-color:var(--om);box-shadow:0 1px 4px rgba(0,0,0,.08)}
-.list-tab b{color:var(--o)}
+/* ===== DANH SÁCH DÂY THIẾT BỊ NGAY TRÊN TAB SƠ ĐỒ ===== */
+.list-hd-main{display:flex;align-items:center;gap:8px;flex:1;min-width:0}
+.dw-hd-title{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:700;color:var(--od);flex:1;min-width:0}
+.dw-hd-txt{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dw-close-btn{border:1px solid var(--om);background:var(--ol);color:var(--od);font:inherit;font-size:11px;font-weight:700;padding:2px 8px;border-radius:5px;cursor:pointer;flex:none;white-space:nowrap}
+.dw-close-btn:hover{background:var(--o);color:#fff}
 
 .diagram-wires{display:flex;flex-direction:column;flex:1;min-height:0;overflow:hidden;background:#FBFAF8}
-.dw-header{padding:6px 10px;background:#fff;border-bottom:1px solid var(--line);flex:none}
+.dw-header{padding:5px 8px;background:#fff;border-bottom:1px solid var(--line);flex:none}
 .dw-search-row{display:flex;gap:6px;align-items:center}
-.dw-input{flex:1;min-width:0;border:1px solid var(--om);border-radius:8px;padding:6px 10px;font:inherit;font-size:12.5px;outline:none;background:#fff}
+.dw-input{flex:1;min-width:0;border:1px solid var(--om);border-radius:7px;padding:5px 9px;font:inherit;font-size:12px;outline:none;background:#fff}
 .dw-input:focus{border-color:var(--o);box-shadow:0 0 0 2px var(--ol)}
-.dw-btn-open-full{flex:none;background:var(--ol);color:var(--od);border:1px solid var(--om);border-radius:7px;padding:6px 9px;font:inherit;font-size:11.5px;font-weight:700;cursor:pointer;white-space:nowrap}
+.dw-btn-open-full{flex:none;background:var(--ol);color:var(--od);border:1px solid var(--om);border-radius:6px;padding:5px 8px;font:inherit;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap}
 .dw-btn-open-full:hover{background:var(--o);color:#fff}
 
-.dw-list{overflow-y:auto;overflow-x:hidden;flex:1;padding:6px 8px 14px;display:flex;flex-direction:column;gap:6px;-webkit-overflow-scrolling:touch}
-.dw-card{background:#fff;border:1px solid var(--line);border-radius:9px;padding:7px 9px;box-shadow:0 1px 3px rgba(0,0,0,.04);transition:.15s}
+.dw-list{overflow-y:auto;overflow-x:hidden;flex:1;padding:4px 6px 12px;display:flex;flex-direction:column;gap:4px;-webkit-overflow-scrolling:touch}
+.dw-card{background:#fff;border:1px solid var(--line);border-radius:7px;padding:5px 8px;box-shadow:0 1px 2px rgba(0,0,0,.04);transition:.15s;display:flex;flex-direction:column;gap:2px;flex:none}
 .dw-card:hover{border-color:var(--om);box-shadow:0 2px 6px rgba(242,107,29,.12)}
-.dw-c-top{display:flex;align-items:center;gap:6px;margin-bottom:3px}
-.dw-c-idx{font-size:10px;color:var(--mut);font-weight:700}
-.dw-c-num{font-weight:800;font-size:12px;color:var(--od);background:var(--ol);padding:1px 6px;border-radius:5px;cursor:pointer}
+.dw-c-top{display:flex;align-items:center;gap:6px}
+.dw-c-idx{font-size:10px;color:var(--mut);font-weight:700;min-width:16px;flex:none}
+.dw-c-num{font-weight:800;font-size:12px;color:var(--od);background:var(--ol);padding:1px 5px;border-radius:4px;cursor:pointer;flex:none}
 .dw-c-num:hover{text-decoration:underline}
-.dw-c-type{margin-left:auto;font-size:11px;color:var(--mut);font-weight:600;white-space:nowrap}
-.dw-c-route{display:flex;flex-direction:column;gap:3px;font-size:11.5px}
-.dw-route-line{display:flex;align-items:baseline;gap:6px}
-.dw-lbl{font-size:10px;font-weight:700;color:var(--mut);min-width:36px;flex:none}
-.dw-txt{color:var(--ink);flex:1;min-width:0;word-break:break-word}
-.dw-map-btn{border:0;background:var(--ol);color:var(--od);font:inherit;font-size:11.5px;font-weight:700;padding:2px 7px;border-radius:5px;cursor:pointer;text-align:left;display:inline-flex;align-items:center;gap:4px}
+.dw-c-type{margin-left:auto;font-size:10.5px;color:var(--mut);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dw-c-route{display:flex;align-items:center;gap:5px;font-size:11px;min-width:0;overflow:hidden}
+.dw-r-item{display:inline-flex;align-items:center;gap:3px;min-width:0;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dw-lbl{font-size:9.5px;font-weight:700;color:var(--mut);flex:none}
+.dw-txt{color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dw-arr{color:var(--o);font-weight:800;font-size:10px;flex:none}
+.dw-map-btn{border:0;background:var(--ol);color:var(--od);font:inherit;font-size:11px;font-weight:700;padding:1px 5px;border-radius:4px;cursor:pointer;text-align:left;display:inline-flex;align-items:center;gap:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:150px}
 .dw-map-btn:hover{background:var(--o);color:#fff}
 
-.list-toggle-btn{border:1px solid var(--om);background:#fff;color:var(--od);font:inherit;font-size:12px;font-weight:700;padding:3px 9px;border-radius:6px;cursor:pointer;line-height:1.2}
+.list-toggle-btn{border:1px solid var(--om);background:#fff;color:var(--od);font:inherit;font-size:11.5px;font-weight:700;padding:3px 8px;border-radius:6px;cursor:pointer;line-height:1.2;flex:none}
 .list-toggle-btn:hover{background:var(--ol)}
-.card-wire-wrap{margin-top:10px}
-.card-wire-btn{display:inline-flex;align-items:center;gap:8px;width:100%;justify-content:center;padding:8px 12px;background:var(--o);color:#fff;border:0;border-radius:9px;font:inherit;font-size:13px;font-weight:700;cursor:pointer;box-shadow:0 2px 8px rgba(201,78,8,.25);transition:background .15s,transform .15s;box-sizing:border-box}
-.card-wire-btn:hover{background:var(--od);transform:translateY(-1px)}
-.card-wire-btn:active{transform:translateY(0)}
-.card-wire-btn .cwb-icon{font-size:14px;flex:none}
-.card-wire-btn .cwb-cnt{background:rgba(255,255,255,.24);padding:2px 8px;border-radius:999px;font-size:11.5px;font-weight:600;margin-left:auto}
+.card-wire-pill{flex:none;background:var(--o);color:#fff;border:0;border-radius:999px;padding:3px 9px;font:inherit;font-size:11.5px;font-weight:800;cursor:pointer;display:inline-flex;align-items:center;gap:3px;box-shadow:0 2px 6px rgba(242,107,29,.35);transition:.15s;white-space:nowrap}
+.card-wire-pill:hover{background:var(--od);transform:scale(1.04)}
+.card-wire-pill:active{transform:scale(.96)}
 .bd{flex:none;font-size:11px;font-weight:700;color:var(--od);background:var(--om);border-radius:6px;padding:1px 7px;margin-left:6px;vertical-align:1px;white-space:nowrap}
 .hint{font-size:12px;color:var(--mut);padding:2px 14px 8px}
 @media(max-width:900px){
@@ -158,15 +156,15 @@ footer .cp{font-weight:600;color:var(--od);white-space:nowrap}
  .tools button{width:34px;height:34px;font-size:16px;border-radius:8px;background:rgba(255,255,255,.94);box-shadow:0 2px 8px rgba(0,0,0,.2)}
  .tools button.on{background:var(--o);color:#fff}
 
- .card{left:8px;right:8px;bottom:8px;max-width:none;padding:8px 10px;border-radius:10px;box-shadow:0 4px 18px rgba(0,0,0,.25);z-index:20}
- .card-head{display:flex;align-items:center;gap:6px;margin-bottom:5px}
- .card .code{font-size:12.5px;padding:2px 7px;border-radius:5px}
- .card .nm{font-size:12.5px;font-weight:700;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--ink)}
- .card .x{position:static;font-size:22px;line-height:1;padding:0 4px;color:var(--mut)}
- .card-actions{display:flex;align-items:center;gap:6px;flex-wrap:nowrap}
- .card-wire-btn{flex:1;min-width:0;padding:6px 9px;font-size:12px;border-radius:7px;gap:5px}
+ .card{left:8px;right:8px;bottom:8px;max-width:none;padding:5px 8px;border-radius:8px;box-shadow:0 3px 12px rgba(0,0,0,.2);z-index:20}
+ .card-head{display:flex;align-items:center;gap:6px;margin:0}
+ .card .code{font-size:12px;padding:2px 6px;border-radius:5px}
+ .card .nm{font-size:12px;font-weight:700;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--ink)}
+ .card-wire-pill{padding:2px 8px;font-size:11px}
+ .card .x{position:static;font-size:18px;line-height:1;padding:0 2px;color:var(--mut);margin-left:2px}
+ .card-actions{display:flex;align-items:center;gap:6px;flex-wrap:nowrap;margin-top:4px}
  .card .cbtns{display:flex;gap:4px;flex:none;align-items:center;margin-top:0}
- .cb{padding:4px 7px;font-size:11.5px;border-radius:6px}
+ .cb{padding:3px 6px;font-size:11px;border-radius:5px}
  .hintm{display:none}
 
  .list{border-left:0;border-top:2px solid var(--o);display:flex;flex-direction:column;min-height:0}
@@ -397,8 +395,9 @@ footer .badge{background:var(--ol);padding:2px 10px;font-size:12px}
  .srch{order:10;flex:1 1 100%;width:100%;max-width:none;margin:2px 0 0}
  .srch input{padding:4px 10px;font-size:13px;height:30px;border-radius:6px}
  
- main{grid-template-columns:minmax(0,1fr);grid-template-rows:auto 65% minmax(0,1fr);transition:grid-template-rows .2s ease}
- body.diagram-max main{grid-template-rows:auto 1fr 36px}
+ main{grid-template-columns:minmax(0,1fr);grid-template-rows:auto 60% minmax(0,1fr);transition:grid-template-rows .2s ease}
+ body.wires-open main{grid-template-rows:auto 32% minmax(0,1fr)!important}
+ body.diagram-max main{grid-template-rows:auto 1fr 36px!important}
 
  main>aside{padding:3px 4px;border-bottom:1px solid var(--line)}
  #decks{gap:2px}
@@ -436,9 +435,12 @@ footer .badge{background:var(--ol);padding:2px 10px;font-size:12px}
   </section>
   <section class="list">
     <div class="hd" id="listHd">
-      <div class="list-tabs">
-        <button type="button" class="list-tab on" id="tabPanelsBtn">📦 Tủ tầng này (<span id="deckPanelCount">0</span>)</button>
-        <button type="button" class="list-tab" id="tabWiresBtn" hidden>📋 Dây tủ <b id="wireTabCode"></b> (<span id="wireTabCount">0</span>)</button>
+      <div class="list-hd-main">
+        <h2 id="lh" style="margin:0;font-size:12.5px;letter-spacing:1px;text-transform:uppercase;color:var(--mut)">Danh mục tủ</h2>
+        <div id="wireHeaderTitle" class="dw-hd-title" hidden>
+          <span class="dw-hd-txt">📋 Dây tủ <b id="wireTabCode"></b> (<span id="wireTabCount">0</span>)</span>
+          <button type="button" class="dw-close-btn" id="closeWiresBtn" title="Đóng danh sách dây, quay lại danh mục tủ">✕ Đóng</button>
+        </div>
       </div>
       <button type="button" class="list-toggle-btn" id="listToggleBtn" title="Phóng to sơ đồ / Thu gọn danh mục">⛶ Toàn màn hình</button>
     </div>
@@ -962,14 +964,14 @@ function showDeviceWiresOnDiagram(cabinetCode,filterQuery=""){
   currentDiagramWireCabinet=cabinetCode;
   const cables=getCabinetCables(cabinetCode);
   
-  const tabBtn=$("tabWiresBtn"),panelsBtn=$("tabPanelsBtn");
-  if(tabBtn){
-    tabBtn.hidden=false;
+  document.body.classList.add("wires-open");
+  if($("lh"))$("lh").hidden=true;
+  const wTitle=$("wireHeaderTitle");
+  if(wTitle){
+    wTitle.hidden=false;
     $("wireTabCode").textContent=cabinetCode;
     $("wireTabCount").textContent=cables.length;
-    tabBtn.classList.add("on");
   }
-  if(panelsBtn)panelsBtn.classList.remove("on");
 
   $("items").hidden=true;
   $("hint").hidden=true;
@@ -1013,14 +1015,15 @@ function showDeviceWiresOnDiagram(cabinetCode,filterQuery=""){
             <span class="dw-c-type">${esc(cType)} • ${esc(cSpec)}</span>
           </div>
           <div class="dw-c-route">
-            <div class="dw-route-line">
+            <span class="dw-r-item">
               <span class="dw-lbl">Nguồn:</span>
               ${sourcePanel?`<button type="button" class="dw-map-btn" data-panel="${esc(sourcePanel.code)}" title="Nhảy tới vị trí ${sourcePanel.code} trên sơ đồ">🗺️ ${esc(cSrc)}</button>`:`<span class="dw-txt">${esc(cSrc+cSec)}</span>`}
-            </div>
-            <div class="dw-route-line">
+            </span>
+            <span class="dw-arr">➔</span>
+            <span class="dw-r-item">
               <span class="dw-lbl">Đích:</span>
               ${targetPanel?`<button type="button" class="dw-map-btn" data-panel="${esc(targetPanel.code)}" title="Nhảy tới vị trí ${targetPanel.code} trên sơ đồ">🗺️ ${esc(cTgt)}</button>`:`<span class="dw-txt">${esc(cTgt)}</span>`}
-            </div>
+            </span>
           </div>
         </div>
       `;
@@ -1057,9 +1060,9 @@ function showDeviceWiresOnDiagram(cabinetCode,filterQuery=""){
 }
 
 function showPanelsListOnDiagram(){
-  const tabBtn=$("tabWiresBtn"),panelsBtn=$("tabPanelsBtn");
-  if(tabBtn)tabBtn.classList.remove("on");
-  if(panelsBtn)panelsBtn.classList.add("on");
+  document.body.classList.remove("wires-open");
+  if($("lh"))$("lh").hidden=false;
+  if($("wireHeaderTitle"))$("wireHeaderTitle").hidden=true;
 
   $("items").hidden=false;
   $("hint").hidden=false;
@@ -1067,10 +1070,7 @@ function showPanelsListOnDiagram(){
   $("diagramWires").hidden=true;
 }
 
-if($("tabPanelsBtn"))$("tabPanelsBtn").onclick=()=>showPanelsListOnDiagram();
-if($("tabWiresBtn"))$("tabWiresBtn").onclick=()=>{
-  if(currentDiagramWireCabinet)showDeviceWiresOnDiagram(currentDiagramWireCabinet);
-};
+if($("closeWiresBtn"))$("closeWiresBtn").onclick=()=>showPanelsListOnDiagram();
 
 function renderList(){
 
@@ -1126,6 +1126,8 @@ function select(p,zoom){
   document.querySelectorAll(".it").forEach(i=>{const on=+i.dataset.di===p.di&&+i.dataset.k===p.k;i.classList.toggle("on",on);if(on&&!zoom&&i.scrollIntoView)i.scrollIntoView({block:"nearest"})});
   el("circle",{class:"pulse",cx:p.x,cy:p.y,r:p.r*1.6,style:"--r0:"+p.r+"px;--r1:"+(p.r*2.6)+"px"},p.g);
   if(p.tx!=null)el("circle",{class:"pulse",cx:p.tx,cy:p.ty,r:Math.max(p.r*.6,40),style:"--r0:"+Math.max(p.r*.6,40)+"px;--r1:"+(Math.max(p.r*.6,40)*2.4)+"px"},p.g);
+  const cnt=wireCountText(p.code);
+  const hasWires=cnt&&cnt!=="—"&&cnt!=="0 dây";
   let h="<div class='card-head'>";
   h+="<span class='code'>"+esc(p.code)+"</span>";
   if(!p.info.length){
@@ -1134,27 +1136,29 @@ function select(p,zoom){
     const names=p.info.map(x=>x.name).filter(Boolean);
     h+="<span class='nm' title='"+esc(names.join(" • "))+"'>"+esc(names.join(" • ")||"Chưa có tên")+"</span>";
   }
+  if(hasWires){
+    h+="<button type='button' class='card-wire-pill' id='cardWireBtn' title='Xem "+esc(cnt)+" của tủ "+esc(p.code)+"'>"+esc(cnt)+"</button>";
+  }
   h+="<button class='x' type='button' onclick='select(null)' title='Đóng'>×</button>";
   h+="</div>";
 
-  const cnt=wireCountText(p.code);
-  h+="<div class='card-actions'>";
-  h+="<button type='button' class='card-wire-btn' id='cardWireBtn' title='Mở danh sách dây của tủ "+esc(p.code)+"'><span class='cwb-icon'>📋</span> Xem dây tủ này<span class='cwb-cnt'>"+esc(cnt)+"</span></button>";
   if(EDIT){
+    h+="<div class='card-actions'>";
     h+="<div class='cbtns'>"+
        "<button class='cb' onclick='editPoint()' title='Sửa tên / thông tin'>✎ Sửa</button>"+
        (p.tx!=null?"<button class='cb' onclick='armTarget()' title='Sửa đầu nối'>↔ Đầu nối</button><button class='cb danger' onclick='dropTarget()' title='Xoá dây nối'>✂ Xoá dây</button>"
                   :"<button class='cb' onclick='armTarget()' title='Thêm dây nối'>➕ Dây nối</button>")+
        "<button class='cb danger' onclick='delPoint()' title='Xoá điểm'>🗑 Xoá</button>"+
        "</div>";
-  }
-  h+="</div>";
-  if(EDIT){
     h+="<div class='hintm'>Kéo điểm trên bản vẽ để dời vị trí"+(p.tx!=null?", kéo chấm cam để dời riêng đầu dây nối":"")+".</div>";
+    h+="</div>";
   }
   card.innerHTML=h;card.classList.add("show");
   const cwb=$("cardWireBtn");
   if(cwb)cwb.addEventListener("click",()=>showDeviceWiresOnDiagram(p.code));
+  if(document.body.classList.contains("wires-open")){
+    showDeviceWiresOnDiagram(p.code);
+  }
   if(zoom){   // phóng tới vị trí tủ trên sơ đồ
     const tx=p.tx!=null?(p.x+p.tx)/2:p.x,ty=p.tx!=null?(p.y+p.ty)/2:p.y;
     const r=svg.getBoundingClientRect(),asp=r.height/r.width;
