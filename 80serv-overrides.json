@@ -1,6 +1,6 @@
 {
   "v": 1,
-  "updated": "2026-10-27T13:26:36.105Z",
+  "updated": "2026-10-27T13:26:52.454Z",
   "added": [
     {
       "deck": "-1 DECK",
@@ -683,6 +683,26 @@
         "tx": 13565,
         "ty": -12495
       }
+    },
+    {
+      "deck": "BRIDGE DECK",
+      "uid": "nmvqpz2owq8m",
+      "panel": {
+        "code": "WH-S4",
+        "x": 13941,
+        "y": -12609,
+        "r": 61,
+        "info": [
+          {
+            "item": "",
+            "name": "1",
+            "dim": "",
+            "qty": "",
+            "mat": "",
+            "mount": ""
+          }
+        ]
+      }
     }
   ],
   "deleted": [
@@ -1083,5 +1103,5 @@
       ]
     }
   },
-  "dirty": false
+  "dirty": true
 }
