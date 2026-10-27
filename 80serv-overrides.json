@@ -1,6 +1,6 @@
 {
   "v": 1,
-  "updated": "2026-10-27T13:35:04.627Z",
+  "updated": "2026-10-27T13:37:08.271Z",
   "added": [
     {
       "deck": "-1 DECK",
@@ -792,6 +792,26 @@
         ],
         "tx": 13445,
         "ty": -12524
+      }
+    },
+    {
+      "deck": "BRIDGE DECK",
+      "uid": "nmvqqc9uy1uf6",
+      "panel": {
+        "code": "WH-S9",
+        "x": 12324,
+        "y": -13046,
+        "r": 61,
+        "info": [
+          {
+            "item": "",
+            "name": "AFT CONSOLE PS",
+            "dim": "",
+            "qty": "",
+            "mat": "",
+            "mount": ""
+          }
+        ]
       }
     }
   ],
