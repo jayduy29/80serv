@@ -17,13 +17,15 @@
 *{box-sizing:border-box}
 html,body{height:100%;margin:0;-webkit-text-size-adjust:100%;font-family:"Segoe UI",Roboto,Arial,sans-serif;color:var(--ink);background:var(--bg)}
 body{display:flex;flex-direction:column;height:100dvh}
-header,.wire-top{display:flex;align-items:center;gap:14px;padding:8px 18px;background:linear-gradient(90deg,var(--o),#FF8A3D);color:#fff;box-shadow:0 2px 8px rgba(201,78,8,.35);z-index:5;flex:none}
-.logo{width:52px;height:52px;border-radius:50%;background:#fff;padding:2px;flex:none;box-shadow:0 0 0 3px rgba(255,255,255,.45)}
+header,.wire-top{display:flex;align-items:center;gap:12px;padding:8px 18px;background:linear-gradient(90deg,var(--o),#FF8A3D);color:#fff;box-shadow:0 2px 8px rgba(201,78,8,.35);z-index:5;flex:none;flex-wrap:nowrap}
+.brand{display:flex;flex-direction:column;min-width:0}
+.logo{width:46px;height:46px;border-radius:50%;background:#fff;padding:2px;flex:none;box-shadow:0 0 0 3px rgba(255,255,255,.45)}
 .logo img{width:100%;height:100%;object-fit:contain;display:block}
 .logo.ph{display:flex;align-items:center;justify-content:center;color:var(--o);font-weight:800}
-header h1,.wire-top h1{margin:0;font-size:19px;letter-spacing:.3px;line-height:1.2}
-header small,.wire-top small{display:block;font-weight:400;opacity:.92;font-size:12.5px;margin-top:2px}
-.srch{flex:1;max-width:430px;margin-left:auto;position:relative}
+header h1,.wire-top h1{margin:0;font-size:18px;letter-spacing:.3px;line-height:1.2;white-space:nowrap}
+header small,.wire-top small{display:block;font-weight:400;opacity:.92;font-size:12px;margin-top:2px;white-space:nowrap}
+.hdbtns{display:flex;align-items:center;gap:6px;flex:none}
+.srch{flex:1;max-width:380px;position:relative;margin-left:auto;margin-right:10px}
 .srch input{width:100%;border:0;border-radius:999px;padding:9px 16px;font:inherit;font-size:16px;outline:none;color:var(--ink);background:#fff;box-shadow:inset 0 0 0 2px rgba(255,255,255,.6)}
 .srch input:focus{box-shadow:0 0 0 3px rgba(255,255,255,.7)}
 .badge{background:#fff;color:var(--od);border-radius:999px;padding:5px 14px;font-weight:700;font-size:13px;white-space:nowrap}
@@ -72,7 +74,9 @@ main>aside h2,.list h2{font-size:12px;letter-spacing:1.2px;text-transform:upperc
 .it .t{flex:1;min-width:0;font-size:12.5px;line-height:1.3}
 .it .t small{display:block;color:var(--mut);font-size:11px;margin-top:2px}
 .empty{color:var(--mut);padding:18px;text-align:center}
-footer{display:flex;justify-content:space-between;gap:12px;padding:5px 16px;font-size:11.5px;color:var(--mut);border-top:1px solid var(--line);background:#fff}
+footer{display:flex!important;justify-content:center!important;align-items:center!important;text-align:center!important;gap:12px;padding:6px 12px;font-size:11.5px;color:var(--mut);border-top:1px solid var(--line);background:#fff;flex:none}
+footer .src{display:none!important}
+footer .fbar{display:inline-flex!important;align-items:center!important;justify-content:center!important;gap:10px;margin:0 auto;text-align:center}
 footer .cp{font-weight:600;color:var(--od);white-space:nowrap}
 .mk{cursor:pointer}
 .mk circle.b{fill:#fff;stroke:var(--o);stroke-width:2.2;vector-effect:non-scaling-stroke}
@@ -89,6 +93,37 @@ footer .cp{font-weight:600;color:var(--od);white-space:nowrap}
 .mk.on{animation:mkPulse 1.2s ease-in-out infinite}
 .card-head{display:flex;align-items:center;gap:8px;margin-bottom:6px}
 .card-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+
+/* ===== TABS & DANH SÁCH DÂY THIẾT BỊ NGAY TRÊN TAB SƠ ĐỒ ===== */
+.list-tabs{display:flex;align-items:center;gap:4px;flex:1;min-width:0;overflow-x:auto;-webkit-overflow-scrolling:touch}
+.list-tab{border:1px solid transparent;background:transparent;color:var(--mut);font:inherit;font-size:12px;font-weight:700;padding:4px 9px;border-radius:7px;cursor:pointer;white-space:nowrap;display:inline-flex;align-items:center;gap:4px}
+.list-tab:hover{background:var(--ol);color:var(--od)}
+.list-tab.on{background:#fff;color:var(--od);border-color:var(--om);box-shadow:0 1px 4px rgba(0,0,0,.08)}
+.list-tab b{color:var(--o)}
+
+.diagram-wires{display:flex;flex-direction:column;flex:1;min-height:0;overflow:hidden;background:#FBFAF8}
+.dw-header{padding:6px 10px;background:#fff;border-bottom:1px solid var(--line);flex:none}
+.dw-search-row{display:flex;gap:6px;align-items:center}
+.dw-input{flex:1;min-width:0;border:1px solid var(--om);border-radius:8px;padding:6px 10px;font:inherit;font-size:12.5px;outline:none;background:#fff}
+.dw-input:focus{border-color:var(--o);box-shadow:0 0 0 2px var(--ol)}
+.dw-btn-open-full{flex:none;background:var(--ol);color:var(--od);border:1px solid var(--om);border-radius:7px;padding:6px 9px;font:inherit;font-size:11.5px;font-weight:700;cursor:pointer;white-space:nowrap}
+.dw-btn-open-full:hover{background:var(--o);color:#fff}
+
+.dw-list{overflow-y:auto;overflow-x:hidden;flex:1;padding:6px 8px 14px;display:flex;flex-direction:column;gap:6px;-webkit-overflow-scrolling:touch}
+.dw-card{background:#fff;border:1px solid var(--line);border-radius:9px;padding:7px 9px;box-shadow:0 1px 3px rgba(0,0,0,.04);transition:.15s}
+.dw-card:hover{border-color:var(--om);box-shadow:0 2px 6px rgba(242,107,29,.12)}
+.dw-c-top{display:flex;align-items:center;gap:6px;margin-bottom:3px}
+.dw-c-idx{font-size:10px;color:var(--mut);font-weight:700}
+.dw-c-num{font-weight:800;font-size:12px;color:var(--od);background:var(--ol);padding:1px 6px;border-radius:5px;cursor:pointer}
+.dw-c-num:hover{text-decoration:underline}
+.dw-c-type{margin-left:auto;font-size:11px;color:var(--mut);font-weight:600;white-space:nowrap}
+.dw-c-route{display:flex;flex-direction:column;gap:3px;font-size:11.5px}
+.dw-route-line{display:flex;align-items:baseline;gap:6px}
+.dw-lbl{font-size:10px;font-weight:700;color:var(--mut);min-width:36px;flex:none}
+.dw-txt{color:var(--ink);flex:1;min-width:0;word-break:break-word}
+.dw-map-btn{border:0;background:var(--ol);color:var(--od);font:inherit;font-size:11.5px;font-weight:700;padding:2px 7px;border-radius:5px;cursor:pointer;text-align:left;display:inline-flex;align-items:center;gap:4px}
+.dw-map-btn:hover{background:var(--o);color:#fff}
+
 .list-toggle-btn{border:1px solid var(--om);background:#fff;color:var(--od);font:inherit;font-size:12px;font-weight:700;padding:3px 9px;border-radius:6px;cursor:pointer;line-height:1.2}
 .list-toggle-btn:hover{background:var(--ol)}
 .card-wire-wrap{margin-top:10px}
@@ -351,14 +386,15 @@ footer .hbtn.on{background:var(--o);color:#fff}
 footer .hbtn.label{width:auto;padding:0 11px;font-size:12.5px}
 footer .badge{background:var(--ol);padding:2px 10px;font-size:12px}
 @media(max-width:900px){
- header,.wire-top{flex-wrap:wrap;padding:4px 8px;gap:4px 6px}
+ header,.wire-top{flex-wrap:wrap;padding:5px 8px;gap:4px 6px;justify-content:space-between}
  .logo{width:28px;height:28px;padding:1px;box-shadow:0 0 0 2px rgba(255,255,255,.4)}
- header h1,.wire-top h1{font-size:14px;line-height:1}
+ .brand{flex:1;min-width:0;order:1}
+ header h1,.wire-top h1{font-size:14px;line-height:1.15;white-space:nowrap}
  header small,.wire-top small{display:none!important}
- .hdbtns{margin-left:auto;gap:4px}
+ .hdbtns{margin-left:auto;gap:4px;order:2;flex:none}
  .hbtn{width:28px;height:28px;font-size:13px;border-radius:6px}
- .hbtn.label{height:28px;padding:0 7px;font-size:11px}
- .srch{order:5;flex:1 1 100%;margin:2px 0 0}
+ .hbtn.label{height:28px;padding:0 8px;font-size:11.5px}
+ .srch{order:10;flex:1 1 100%;width:100%;max-width:none;margin:2px 0 0}
  .srch input{padding:4px 10px;font-size:13px;height:30px;border-radius:6px}
  
  main{grid-template-columns:minmax(0,1fr);grid-template-rows:auto 65% minmax(0,1fr);transition:grid-template-rows .2s ease}
@@ -371,9 +407,10 @@ footer .badge{background:var(--ol);padding:2px 10px;font-size:12px}
 
  .hint{display:none}
  .list .hd{padding:5px 8px}
- footer{padding:3px 8px;font-size:10px;height:28px;align-items:center}
+ footer{padding:4px 8px!important;font-size:10.5px!important;height:28px;display:flex!important;justify-content:center!important;align-items:center!important;text-align:center!important}
  footer .src{display:none!important}
- footer .cp{font-size:10px}
+ footer .fbar{display:inline-flex!important;justify-content:center!important;align-items:center!important;margin:0 auto;gap:8px}
+ footer .cp{font-size:10.5px}
  footer .hbtn{width:24px;height:24px;font-size:12px}
  footer .hbtn.label{height:24px;padding:0 6px;font-size:10.5px}
 }
@@ -382,12 +419,11 @@ footer .badge{background:var(--ol);padding:2px 10px;font-size:12px}
 <body>
 <header>
   <div class="logo" id="logo"></div>
-  <div><h1 id="ttl"></h1><small id="sub"></small></div>
+  <div class="brand"><h1 id="ttl"></h1><small id="sub"></small></div>
   <div class="srch"><input id="q" type="search" placeholder="Tìm tủ theo mã hoặc tên (toàn tàu)..." autocomplete="off" autocapitalize="characters" spellcheck="false"><div class="sug" id="sug" hidden></div></div>
   <div class="hdbtns">
     <button id="installAppBtn" class="hbtn label" type="button" title="Tải hoặc cài đặt ứng dụng 80SERV về máy">📲 Tải app</button>
     <button id="wireBtn" class="hbtn label" title="Mở danh sách dây điện — tìm theo tên tủ hoặc theo số dây">📋 Dây điện</button>
-    <button id="pwBtnHdr" class="hbtn" type="button" title="Mở / khoá chế độ sửa (mật khẩu 0000)">🔒</button>
   </div>
 </header>
 <main>
@@ -399,7 +435,14 @@ footer .badge{background:var(--ol);padding:2px 10px;font-size:12px}
     <div class="card" id="card"></div>
   </section>
   <section class="list">
-    <div class="hd" id="listHd"><h2 id="lh">Danh mục tủ</h2><button type="button" class="list-toggle-btn" id="listToggleBtn" title="Phóng to sơ đồ / Thu gọn danh mục">⛶ Toàn màn hình</button></div><div class="hint" id="hint"></div>
+    <div class="hd" id="listHd">
+      <div class="list-tabs">
+        <button type="button" class="list-tab on" id="tabPanelsBtn">📦 Tủ tầng này (<span id="deckPanelCount">0</span>)</button>
+        <button type="button" class="list-tab" id="tabWiresBtn" hidden>📋 Dây tủ <b id="wireTabCode"></b> (<span id="wireTabCount">0</span>)</button>
+      </div>
+      <button type="button" class="list-toggle-btn" id="listToggleBtn" title="Phóng to sơ đồ / Thu gọn danh mục">⛶ Toàn màn hình</button>
+    </div>
+    <div class="hint" id="hint"></div>
     <div class="editbar" id="editbar" style="display:none">
       <button class="eb" id="btnAdd" title="Thêm điểm thiết bị mới trên bản vẽ">＋ Thêm điểm</button>
       <button class="eb" id="btnFile" title="Tải file dữ liệu JSON về máy">💾 Lưu file JSON</button>
@@ -409,6 +452,7 @@ footer .badge{background:var(--ol);padding:2px 10px;font-size:12px}
     </div>
 
     <div class="items" id="items"></div>
+    <div class="diagram-wires" id="diagramWires" hidden></div>
   </section>
 </main>
 <section class="wire-app" id="wireApp" hidden aria-label="Quản lý dây điện">
@@ -477,7 +521,7 @@ footer .badge{background:var(--ol);padding:2px 10px;font-size:12px}
     </section>
   </div>
 </section>
-<footer><span class="src" id="foot"></span><span class="fbar"><span class="cp">Copyright (C) 2026 by Jay Duy</span><button id="xlsxBtn" class="hbtn label" title="Xuất danh sách điểm nút (tủ/bảng điện) theo tầng ra file Excel .xlsx">📊 Excel</button><button id="pwBtn" class="hbtn" title="Mở / khoá chế độ sửa (thêm, xoá, dời điểm)">🔒</button></span></footer>
+<footer><span class="fbar"><span class="cp">Copyright (C) 2026 by Jay Duy</span><button id="xlsxBtn" class="hbtn label" title="Xuất danh sách điểm nút (tủ/bảng điện) theo tầng ra file Excel .xlsx">📊 Excel</button><button id="pwBtn" class="hbtn" title="Mở / khoá chế độ sửa (thêm, xoá, dời điểm)">🔒</button></span></footer>
 <!-- ===== MODAL: mật khẩu ===== -->
 <div class="ovl" id="pwOvl" hidden>
   <div class="modal">
@@ -583,7 +627,7 @@ $("sub").textContent="Bố trí tủ & bảng điện theo tầng";
 if($("wireTtl"))$("wireTtl").textContent=M.ship+" – "+M.title;
 if($("wireSub"))$("wireSub").textContent="Bố trí tủ & bảng điện theo tầng";
 const stripRev=s=>String(s==null?"":s).replace(/\s*[-_]\s*Rev\s*9(?=\D|$)/ig,"");
-$("foot").textContent="Nguồn: "+stripRev(M.file)+"  •  tạo ngày "+M.built+"  •  Chọn tầng → bấm ô tròn trên bản vẽ (hoặc chọn trong danh mục) để xem tên đầy đủ của tủ";
+if($("foot"))$("foot").textContent="Nguồn: "+stripRev(M.file)+"  •  tạo ngày "+M.built+"  •  Chọn tầng → bấm ô tròn trên bản vẽ (hoặc chọn trong danh mục) để xem tên đầy đủ của tủ";
 (function(){
   const l=$("logo"),wl=$("wireLogo");
   if(LOGO){
@@ -870,6 +914,7 @@ function openDeck(i){
   if(i===di)return;
   if(targeting)cancelTarget();
   di=i;deck=DATA.decks[i];selP=null;
+  showPanelsListOnDiagram();
   document.querySelectorAll(".deck").forEach(b=>{const on=+b.dataset.i===i;b.classList.toggle("on",on);if(on&&b.scrollIntoView)b.scrollIntoView({inline:"nearest",block:"nearest"})});
   $("pp").setAttribute("d",deck.d);
   full=deck.vb.slice();
@@ -889,7 +934,146 @@ function openDeck(i){
   if(window.loadDeckWireCounts)window.loadDeckWireCounts();
 }
 
+let currentDiagramWireCabinet=null;
+
+function getCabinetCables(code){
+  if(!code)return[];
+  const kNorm=norm(code);
+  if(typeof WIRE_SEED_CABLES==="object"&&WIRE_SEED_CABLES&&WIRE_SEED_CABLES[code])return WIRE_SEED_CABLES[code];
+  if(WIRE_CABLES_CACHE.has(code))return WIRE_CABLES_CACHE.get(code);
+  if(WIRE_SHEETS&&WIRE_SHEETS.length){
+    const s=WIRE_SHEETS.find(sh=>sh.name===code||norm(sh.name)===kNorm||norm(sh.name).startsWith(kNorm)||kNorm.startsWith(norm(sh.name)));
+    if(s){
+      const cached=WIRE_CABLES_CACHE.get(s.name)||(typeof WIRE_SEED_CABLES==="object"&&WIRE_SEED_CABLES&&WIRE_SEED_CABLES[s.name]);
+      if(cached)return cached;
+    }
+  }
+  const total=WIRE_TOTAL_CACHE||(typeof WIRE_SEED_CABLES==="object"&&WIRE_SEED_CABLES&&(WIRE_SEED_CABLES["TỔNG"]||WIRE_SEED_CABLES["total"]));
+  if(total&&Array.isArray(total)){
+    return total.filter(r=>{
+      const src=norm(r[1]||""),tgt=norm(r[3]||"");
+      return src===kNorm||tgt===kNorm||src.includes(kNorm)||tgt.includes(kNorm);
+    });
+  }
+  return[];
+}
+
+function showDeviceWiresOnDiagram(cabinetCode,filterQuery=""){
+  currentDiagramWireCabinet=cabinetCode;
+  const cables=getCabinetCables(cabinetCode);
+  
+  const tabBtn=$("tabWiresBtn"),panelsBtn=$("tabPanelsBtn");
+  if(tabBtn){
+    tabBtn.hidden=false;
+    $("wireTabCode").textContent=cabinetCode;
+    $("wireTabCount").textContent=cables.length;
+    tabBtn.classList.add("on");
+  }
+  if(panelsBtn)panelsBtn.classList.remove("on");
+
+  $("items").hidden=true;
+  $("hint").hidden=true;
+  if($("editbar"))$("editbar").style.display="none";
+  
+  const box=$("diagramWires");
+  box.hidden=false;
+
+  const q=filterQuery.trim().toLowerCase();
+  const filtered=q?cables.filter(c=>c.some(val=>String(val||"").toLowerCase().includes(q))):cables;
+
+  let html=`
+    <div class="dw-header">
+      <div class="dw-search-row">
+        <input type="search" id="dwFilter" class="dw-input" placeholder="🔍 Lọc số dây, đích, loại cáp của tủ ${esc(cabinetCode)}..." value="${esc(filterQuery)}">
+        <button type="button" class="dw-btn-open-full" id="dwOpenFull" title="Mở trang Dây điện đầy đủ có in ấn và xuất file">↗ Bảng lớn</button>
+      </div>
+    </div>
+    <div class="dw-list" id="dwList">
+  `;
+
+  if(!filtered.length){
+    html+=`<div class="empty">Không tìm thấy dây nào của tủ <b>${esc(cabinetCode)}</b>${q?" khớp với từ khoá":""}.</div>`;
+  }else{
+    filtered.forEach((cable,idx)=>{
+      const cNum=cable[0]||"—";
+      const cSrc=cable[1]||"—";
+      const cSec=cable[2]?` (${cable[2]})`:"";
+      const cTgt=cable[3]||"—";
+      const cType=cable[4]||"—";
+      const cSpec=cable[5]||"—";
+      
+      const targetPanel=findPanelForTarget(cable[3]);
+      const sourcePanel=(cable[1]&&findPanelForTarget(cable[1])?.code!==cabinetCode)?findPanelForTarget(cable[1]):null;
+
+      html+=`
+        <div class="dw-card">
+          <div class="dw-c-top">
+            <span class="dw-c-idx">#${idx+1}</span>
+            <span class="dw-c-num" title="Bấm để sao chép số dây" onclick="navigator.clipboard&&navigator.clipboard.writeText('${esc(cNum)}')">${esc(cNum)}</span>
+            <span class="dw-c-type">${esc(cType)} • ${esc(cSpec)}</span>
+          </div>
+          <div class="dw-c-route">
+            <div class="dw-route-line">
+              <span class="dw-lbl">Nguồn:</span>
+              ${sourcePanel?`<button type="button" class="dw-map-btn" data-panel="${esc(sourcePanel.code)}" title="Nhảy tới vị trí ${sourcePanel.code} trên sơ đồ">🗺️ ${esc(cSrc)}</button>`:`<span class="dw-txt">${esc(cSrc+cSec)}</span>`}
+            </div>
+            <div class="dw-route-line">
+              <span class="dw-lbl">Đích:</span>
+              ${targetPanel?`<button type="button" class="dw-map-btn" data-panel="${esc(targetPanel.code)}" title="Nhảy tới vị trí ${targetPanel.code} trên sơ đồ">🗺️ ${esc(cTgt)}</button>`:`<span class="dw-txt">${esc(cTgt)}</span>`}
+            </div>
+          </div>
+        </div>
+      `;
+    });
+  }
+  html+=`</div>`;
+  box.innerHTML=html;
+
+  const fIn=$("dwFilter");
+  if(fIn){
+    if(filterQuery)fIn.focus();
+    fIn.oninput=()=>showDeviceWiresOnDiagram(cabinetCode,fIn.value);
+  }
+
+  const fullBtn=$("dwOpenFull");
+  if(fullBtn){
+    fullBtn.onclick=()=>openWireManager(cabinetCode);
+  }
+
+  box.querySelectorAll(".dw-map-btn").forEach(btn=>{
+    btn.onclick=(e)=>{
+      e.stopPropagation();
+      const pCode=btn.dataset.panel;
+      if(pCode){
+        const p=panelOf(pCode);
+        if(p)locateCabinetOnDiagram(p);
+      }
+    };
+  });
+
+  if(document.body.classList.contains("diagram-max")){
+    toggleDiagramMax(false);
+  }
+}
+
+function showPanelsListOnDiagram(){
+  const tabBtn=$("tabWiresBtn"),panelsBtn=$("tabPanelsBtn");
+  if(tabBtn)tabBtn.classList.remove("on");
+  if(panelsBtn)panelsBtn.classList.add("on");
+
+  $("items").hidden=false;
+  $("hint").hidden=false;
+  if(EDIT&&$("editbar"))$("editbar").style.display="";
+  $("diagramWires").hidden=true;
+}
+
+if($("tabPanelsBtn"))$("tabPanelsBtn").onclick=()=>showPanelsListOnDiagram();
+if($("tabWiresBtn"))$("tabWiresBtn").onclick=()=>{
+  if(currentDiagramWireCabinet)showDeviceWiresOnDiagram(currentDiagramWireCabinet);
+};
+
 function renderList(){
+
   const q=$("q").value.trim().toLowerCase(),box=$("items");box.innerHTML="";
   let list;
   if(q){
@@ -900,6 +1084,7 @@ function renderList(){
   }else{
     list=deck.panels;$("lh").textContent="Danh mục tủ – "+nice(deck.name);$("hint").textContent=list.length+" tủ trên tầng này";
   }
+  if($("deckPanelCount"))$("deckPanelCount").textContent=list.length;
   deck.panels.forEach(p=>p.g.classList.toggle("dim",!!q&&!list.includes(p)));
   list.forEach(p=>{
     const nm=nameOf(p),d=document.createElement("div");
@@ -913,7 +1098,7 @@ function renderList(){
     const wireCount=document.createElement(hasSheet?"button":"span");
     wireCount.className="wire-list-count";wireCount.textContent=wireCountText(p.code);
     if(wireCount.tagName==="BUTTON"){
-      wireCount.type="button";wireCount.title="Mở danh sách dây của tủ "+p.code;wireCount.addEventListener("click",()=>openWireManager(p.code));
+      wireCount.type="button";wireCount.title="Xem danh sách dây của tủ "+p.code+" ngay trên sơ đồ";wireCount.addEventListener("click",(e)=>{e.stopPropagation();showDeviceWiresOnDiagram(p.code)});
     }
     const parts=[code,info];
     if(p.tx!=null){                 /* tủ đã ghim vị trí đầu nối → nút ghim đỏ, đặt trước số lượng dây */
@@ -969,7 +1154,7 @@ function select(p,zoom){
   }
   card.innerHTML=h;card.classList.add("show");
   const cwb=$("cardWireBtn");
-  if(cwb)cwb.addEventListener("click",()=>openWireManager(p.code));
+  if(cwb)cwb.addEventListener("click",()=>showDeviceWiresOnDiagram(p.code));
   if(zoom){   // phóng tới vị trí tủ trên sơ đồ
     const tx=p.tx!=null?(p.x+p.tx)/2:p.x,ty=p.tx!=null?(p.y+p.ty)/2:p.y;
     const r=svg.getBoundingClientRect(),asp=r.height/r.width;
