@@ -1088,8 +1088,9 @@ function openCfg(){
 }
 
 /* ==================== 9. GẮN SỰ KIỆN CHO NÚT ==================== */
-/* ==================== QUẢN LÝ DÂY TỪ GOOGLE SHEETS (TỐI ƯU HOÁ & BỘ NHỚ ĐỆM) ==================== */
-const DEFAULT_WIRE_SPREADSHEET_ID="1Ug_siHaCCin_FwHJRmHbfjnQVKa-EUYg";
+/* ==================== QUẢN LÝ DÂY TỪ EXCEL / ONEDRIVE / GOOGLE SHEETS ==================== */
+const DEFAULT_ONEDRIVE_URL="https://1drv.ms/x/c/e898f0bace036960/IQD2rR5GS2FjTYh2peM3EgROAY2D9geLBA0U7pVrTl7Nqmg?e=NuDBrO";
+const DEFAULT_WIRE_SPREADSHEET_ID="DEFAULT_ONEDRIVE_CHECKLIST";
 const WIRE_STORAGE_KEY_SHEET_ID="wire_spreadsheet_id_v2";
 const WIRE_STORAGE_KEY_SHEET_URL="wire_spreadsheet_url_v2";
 let WIRE_SPREADSHEET_ID=DEFAULT_WIRE_SPREADSHEET_ID;
@@ -1107,6 +1108,7 @@ const WIRE_CABLES_CACHE=new Map();
 function extractSpreadsheetId(val){
   if(!val)return "";
   val=String(val).trim();
+  if(val.includes("1drv.ms")||val.includes("onedrive.live.com"))return DEFAULT_WIRE_SPREADSHEET_ID;
   const m=val.match(/\/spreadsheets\/d\/([a-zA-Z0-9-_]+)/);
   if(m&&m[1])return m[1];
   const m2=val.match(/key=([a-zA-Z0-9-_]+)/);
@@ -1115,10 +1117,12 @@ function extractSpreadsheetId(val){
 }
 
 function syncSheetUrlInputs(){
-  let currentUrl="https://docs.google.com/spreadsheets/d/"+WIRE_SPREADSHEET_ID+"/edit";
+  let currentUrl=DEFAULT_ONEDRIVE_URL;
   try{
     const savedUrl=localStorage.getItem(WIRE_STORAGE_KEY_SHEET_URL);
     if(savedUrl)currentUrl=savedUrl;
+    else if(WIRE_SPREADSHEET_ID===DEFAULT_WIRE_SPREADSHEET_ID)currentUrl=DEFAULT_ONEDRIVE_URL;
+    else currentUrl="https://docs.google.com/spreadsheets/d/"+WIRE_SPREADSHEET_ID+"/edit";
   }catch(e){}
   if($("wireSheetUrl"))$("wireSheetUrl").value=currentUrl;
   if($("cfSheetUrl"))$("cfSheetUrl").value=currentUrl;
@@ -1149,7 +1153,10 @@ function loadWireCache(){
     if(typeof WIRE_SEED_CABLES==="object"&&WIRE_SEED_CABLES){
       for(const k in WIRE_SEED_CABLES){
         if(isTotalSheet(k))WIRE_TOTAL_CACHE=WIRE_SEED_CABLES[k];
-        else WIRE_CABLES_CACHE.set(k,WIRE_SEED_CABLES[k]);
+        else {
+          WIRE_CABLES_CACHE.set(k,WIRE_SEED_CABLES[k]);
+          WIRE_CABLES_CACHE.set("wire_sheet_"+DEFAULT_WIRE_SPREADSHEET_ID+"_"+k,WIRE_SEED_CABLES[k]);
+        }
       }
     }
   }else{
@@ -1160,22 +1167,24 @@ function loadWireCache(){
   }
 
   try{
-    const sKey=isDefault?WIRE_STORAGE_KEY_SHEETS:(WIRE_STORAGE_KEY_SHEETS+"_"+WIRE_SPREADSHEET_ID);
-    const s=localStorage.getItem(sKey)||(isDefault?localStorage.getItem(WIRE_STORAGE_KEY_SHEETS):null);
-    if(s){
-      const o=JSON.parse(s);
-      if(Array.isArray(o.cabinets)&&o.cabinets.length)WIRE_SHEETS=o.cabinets;
-      if(o.total)WIRE_TOTAL_SHEET=o.total;
-    }
-    const cKey=isDefault?WIRE_STORAGE_KEY_COUNTS:(WIRE_STORAGE_KEY_COUNTS+"_"+WIRE_SPREADSHEET_ID);
-    const c=localStorage.getItem(cKey)||(isDefault?localStorage.getItem(WIRE_STORAGE_KEY_COUNTS):null);
-    if(c){
-      const parsedCounts=JSON.parse(c);
-      if(parsedCounts&&typeof parsedCounts==="object"){
-        for(const k in parsedCounts){
-          if(parsedCounts[k]&&typeof parsedCounts[k].count==="number")wireSheetCounts[k]={count:parsedCounts[k].count};
+    if(!isDefault){
+      const sKey=WIRE_STORAGE_KEY_SHEETS+"_"+WIRE_SPREADSHEET_ID;
+      const s=localStorage.getItem(sKey);
+      if(s){
+        const o=JSON.parse(s);
+        if(Array.isArray(o.cabinets)&&o.cabinets.length)WIRE_SHEETS=o.cabinets;
+        if(o.total)WIRE_TOTAL_SHEET=o.total;
+      }
+      const cKey=WIRE_STORAGE_KEY_COUNTS+"_"+WIRE_SPREADSHEET_ID;
+      const c=localStorage.getItem(cKey);
+      if(c){
+        const parsedCounts=JSON.parse(c);
+        if(parsedCounts&&typeof parsedCounts==="object"){
+          for(const k in parsedCounts){
+            if(parsedCounts[k]&&typeof parsedCounts[k].count==="number")wireSheetCounts[k]={count:parsedCounts[k].count};
+          }
+          wireCountsReady=true;
         }
-        wireCountsReady=true;
       }
     }
     const t=sessionStorage.getItem(WIRE_STORAGE_KEY_TOTAL+"_"+WIRE_SPREADSHEET_ID)||sessionStorage.getItem(WIRE_STORAGE_KEY_TOTAL);
@@ -1235,14 +1244,21 @@ function debouncedRenderCounts(){
 
 function hasWireSheet(code){
   if(!code) return false;
-  if(WIRE_SHEETS && WIRE_SHEETS.length) return WIRE_SHEETS.some(s => s.name === code);
+  if(WIRE_SHEETS && WIRE_SHEETS.length){
+    return WIRE_SHEETS.some(s=>s.name===code||norm(s.name)===norm(code)||norm(s.name).startsWith(norm(code))||norm(code).startsWith(norm(s.name)));
+  }
   const c = wireSheetCounts[code];
   if(c && typeof c.count === "number") return c.count > 0;
   return true;
 }
 
 function wireCountText(sheetName){
-  const countInfo=wireSheetCounts[sheetName];
+  if(!sheetName) return "—";
+  let countInfo=wireSheetCounts[sheetName];
+  if(!countInfo){
+    const found=WIRE_SHEETS.find(s=>s.name===sheetName||norm(s.name)===norm(sheetName)||norm(s.name).startsWith(norm(sheetName))||norm(sheetName).startsWith(norm(s.name)));
+    if(found)countInfo=wireSheetCounts[found.name];
+  }
   if(countInfo&&typeof countInfo.count==="number")return countInfo.count?countInfo.count+" dây":"0 dây";
   if(countInfo&&countInfo.loading)return "Đang tải…";
   if(countInfo&&countInfo.error)return "Không tải được";
@@ -1293,6 +1309,7 @@ function renderWireCabinets(){
 }
 
 function loadDeckWireCounts(){
+  if(WIRE_SPREADSHEET_ID===DEFAULT_WIRE_SPREADSHEET_ID)return;
   if(!deck||!deck.panels||!WIRE_SHEETS.length)return;
   const missing=deck.panels
     .map(p=>WIRE_SHEETS.find(s=>s.name===p.code))
@@ -1337,6 +1354,30 @@ async function updateMissingCounts(sheets,maxToFetch=Infinity){
 async function refreshWireSheets(refreshData=false){
   if(wireSheetsLoading)return wireSheetsLoading;
   wireSheetsLoading=(async()=>{
+    const isDefault=(WIRE_SPREADSHEET_ID===DEFAULT_WIRE_SPREADSHEET_ID);
+    if(isDefault){
+      WIRE_SHEETS=(WIRE_SEED.sheets||[]).slice();
+      WIRE_TOTAL_SHEET=WIRE_SEED.total||{name:"TỔNG",gid:"0"};
+      for(const k in WIRE_SEED.counts){
+        wireSheetCounts[k]={count:WIRE_SEED.counts[k]};
+      }
+      wireCountsReady=true;
+      renderWireCabinets();
+      if(window.rebuildSug)window.rebuildSug();
+
+      const selected=(wireRequestedCabinet&&(
+        WIRE_SHEETS.find(sheet=>sheet.name===wireRequestedCabinet)
+        ||WIRE_SHEETS.find(sheet=>norm(sheet.name)===norm(wireRequestedCabinet))
+        ||WIRE_SHEETS.find(sheet=>norm(sheet.name).startsWith(norm(wireRequestedCabinet)))
+        ||WIRE_SHEETS.find(sheet=>norm(wireRequestedCabinet).startsWith(norm(sheet.name)))
+      ))||activeWireSheet||(WIRE_SHEETS.length?WIRE_SHEETS[0]:null);
+
+      if(selected&&(!activeWireSheet||selected.name!==activeWireSheet.name)){
+        await loadWireSheet(selected,false);
+      }
+      setWireStatus("");
+      return;
+    }
     const previousName=activeWireSheet&&activeWireSheet.name;
     setWireStatus("Đang đồng bộ danh sách tủ từ Google Sheets…");
     try{
@@ -1591,10 +1632,11 @@ async function loadWireSheet(sheet,forceNetwork=false){
 
   if(!forceNetwork){
     const cacheKey="wire_sheet_"+WIRE_SPREADSHEET_ID+"_"+sheet.name;
-    let cached=WIRE_CABLES_CACHE.get(cacheKey);
+    let cached=WIRE_CABLES_CACHE.get(cacheKey)||WIRE_CABLES_CACHE.get(sheet.name);
     if(!cached&&WIRE_SPREADSHEET_ID===DEFAULT_WIRE_SPREADSHEET_ID&&typeof WIRE_SEED_CABLES==="object"&&WIRE_SEED_CABLES[sheet.name]){
       cached=WIRE_SEED_CABLES[sheet.name];
       WIRE_CABLES_CACHE.set(cacheKey,cached);
+      WIRE_CABLES_CACHE.set(sheet.name,cached);
     }
     if(!cached){
       try{
@@ -1638,21 +1680,26 @@ function openWireManager(cabinetCode=null){
   wireNumView=false;wireNumQuery="";
   $("wireApp").hidden=false;$("wireBtn").classList.add("on");
   syncSheetUrlInputs();
-  renderWireCabinets();
 
   if(cabinetCode){
     const target=WIRE_SHEETS.find(s=>s.name===cabinetCode)
       ||WIRE_SHEETS.find(s=>norm(s.name)===norm(cabinetCode))
-      ||WIRE_SHEETS.find(s=>norm(s.name).startsWith(norm(cabinetCode)));
+      ||WIRE_SHEETS.find(s=>norm(s.name).startsWith(norm(cabinetCode)))
+      ||WIRE_SHEETS.find(s=>norm(cabinetCode).startsWith(norm(s.name)));
     if(target){
       loadWireSheet(target);
+      renderWireCabinets();
       return;
     }
-  }else if(activeWireSheet){
+  }
+  if(activeWireSheet){
     loadWireSheet(activeWireSheet);
+    renderWireCabinets();
     return;
-  }else if(WIRE_SHEETS.length>0){
+  }
+  if(WIRE_SHEETS.length>0){
     loadWireSheet(WIRE_SHEETS[0]);
+    renderWireCabinets();
     return;
   }
   refreshWireSheets();
