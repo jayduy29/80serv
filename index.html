@@ -441,6 +441,22 @@ footer .badge{background:var(--ol);padding:2px 10px;font-size:12px}
  .srch{order:10;flex:1 1 100%;width:100%;max-width:none;margin:3px 0 0}
  .srch input{padding:5px 12px;font-size:13px;height:32px;border-radius:7px}
 }
+
+/* ===== MODAL XEM TRƯỚC ẢNH DANH SÁCH DÂY ===== */
+.wire-img-modal{width:min(480px,96vw);max-height:94vh;padding:12px 14px 14px;display:flex;flex-direction:column;gap:8px;border-radius:14px;background:#fff;box-shadow:0 16px 48px rgba(0,0,0,.45)}
+.wire-img-modal-head{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;border-bottom:1px solid var(--line);padding-bottom:8px}
+.wire-img-modal-title h3{margin:0 0 2px;font-size:15px;color:var(--od)}
+.wire-img-modal-sub{font-size:11.5px;color:var(--mut)}
+.wire-img-page-nav{display:flex;align-items:center;justify-content:center;gap:12px;padding:4px 8px;background:#FFF7F0;border-radius:6px;border:1px solid var(--line)}
+.wire-page-nav-btn{padding:4px 10px;font-size:11.5px;font-weight:700;border:1px solid var(--om);background:#fff;color:var(--od);border-radius:6px;cursor:pointer;line-height:1.2}
+.wire-page-nav-btn:disabled{opacity:.4;cursor:not-allowed}
+.wire-page-ind{font-size:11.5px;font-weight:800;color:var(--od)}
+.wire-img-preview-wrap{flex:1;min-height:0;max-height:min(58vh,480px);overflow-y:auto;overflow-x:hidden;text-align:center;background:#1E293B;border-radius:8px;padding:8px;display:flex;align-items:center;justify-content:center}
+.wire-preview-img{max-width:100%;max-height:100%;height:auto;border-radius:4px;box-shadow:0 4px 20px rgba(0,0,0,.5);object-fit:contain;background:#fff}
+.wire-img-modal-actions{display:flex;gap:8px;margin-top:4px;flex-wrap:wrap}
+.wire-action-btn{flex:1;min-width:120px;padding:9px 12px;font-size:13px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;gap:5px}
+.wire-share-btn{background:#1967D2;color:#fff;border-color:#1557B0}
+.wire-share-btn:hover{background:#1557B0}
 </style>
 </head>
 <body>
@@ -631,6 +647,44 @@ footer .badge{background:var(--ol);padding:2px 10px;font-size:12px}
     </div>
     <div class="mb" style="margin-top:14px">
       <button class="btn ghost" id="appOvlClose" type="button">Đóng</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MODAL: XEM TRƯỚC ẢNH DANH SÁCH DÂY (9:16) ===== -->
+<div class="ovl" id="wireImgOvl" hidden>
+  <div class="modal wire-img-modal">
+    <div class="wire-img-modal-head">
+      <div class="wire-img-modal-title">
+        <h3 id="wipTitle">🖼 Xem trước ảnh danh sách dây</h3>
+        <span id="wipSubtitle" class="wire-img-modal-sub"></span>
+      </div>
+      <button class="x" type="button" id="wipCloseBtn" title="Đóng">×</button>
+    </div>
+
+    <!-- Thanh chuyển trang khi có nhiều hơn 1 trang -->
+    <div id="wipPageNav" class="wire-img-page-nav" hidden>
+      <button type="button" class="wire-page-nav-btn" id="wipPrevBtn" title="Trang trước">◀ Trang trước</button>
+      <span id="wipPageIndicator" class="wire-page-ind">Trang 1 / 1</span>
+      <button type="button" class="wire-page-nav-btn" id="wipNextBtn" title="Trang sau">Trang sau ▶</button>
+    </div>
+
+    <!-- Vùng hiển thị ảnh xem trước -->
+    <div class="wire-img-preview-wrap">
+      <img id="wirePreviewImg" class="wire-preview-img" alt="Xem trước ảnh 9:16">
+    </div>
+
+    <!-- Thanh nút hành động: Tải về, Chia sẻ, Đóng -->
+    <div class="wire-img-modal-actions">
+      <button type="button" id="wipDownloadBtn" class="wire-btn primary wire-action-btn">
+        <span>⬇ Tải ảnh về máy</span>
+      </button>
+      <button type="button" id="wipShareBtn" class="wire-btn wire-action-btn wire-share-btn">
+        <span>📤 Chia sẻ</span>
+      </button>
+      <button type="button" id="wipCancelBtn" class="wire-btn" style="flex:none;padding:8px 14px">
+        <span>Đóng</span>
+      </button>
     </div>
   </div>
 </div>
@@ -2254,74 +2308,356 @@ function wrapWireText(context,text,maxWidth,maxLines){
   return lines;
 }
 
-function renderWirePage(sheetName,pageNumber,totalPages,cables){
+let generatedWirePages=[];
+let currentWirePageIndex=0;
+
+function drawCanvasRoundRect(ctx,x,y,w,h,r,fill,stroke){
+  ctx.beginPath();
+  ctx.moveTo(x+r,y);
+  ctx.lineTo(x+w-r,y);
+  ctx.quadraticCurveTo(x+w,y,x+w,y+r);
+  ctx.lineTo(x+w,y+h-r);
+  ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
+  ctx.lineTo(x+r,y+h);
+  ctx.quadraticCurveTo(x,y+h,x,y+h-r);
+  ctx.lineTo(x,y+r);
+  ctx.quadraticCurveTo(x,y,x+r,y);
+  ctx.closePath();
+  if(fill)ctx.fill();
+  if(stroke)ctx.stroke();
+}
+
+function wrapCanvasText(ctx,text,maxWidth){
+  const words=String(text||"").split(/\s+/).filter(Boolean);
+  if(!words.length)return [];
+  const lines=[];
+  let currentLine=words[0];
+  for(let i=1;i<words.length;i++){
+    const candidate=currentLine+" "+words[i];
+    if(ctx.measureText(candidate).width<=maxWidth){
+      currentLine=candidate;
+    }else{
+      lines.push(currentLine);
+      currentLine=words[i];
+    }
+  }
+  lines.push(currentLine);
+  return lines;
+}
+
+function renderWirePage(sheetName,pageNumber,totalPages,cables,allCables){
   const canvas=document.createElement("canvas");
-  canvas.width=2160;canvas.height=3840;
-  const context=canvas.getContext("2d");
-  if(!context)throw new Error("Không thể khởi tạo bộ vẽ ảnh trong trình duyệt.");
-  const left=70,top=230,headerHeight=90,rowHeight=100;
-  const widths=[520,500,500,500];
-  const tableWidth=widths.reduce((sum,width)=>sum+width,0);
-  context.fillStyle="#fff";context.fillRect(0,0,canvas.width,canvas.height);
-  context.fillStyle="#2B2B2B";context.font="700 48px Arial,sans-serif";
-  context.fillText("DANH SÁCH DÂY ĐIỆN — "+sheetName,left,105);
-  context.fillStyle="#7A6F68";context.font="26px Arial,sans-serif";
-  context.fillText("Trang "+pageNumber+" / "+totalPages+"  •  Tối đa 30 dây  •  80M SERV",left,165);
-  let x=left;
-  WIRE_HEADERS.forEach((label,index)=>{
-    context.fillStyle="#F26B1D";context.fillRect(x,top,widths[index],headerHeight);
-    context.fillStyle="#fff";context.font="700 24px Arial,sans-serif";
-    const lines=wrapWireText(context,label,widths[index]-20,2);
-    lines.forEach((line,lineIndex)=>context.fillText(line,x+10,top+36+lineIndex*28));
-    x+=widths[index];
+  canvas.width=1080;canvas.height=1920;
+  const ctx=canvas.getContext("2d");
+  if(!ctx)throw new Error("Không thể khởi tạo bộ vẽ ảnh trong trình duyệt.");
+
+  // Nền trắng và dải cam viền trên
+  ctx.fillStyle="#FFFFFF";ctx.fillRect(0,0,1080,1920);
+  ctx.fillStyle="#F97316";ctx.fillRect(0,0,1080,8);
+
+  // Huy hiệu ứng dụng
+  ctx.fillStyle="#FFF7ED";ctx.strokeStyle="#FDBA74";ctx.lineWidth=1.5;
+  drawCanvasRoundRect(ctx,40,26,230,32,6,true,true);
+  ctx.fillStyle="#C2410C";ctx.font="bold 13px sans-serif";
+  ctx.fillText("⚓ 80SERV – CỨU HỘ TÀU NGẦM",52,47);
+
+  // Tiêu đề tủ
+  ctx.fillStyle="#7C2D12";ctx.font="bold 28px sans-serif";
+  ctx.fillText("DANH SÁCH DÂY ĐIỆN — TỦ "+sheetName,40,96);
+
+  // Phụ đề thông tin tầng, tổng số dây, trang và ngày tạo
+  const panel=panelOf(sheetName);
+  const deckName=panel&&panel.di!=null&&DATA.decks[panel.di]?DATA.decks[panel.di].name:"Chưa xác định";
+  ctx.fillStyle="#4B5563";ctx.font="14px sans-serif";
+  const dateStr=new Date().toLocaleDateString("vi-VN");
+  const totalCount=allCables?allCables.length:cables.length;
+  ctx.fillText("📍 Vị trí: "+deckName+"   •   📊 Tổng: "+totalCount+" dây   •   📄 Trang "+pageNumber+"/"+totalPages+"   •   🕒 "+dateStr,40,134);
+
+  // Cấu trúc bảng
+  const tableX=40,tableY=162,tableW=1000,headerH=46;
+  const col4W=130,col1W=210;
+
+  // Tính toán tỷ lệ độ rộng cột nguồn và đích
+  let countSrc=0,sumSrc=0,countTgt=0,sumTgt=0;
+  const sampleSet=allCables||cables;
+  for(const c of sampleSet){
+    const s=String(c[1]||"").trim();
+    const t=String(c[2]||"").trim();
+    if(s&&s!=="—"){countSrc++;sumSrc+=s.length;}
+    if(t&&t!=="—"){countTgt++;sumTgt+=t.length;}
+  }
+  const remainingW=tableW-col1W-col4W;
+  let col2W=Math.round(remainingW/2),col3W=remainingW-col2W;
+  if(countTgt===0){
+    col3W=80;col2W=remainingW-col3W;
+  }else if(countSrc===0){
+    col2W=80;col3W=remainingW-col2W;
+  }else{
+    const ratio=Math.max(0.65,Math.min(1.5,Math.sqrt((sumSrc/(countSrc||1))/(sumTgt/(countTgt||1)||1))));
+    col2W=Math.round(remainingW*(ratio/(ratio+1)));
+    col3W=remainingW-col2W;
+  }
+
+  const colWidths=[col1W,col2W,col3W,col4W];
+  const headers=["ID / Loại / Nhà thầu","Nguồn","Đích","Đã kéo / Đã đấu"];
+
+  // Dòng đầu tiêu đề bảng
+  ctx.fillStyle="#FFE8D6";ctx.fillRect(tableX,tableY,tableW,headerH);
+  ctx.fillStyle="#F57C00";ctx.fillRect(tableX,tableY+headerH-2,tableW,2);
+
+  let hx=tableX;
+  headers.forEach((h,idx)=>{
+    ctx.fillStyle="#8A2C00";ctx.font="bold 13.5px sans-serif";
+    if(idx===3){
+      const tw=ctx.measureText(h).width;
+      ctx.fillText(h,hx+(colWidths[idx]-tw)/2,tableY+28);
+    }else{
+      ctx.fillText(h,hx+10,tableY+28);
+    }
+    if(idx<3){
+      ctx.strokeStyle="#FED7AA";ctx.lineWidth=1;
+      ctx.beginPath();
+      ctx.moveTo(hx+colWidths[idx],tableY);
+      ctx.lineTo(hx+colWidths[idx],tableY+headerH);
+      ctx.stroke();
+    }
+    hx+=colWidths[idx];
   });
-  cables.forEach((cable,rowIndex)=>{
-    const y=top+headerHeight+rowIndex*rowHeight;
-    context.fillStyle=rowIndex%2?"#FFF9F4":"#fff";context.fillRect(left,y,tableWidth,rowHeight);
-    let cellX=left;
-    cable.forEach((value,columnIndex)=>{
-      context.strokeStyle="#EADFD6";context.lineWidth=1;
-      context.strokeRect(cellX,y,widths[columnIndex],rowHeight);
-      context.fillStyle=columnIndex===0?"#C94E08":"#2B2B2B";
-      context.font=columnIndex===0?"700 24px Arial,sans-serif":"24px Arial,sans-serif";
-      const lines=wrapWireText(context,value,widths[columnIndex]-20,2);
-      const lineHeight=29,startY=y+(rowHeight-lines.length*lineHeight)/2+22;
-      lines.forEach((line,lineIndex)=>context.fillText(line,cellX+10,startY+lineIndex*lineHeight));
-      cellX+=widths[columnIndex];
+
+  // Từng dòng dây
+  const rowH=cables.length<=15?68:(cables.length<=22?64:58);
+  cables.forEach((c,rIdx)=>{
+    const y=tableY+headerH+rIdx*rowH;
+
+    // Nền dòng xen kẽ
+    ctx.fillStyle=rIdx%2===0?"#FFFFFF":"#F8FAFC";
+    ctx.fillRect(tableX,y,tableW,rowH);
+
+    // Kẻ ngang phân cách dòng
+    ctx.strokeStyle="#E2E8F0";ctx.lineWidth=1;
+    ctx.beginPath();
+    ctx.moveTo(tableX,y+rowH);
+    ctx.lineTo(tableX+tableW,y+rowH);
+    ctx.stroke();
+
+    // Kẻ dọc phân cách cột
+    let cx=tableX;
+    for(let i=0;i<3;i++){
+      cx+=colWidths[i];
+      ctx.beginPath();
+      ctx.moveTo(cx,y);
+      ctx.lineTo(cx,y+rowH);
+      ctx.stroke();
+    }
+
+    // Cột 1: Mã cáp, loại/quy cách, nhà thầu
+    const c1x=tableX+8;
+    ctx.fillStyle="#C25E00";ctx.font="bold 13.5px monospace, sans-serif";
+    ctx.fillText(c[0]||"—",c1x,y+18);
+
+    ctx.fillStyle="#4B5563";ctx.font="11.5px sans-serif";
+    const specStr=(c[3]||"—")+" / "+(c[4]||"—");
+    ctx.fillText(specStr,c1x,y+36);
+
+    const contractor=c[5]||"";
+    if(contractor){
+      let bg="#FFF3E0",border="#FFE0B2",text="#B06000";
+      if(/hdc/i.test(contractor)){bg="#E6F4EA";border="#CEEAD6";text="#137333";}
+      else if(/nautic/i.test(contractor)){bg="#E8F0FE";border="#C2E7FF";text="#1967D2";}
+      else if(/vkkt/i.test(contractor)){bg="#F3E8FD";border="#E1BEE7";text="#7627BB";}
+
+      ctx.font="bold 10px sans-serif";
+      const tw=ctx.measureText(contractor).width;
+      ctx.fillStyle=bg;ctx.strokeStyle=border;ctx.lineWidth=1;
+      drawCanvasRoundRect(ctx,c1x,y+43,tw+10,16,3,true,true);
+      ctx.fillStyle=text;
+      ctx.fillText(contractor,c1x+5,y+55);
+    }
+
+    // Cột 2: Nguồn
+    const c2x=tableX+colWidths[0]+8;
+    ctx.fillStyle="#1F2937";ctx.font="12px sans-serif";
+    const lines2=wrapCanvasText(ctx,c[1]||"—",colWidths[1]-16);
+    const lineH=16;
+    const startY2=y+(rowH-lines2.length*lineH)/2+12;
+    lines2.forEach((line,lIdx)=>{
+      ctx.fillText(line,c2x,startY2+lIdx*lineH);
     });
+
+    // Cột 3: Đích
+    const c3x=tableX+colWidths[0]+colWidths[1]+8;
+    const lines3=wrapCanvasText(ctx,c[2]||"—",colWidths[2]-16);
+    const startY3=y+(rowH-lines3.length*lineH)/2+12;
+    lines3.forEach((line,lIdx)=>{
+      ctx.fillText(line,c3x,startY3+lIdx*lineH);
+    });
+
+    // Cột 4: Đã kéo / Đã đấu
+    const c4x=tableX+colWidths[0]+colWidths[1]+colWidths[2];
+    const pillW=104,pillH=20;
+    const pillX=c4x+(colWidths[3]-pillW)/2;
+    const startPillY=y+(rowH-44)/2;
+
+    // Pill Kéo
+    const keo=String(c[6]==null?"":c[6]).trim();
+    const isKeo=keo==="1"||/^(1|x|v|ok|đã kéo|yes)$/i.test(keo);
+    ctx.fillStyle=isKeo?"#E6F4EA":"#F1F3F4";
+    ctx.strokeStyle=isKeo?"#CEEAD6":"#DADCE0";
+    ctx.lineWidth=1;
+    drawCanvasRoundRect(ctx,pillX,startPillY,pillW,pillH,4,true,true);
+    ctx.fillStyle=isKeo?"#137333":"#5F6368";
+    ctx.font="bold 10px sans-serif";
+    const keoText=isKeo?"✔ Đã kéo":"Chưa kéo";
+    const ktw=ctx.measureText(keoText).width;
+    ctx.fillText(keoText,pillX+(pillW-ktw)/2,startPillY+14);
+
+    // Pill Đấu
+    const dau=String(c[7]==null?"":c[7]).trim();
+    const isDau2=dau==="2"||/^(2|2\/2|đủ|xong)$/i.test(dau);
+    const isDau1=dau==="1"||/^(1|1\/2|nửa)$/i.test(dau);
+    let dauBg="#F1F3F4",dauBorder="#DADCE0",dauColor="#5F6368",dauText="Chưa đấu";
+    if(isDau2){dauBg="#E6F4EA";dauBorder="#CEEAD6";dauColor="#137333";dauText="✔ Đấu 2/2";}
+    else if(isDau1){dauBg="#FEF7E0";dauBorder="#FEEFC3";dauColor="#B06000";dauText="⏳ Đấu 1/2";}
+
+    ctx.fillStyle=dauBg;ctx.strokeStyle=dauBorder;
+    drawCanvasRoundRect(ctx,pillX,startPillY+24,pillW,pillH,4,true,true);
+    ctx.fillStyle=dauColor;
+    const dtw=ctx.measureText(dauText).width;
+    ctx.fillText(dauText,pillX+(pillW-dtw)/2,startPillY+38);
   });
-  context.fillStyle="#7A6F68";context.font="20px Arial,sans-serif";
-  context.fillText("Nguồn: Google Sheets · Chỉ lấy dữ liệu cột A–F · "+new Date().toLocaleDateString("vi-VN"),left,3780);
-  return new Promise((resolve,reject)=>canvas.toBlob(blob=>{
-    if(blob)resolve(blob);else reject(new Error("Trình duyệt không tạo được tệp PNG."));
-  },"image/png"));
+
+  // Viền khung ngoài bảng
+  ctx.strokeStyle="#CBD5E1";ctx.lineWidth=1.5;
+  ctx.strokeRect(tableX,tableY,tableW,headerH+cables.length*rowH);
+
+  // Chân trang ảnh
+  ctx.fillStyle="#9CA3AF";ctx.font="12.5px sans-serif";
+  ctx.fillText("Hệ thống quản lý dây cáp điện 80SERV Cứu hộ tàu ngầm  •  80serv.vercel.app",40,1885);
+
+  return new Promise((resolve,reject)=>{
+    canvas.toBlob(blob=>{
+      if(blob)resolve(blob);
+      else reject(new Error("Trình duyệt không tạo được tệp ảnh PNG."));
+    },"image/png");
+  });
+}
+
+function openWireImgPreviewModal(){
+  if(!generatedWirePages.length)return;
+  currentWirePageIndex=0;
+  updateWireImgPreviewView();
+  showOvl("wireImgOvl");
+}
+
+function updateWireImgPreviewView(){
+  if(!generatedWirePages.length)return;
+  const page=generatedWirePages[currentWirePageIndex];
+  const total=generatedWirePages.length;
+
+  $("wirePreviewImg").src=page.url;
+  const titleName=activeWireSheet?activeWireSheet.name:(wireNumView?wireNumQuery:"");
+  $("wipSubtitle").textContent="Tủ "+titleName+" • Trang "+page.pageNumber+"/"+total+" ("+wireCables.length+" dây)";
+
+  const nav=$("wipPageNav");
+  if(total>1){
+    nav.hidden=false;
+    $("wipPageIndicator").textContent="Trang "+page.pageNumber+" / "+total;
+    $("wipPrevBtn").disabled=(currentWirePageIndex===0);
+    $("wipNextBtn").disabled=(currentWirePageIndex===total-1);
+  }else{
+    nav.hidden=true;
+  }
+}
+
+function downloadCurrentWireImage(){
+  if(!generatedWirePages.length)return;
+  const page=generatedWirePages[currentWirePageIndex];
+  const a=document.createElement("a");
+  a.href=page.url;
+  a.download=page.filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setWireStatus("Đã tải ảnh "+page.filename+" về máy.");
+}
+
+async function shareCurrentWireImage(){
+  if(!generatedWirePages.length)return;
+  const page=generatedWirePages[currentWirePageIndex];
+  const file=new File([page.blob],page.filename,{type:"image/png"});
+
+  if(navigator.canShare&&navigator.canShare({files:[file]})){
+    try{
+      await navigator.share({
+        files:[file],
+        title:page.title,
+        text:"Danh sách dây cáp tủ "+(activeWireSheet?activeWireSheet.name:"")+" (Tàu 80SERV)"
+      });
+      setWireStatus("Đã mở chia sẻ ảnh thành công!");
+      return;
+    }catch(err){
+      if(err.name==="AbortError")return;
+    }
+  }
+
+  // Fallback 1: Clipboard
+  if(navigator.clipboard&&window.ClipboardItem){
+    try{
+      await navigator.clipboard.write([
+        new ClipboardItem({"image/png":page.blob})
+      ]);
+      alert("Đã sao chép ảnh vào bộ nhớ tạm (Clipboard)! Bạn có thể dán (Paste) trực tiếp vào Zalo, Viber, Word, Excel...");
+      return;
+    }catch(e){}
+  }
+
+  // Fallback 2: Direct download
+  downloadCurrentWireImage();
+  alert("Trình duyệt không hỗ trợ chia sẻ trực tiếp. Đã tự động tải ảnh về máy để bạn gửi!");
 }
 
 async function createWireImages(){
   if(!wireCables.length||!activeWireSheet)return;
   const button=$("wireA4"),sheet=activeWireSheet,cables=wireCables.slice();
   const title=wireNumView?("SỐ DÂY "+wireNumQuery):sheet.name;
-  button.disabled=true;clearWireExports();
-  const requestId=wireExportRequestId;
-  setWireStatus("Đang tạo ảnh dọc 9:16…");
+  button.disabled=true;
+  button.innerHTML="⏳<span class=\"wr-t\"> Đang tạo ảnh…</span>";
+  clearWireExports();
+  setWireStatus("Đang khởi tạo ảnh danh sách dây 9:16…");
+
   try{
     const pages=[];
-    for(let start=0;start<cables.length;start+=30)pages.push(cables.slice(start,start+30));
-    const exports=$("wireExports");
-    for(let index=0;index<pages.length;index++){
-      const blob=await renderWirePage(title,index+1,pages.length,pages[index]);
-      if(requestId!==wireExportRequestId)return;
-      const url=URL.createObjectURL(blob);wireBlobUrls.push(url);
-      const link=document.createElement("a");
-      link.className="wire-export-link";link.href=url;
-      link.download="80M-"+String(title).replace(/[^\w\-]+/g,"_")+"-9x16-"+(index+1)+".png";
-      link.textContent="⬇ Tải ảnh 9:16 · "+(index+1)+"/"+pages.length;
-      exports.appendChild(link);
+    const pageSize=25; // 25 dây / trang 9:16
+    for(let start=0;start<cables.length;start+=pageSize){
+      pages.push(cables.slice(start,start+pageSize));
     }
-    exports.hidden=false;
-    setWireStatus("Đã tạo "+pages.length+" ảnh dọc 9:16, mỗi ảnh tối đa 30 dây. Tải từng ảnh ở cuối danh sách.");
-  }catch(error){if(requestId===wireExportRequestId)setWireStatus("Không tạo được ảnh A4. "+error.message,true)}
-  finally{button.disabled=!wireCables.length}
+
+    generatedWirePages=[];
+    currentWirePageIndex=0;
+
+    for(let index=0;index<pages.length;index++){
+      const blob=await renderWirePage(title,index+1,pages.length,pages[index],cables);
+      const url=URL.createObjectURL(blob);
+      wireBlobUrls.push(url);
+      const filename="80SERV-"+String(title).replace(/[^\w\-]+/g,"_")+"-Trang"+(index+1)+".png";
+      generatedWirePages.push({
+        blob,
+        url,
+        filename,
+        title:"Danh sách dây tủ "+title+" (Trang "+(index+1)+"/"+pages.length+")",
+        pageNumber:index+1,
+        totalPages:pages.length
+      });
+    }
+
+    setWireStatus("Đã tạo xong ảnh danh sách dây. Đang mở xem trước…");
+    openWireImgPreviewModal();
+  }catch(error){
+    setWireStatus("Không tạo được ảnh: "+error.message,true);
+  }finally{
+    button.disabled=!wireCables.length;
+    button.innerHTML="🖼<span class=\"wr-t\"> Tạo ảnh 9:16</span>";
+  }
 }
 
 function showPasswordModal(){
@@ -2701,6 +3037,22 @@ function initWireManager(){
   });
   $("wireCopy").addEventListener("click",copyWireList);
   $("wireA4").addEventListener("click",createWireImages);
+  $("wipCloseBtn").addEventListener("click",()=>hideOvl("wireImgOvl"));
+  $("wipCancelBtn").addEventListener("click",()=>hideOvl("wireImgOvl"));
+  $("wipDownloadBtn").addEventListener("click",downloadCurrentWireImage);
+  $("wipShareBtn").addEventListener("click",shareCurrentWireImage);
+  $("wipPrevBtn").addEventListener("click",()=>{
+    if(currentWirePageIndex>0){
+      currentWirePageIndex--;
+      updateWireImgPreviewView();
+    }
+  });
+  $("wipNextBtn").addEventListener("click",()=>{
+    if(currentWirePageIndex<generatedWirePages.length-1){
+      currentWirePageIndex++;
+      updateWireImgPreviewView();
+    }
+  });
   document.addEventListener("keydown",event=>{
     if(event.key==="Escape"&&!$("wireApp").hidden)closeWireManager();
   });
