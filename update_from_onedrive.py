@@ -5,7 +5,6 @@ Cách dùng:
     python update_from_onedrive.py "https://1drv.ms/x/c/..."
 hoặc chỉ cần chạy:
     python update_from_onedrive.py
-rồi dán link khi được hỏi.
 """
 
 import sys
@@ -17,12 +16,8 @@ if hasattr(sys.stdout, 'reconfigure'):
         pass
 
 import os
-import re
 import json
-import zipfile
-import xml.etree.ElementTree as ET
 import urllib.request
-import urllib.parse
 import http.cookiejar
 
 def download_onedrive_file(share_url, output_path="checklist_finall.xlsx"):
@@ -30,7 +25,6 @@ def download_onedrive_file(share_url, output_path="checklist_finall.xlsx"):
     if not share_url:
         raise ValueError("Đường link OneDrive không được để trống.")
     
-    # Chuẩn hoá URL tải về: đảm bảo có tham số download=1
     if "download=1" not in share_url:
         delim = "&" if "?" in share_url else "?"
         download_url = share_url + delim + "download=1"
@@ -39,7 +33,6 @@ def download_onedrive_file(share_url, output_path="checklist_finall.xlsx"):
 
     print(f"[*] Đang kết nối tới OneDrive: {share_url[:70]}...")
 
-    # Sử dụng CookieJar để xử lý redirect xác thực của OneDrive
     cj = http.cookiejar.CookieJar()
     opener = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(cj))
     opener.addheaders = [
@@ -52,7 +45,6 @@ def download_onedrive_file(share_url, output_path="checklist_finall.xlsx"):
     except Exception as e:
         raise RuntimeError(f"Lỗi khi tải file từ OneDrive: {e}")
 
-    # Kiểm tra xem dữ liệu tải về có phải là file ZIP/XLSX hợp lệ không (magic bytes PK\x03\x04)
     if not data.startswith(b'PK\x03\x04'):
         raise RuntimeError("Dữ liệu tải về không phải file Excel (.xlsx) hợp lệ. Vui lòng kiểm tra quyền chia sẻ của link OneDrive (chọn 'Bất kỳ ai có liên kết đều có thể xem').")
 
@@ -61,6 +53,16 @@ def download_onedrive_file(share_url, output_path="checklist_finall.xlsx"):
 
     print(f"[+] Tải file thành công: {output_path} ({len(data):,} bytes)")
     return output_path
+
+def clean_status(val):
+    if val is None:
+        return ""
+    if isinstance(val, float) and val.is_integer():
+        return str(int(val))
+    s = str(val).strip()
+    if s.endswith(".0"):
+        s = s[:-2]
+    return s
 
 def parse_xlsx_cables(xlsx_path):
     print(f"[*] Đang phân tích file Excel: {xlsx_path}...")
@@ -77,7 +79,14 @@ def parse_xlsx_cables(xlsx_path):
         rows = list(ws.iter_rows(values_only=True))
         if not rows:
             continue
-        h_idx = 1 if len(rows) > 1 and rows[1][0] and 'cable' in str(rows[1][0]).lower() else 0
+        h_idx = -1
+        for r_i, r in enumerate(rows[:5]):
+            first_val = str(r[0] or '').strip().lower()
+            if 'cable' in first_val or 'mã cáp' in first_val or 'số dây' in first_val:
+                h_idx = r_i
+                break
+        if h_idx == -1:
+            h_idx = 1 if len(rows) > 1 and rows[1][0] and 'cable' in str(rows[1][0]).lower() else 0
         data_rows = rows[h_idx+1:]
         
         cables = []
@@ -85,23 +94,25 @@ def parse_xlsx_cables(xlsx_path):
             if not r or r[0] is None:
                 continue
             c_num = str(r[0]).strip()
-            if not c_num or c_num.lower().startswith(('cable', 'tổng', 'số dây')):
+            if not c_num or c_num.lower().startswith(('cable', 'tổng', 'số dây', 'stt')):
                 continue
             source = str(r[1]).strip() if len(r) > 1 and r[1] is not None else ""
             target = str(r[3]).strip() if len(r) > 3 and r[3] is not None else ""
             c_type = str(r[4]).strip() if len(r) > 4 and r[4] is not None else ""
             spec = str(r[5]).strip() if len(r) > 5 and r[5] is not None else ""
+            keo = clean_status(r[6] if len(r) > 6 else None)
+            dau = clean_status(r[7] if len(r) > 7 else None)
             contractor = str(r[9]).strip() if len(r) > 9 and r[9] is not None else ""
-            cables.append([c_num, source, target, c_type, spec, contractor])
+            cables.append([c_num, source, target, c_type, spec, contractor, keo, dau])
 
         all_cables[name] = cables
-        if name.lower() in ('total', 'tổng'):
+        if name.lower() in ('total', 'tổng', 'tong'):
             total_obj = {'name': name, 'gid': '0'}
         else:
             sheets_list.append({'name': name, 'gid': str(i)})
             counts[name] = len(cables)
 
-    print(f"[+] Đã đọc: {len(sheets_list)} sheet tủ điện, tổng số dây: {len(all_cables.get('TỔNG', [])):,}")
+    print(f"[+] Đã đọc: {len(sheets_list)} sheet tủ điện, tổng số dây: {len(all_cables.get(total_obj['name'], [])):,}")
     return total_obj, sheets_list, counts, all_cables
 
 def update_index_html(total_obj, sheets_list, counts, all_cables, html_path="index.html"):
@@ -117,7 +128,6 @@ def update_index_html(total_obj, sheets_list, counts, all_cables, html_path="ind
     seed_json = json.dumps(new_seed, ensure_ascii=False, separators=(',', ':'))
     cables_json = json.dumps(all_cables, ensure_ascii=False, separators=(',', ':'))
 
-    # Thay thế khối WIRE_SEED và WIRE_SEED_CABLES trong index.html an toàn tuyệt đối bằng slice
     seed_idx = content.find('const WIRE_SEED=')
     if seed_idx == -1:
         raise RuntimeError("Không tìm thấy const WIRE_SEED trong index.html")
