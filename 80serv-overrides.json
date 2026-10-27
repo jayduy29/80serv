@@ -1,6 +1,6 @@
 {
   "v": 1,
-  "updated": "2026-10-27T13:40:09.349Z",
+  "updated": "2026-10-27T13:40:50.891Z",
   "added": [
     {
       "deck": "-1 DECK",
@@ -858,6 +858,26 @@
         ],
         "tx": 12599,
         "ty": -12437
+      }
+    },
+    {
+      "deck": "BRIDGE DECK",
+      "uid": "nmvqqh1mu54g",
+      "panel": {
+        "code": "WH-CHARTTABLE",
+        "x": 13165,
+        "y": -11644,
+        "r": 61,
+        "info": [
+          {
+            "item": "",
+            "name": "CHART TABLE",
+            "dim": "",
+            "qty": "",
+            "mat": "",
+            "mount": ""
+          }
+        ]
       }
     }
   ],
