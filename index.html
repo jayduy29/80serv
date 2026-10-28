@@ -2896,25 +2896,47 @@ async function applyExcelBuffer(buffer,sourceName="Excel",optionalUrl=null){
 }
 
 async function applyCustomSheetLink(){
-  if(!EDIT){
-    setWireStatus("🔒 Vui lòng mở khoá chế độ sửa (nhập mật khẩu) để cập nhật link dữ liệu.",true);
-    showPasswordModal();
-    return;
-  }
   const input=$("wireSheetUrl");
   if(!input)return;
-  const raw=input.value.trim();
-  if(!raw){
-    setWireStatus("Vui lòng dán link OneDrive hoặc Excel (hoặc bấm ↩ Mặc định để quay về bản gốc).",true);
-    input.focus();
-    return;
+  let raw=input.value.trim();
+  const activeUrl=getActiveWireUrl();
+
+  // 1. Phân quyền:
+  if(!EDIT){
+    // Người dùng bình thường không được sửa link trong ô input
+    if(raw!==activeUrl){
+      input.value=activeUrl;
+      setWireStatus("🔒 Chỉ quản trị viên (mở khoá) mới có quyền thay đổi link dữ liệu. Đã khôi phục link hiện hành.",true);
+    }
+    // Tự động kiểm tra file cấu hình online xem Quản trị viên có vừa cập nhật link mới không
+    try{
+      const f=CFG.path||OVR_NAME;
+      const r=await fetch(f+"?_="+Date.now(),{cache:"no-store"});
+      if(r.ok){
+        const o=await r.json();
+        if(o&&o.wireUrl&&o.wireUrl!==activeUrl){
+          OV.wireUrl=o.wireUrl;
+          raw=o.wireUrl;
+          input.value=raw;
+          syncSheetUrlInputs();
+        }
+      }
+    }catch(e){}
+    raw=getActiveWireUrl();
+  }else{
+    // Quản trị viên đang mở khoá: kiểm tra không để trống
+    if(!raw){
+      setWireStatus("Vui lòng dán link OneDrive (hoặc bấm ↩ Mặc định để quay về bản gốc).",true);
+      input.focus();
+      return;
+    }
   }
 
-  // Handle OneDrive / SharePoint link
+  // 2. Tải dữ liệu dây từ link (MỌI NGƯỜI ĐỀU ĐƯỢC BẤM BẤT KỲ LÚC NÀO - KHÔNG HỎI MẬT KHẨU)
   if(/onedrive\.live\.com|1drv\.ms|sharepoint\.com/i.test(raw)){
     const btn=$("wireApplyLink");
     if(btn){btn.disabled=true;btn.textContent="Đang tải…"}
-    setWireStatus("Đang kết nối & tải dữ liệu từ Microsoft OneDrive…");
+    setWireStatus("Đang kết nối & tải dữ liệu mới nhất từ Microsoft OneDrive…");
     try{
       const proxyUrl="/api/onedrive?url="+encodeURIComponent(raw);
       const resp=await fetch(proxyUrl);
@@ -2932,17 +2954,31 @@ async function applyCustomSheetLink(){
         localStorage.setItem(WIRE_STORAGE_KEY_SHEET_ID,WIRE_SPREADSHEET_ID);
         localStorage.setItem(WIRE_STORAGE_KEY_SHEET_URL,raw);
       }catch(e){}
+
+      // Nếu là quản trị viên và link đã thay đổi, lưu vào OV và đẩy lên GitHub để tất cả mọi người đều nhận được link mới
+      if(EDIT&&raw!==OV.wireUrl){
+        OV.wireUrl=raw;
+        OV.updated=new Date().toISOString();
+        OV.dirty=true;
+        updStatus();
+        if(CFG.auto&&CFG.token&&CFG.repo){
+          schedulePush();
+        }
+        setWireStatus("✔ Đã đổi link và đồng bộ dữ liệu mới ("+res.cabinets.length+" tủ, "+res.totalCables.length+" dây)!");
+      }else{
+        setWireStatus("✔ Đã cập nhật dữ liệu mới nhất từ Microsoft OneDrive ("+res.cabinets.length+" tủ, "+res.totalCables.length+" dây)!");
+      }
       syncSheetUrlInputs();
-      setWireStatus("✔ Đã cập nhật thành công từ Microsoft OneDrive ("+res.cabinets.length+" tủ, "+res.totalCables.length+" dây)!");
     }catch(err){
       console.error("OneDrive update error:", err);
-      setWireStatus("Không thể tải trực tiếp từ OneDrive: "+err.message+". Hãy chắc chắn file được chia sẻ chế độ 'Bất kỳ ai có liên kết' (Anyone with the link).",true);
+      setWireStatus("Không thể tải từ OneDrive: "+err.message+". Hãy chắc chắn file được chia sẻ 'Bất kỳ ai có liên kết'.",true);
     }finally{
       if(btn){btn.disabled=false;btn.textContent="Cập nhật"}
     }
     return;
   }
 
+  // Handle Google Sheets nếu dùng
   const newId=extractSpreadsheetId(raw);
   if(!newId){
     setWireStatus("Không nhận dạng được link Google Sheets hoặc OneDrive hợp lệ.",true);
@@ -2959,6 +2995,14 @@ async function applyCustomSheetLink(){
     localStorage.setItem(WIRE_STORAGE_KEY_SHEET_ID,newId);
     localStorage.setItem(WIRE_STORAGE_KEY_SHEET_URL,standardUrl);
   }catch(e){}
+
+  if(EDIT&&standardUrl!==OV.wireUrl){
+    OV.wireUrl=standardUrl;
+    OV.updated=new Date().toISOString();
+    OV.dirty=true;
+    updStatus();
+    if(CFG.auto&&CFG.token&&CFG.repo)schedulePush();
+  }
 
   syncSheetUrlInputs();
 
@@ -2985,13 +3029,13 @@ async function applyCustomSheetLink(){
 
   const btn=$("wireApplyLink");
   if(btn){btn.disabled=true;btn.textContent="Đang tải…"}
-  setWireStatus("Đang đồng bộ dữ liệu từ Google Sheets mới…");
+  setWireStatus("Đang đồng bộ dữ liệu mới…");
 
   try{
     await refreshWireSheets(true);
-    setWireStatus("✔ Đã cập nhật dữ liệu từ Google Sheets ("+WIRE_SHEETS.length+" tủ).");
+    setWireStatus("✔ Đã cập nhật dữ liệu thành công ("+WIRE_SHEETS.length+" tủ).");
   }catch(err){
-    setWireStatus("Không thể tải từ link mới. Kiểm tra kết nối và quyền chia sẻ Google Sheets (Bất kỳ ai có liên kết - Người xem). "+err.message,true);
+    setWireStatus("Không thể tải từ link mới. Kiểm tra kết nối và quyền chia sẻ Google Sheets. "+err.message,true);
   }finally{
     if(btn){btn.disabled=false;btn.textContent="Cập nhật"}
   }
