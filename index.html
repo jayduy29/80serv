@@ -719,9 +719,10 @@ if($("foot"))$("foot").textContent="Nguồn: "+stripRev(M.file)+"  •  tạo ng
 
 /* ==================== 1. MẬT KHẨU + DỮ LIỆU SỬA (lưu file / GitHub) ==================== */
 const PW="0000";
+const DEFAULT_ONEDRIVE_URL="https://1drv.ms/x/c/e898f0bace036960/IQD2rR5GS2FjTYh2peM3EgROAY2D9geLBA0U7pVrTl7Nqmg?e=NuDBrO";
 const LS_OVR="80serv.overrides.v1",LS_CFG="80serv.github.cfg",SS_EDIT="80serv.edit",SS_IMPORT="80serv.import";
 const OVR_NAME="80serv-overrides.json";
-function blankOvr(){return{v:1,updated:"",added:[],deleted:[],moved:{},edited:{},dirty:false}}
+function blankOvr(){return{v:1,updated:"",wireUrl:DEFAULT_ONEDRIVE_URL,added:[],deleted:[],moved:{},edited:{},dirty:false}}
 function blankCfg(){return{token:"",repo:"",branch:"main",path:OVR_NAME,msg:"Cập nhật dữ liệu 80SERV",auto:true}}
 let OV=blankOvr(),CFG=blankCfg(),EDIT=false,adding=false,targeting=null,pushT=null,ptTarget=null,ptPos=null,REMOTE=null;
 try{const c=JSON.parse(localStorage.getItem(LS_CFG)||"null");if(c)CFG=Object.assign(blankCfg(),c)}catch(e){}
@@ -1535,7 +1536,6 @@ function openCfg(){
 
 /* ==================== 9. GẮN SỰ KIỆN CHO NÚT ==================== */
 /* ==================== QUẢN LÝ DÂY TỪ EXCEL / ONEDRIVE / GOOGLE SHEETS ==================== */
-const DEFAULT_ONEDRIVE_URL="https://1drv.ms/x/c/e898f0bace036960/IQD2rR5GS2FjTYh2peM3EgROAY2D9geLBA0U7pVrTl7Nqmg?e=NuDBrO";
 const DEFAULT_WIRE_SPREADSHEET_ID="DEFAULT_ONEDRIVE_CHECKLIST";
 const WIRE_STORAGE_KEY_SHEET_ID="wire_spreadsheet_id_v3";
 const WIRE_STORAGE_KEY_SHEET_URL="wire_spreadsheet_url_v3";
@@ -1562,17 +1562,18 @@ function extractSpreadsheetId(val){
   return val;
 }
 
+function getActiveWireUrl(){
+  if(typeof OV==="object"&&OV&&OV.wireUrl&&String(OV.wireUrl).trim()){
+    return String(OV.wireUrl).trim();
+  }
+  return DEFAULT_ONEDRIVE_URL;
+}
+
 function syncSheetUrlInputs(){
-  let currentUrl=DEFAULT_ONEDRIVE_URL;
-  try{
-    const savedUrl=localStorage.getItem(WIRE_STORAGE_KEY_SHEET_URL);
-    if(savedUrl)currentUrl=savedUrl;
-    else if(WIRE_SPREADSHEET_ID===DEFAULT_WIRE_SPREADSHEET_ID)currentUrl=DEFAULT_ONEDRIVE_URL;
-    else currentUrl="https://docs.google.com/spreadsheets/d/"+WIRE_SPREADSHEET_ID+"/edit";
-  }catch(e){}
+  const currentUrl=getActiveWireUrl();
   if($("wireSheetUrl"))$("wireSheetUrl").value=currentUrl;
   if($("cfSheetUrl"))$("cfSheetUrl").value=currentUrl;
-  if($("wireResetLink"))$("wireResetLink").hidden=(WIRE_SPREADSHEET_ID===DEFAULT_WIRE_SPREADSHEET_ID);
+  if($("wireResetLink"))$("wireResetLink").hidden=(currentUrl===DEFAULT_ONEDRIVE_URL);
 }
 
 const WIRE_SEED={"total":{"name":"TỔNG","gid":"0"},"sheets":[{"name":"87P0","gid":"1"},{"name":"87P1","gid":"2"},{"name":"87P2","gid":"3"},{"name":"87P3","gid":"4"},{"name":"87P31","gid":"5"},{"name":"87P4","gid":"6"},{"name":"87P41","gid":"7"},{"name":"87P5","gid":"8"},{"name":"87P6","gid":"9"},{"name":"87P61","gid":"10"},{"name":"87P7","gid":"11"},{"name":"87P8","gid":"12"},{"name":"87P9","gid":"13"},{"name":"89P10","gid":"14"},{"name":"89P1","gid":"15"},{"name":"89P2","gid":"16"},{"name":"86SC","gid":"17"},{"name":"89L0","gid":"18"},{"name":"89L1","gid":"19"},{"name":"89L2","gid":"20"},{"name":"89L3","gid":"21"},{"name":"89L4","gid":"22"},{"name":"89L5","gid":"23"},{"name":"89L6","gid":"24"},{"name":"89L7","gid":"25"},{"name":"89L9","gid":"26"},{"name":"89L10","gid":"27"},{"name":"89P3","gid":"28"},{"name":"87EP0","gid":"29"},{"name":"89EL0","gid":"30"},{"name":"89EL1","gid":"31"},{"name":"89EL2","gid":"32"},{"name":"89EL3","gid":"33"},{"name":"89EL4","gid":"34"},{"name":"86EF1","gid":"35"},{"name":"86EF2","gid":"36"},{"name":"87UP1","gid":"37"},{"name":"87UP2","gid":"38"},{"name":"86E1","gid":"39"},{"name":"86E2","gid":"40"},{"name":"86E3","gid":"41"},{"name":"86E4","gid":"42"},{"name":"86E5","gid":"43"},{"name":"86E6","gid":"44"},{"name":"87NA","gid":"45"},{"name":"50HE","gid":"46"},{"name":"87TP","gid":"47"},{"name":"574S1","gid":"48"},{"name":"574S2","gid":"49"},{"name":"801S","gid":"50"},{"name":"803S1","gid":"51"},{"name":"803S2","gid":"52"},{"name":"813S1","gid":"53"},{"name":"813S3","gid":"54"},{"name":"813S2","gid":"55"},{"name":"79A0","gid":"56"},{"name":"79A1","gid":"57"},{"name":"79A2","gid":"58"},{"name":"79A3","gid":"59"},{"name":"811SP","gid":"60"},{"name":"571S1","gid":"61"},{"name":"403S1","gid":"62"},{"name":"403S2","gid":"63"},{"name":"403S3","gid":"64"},{"name":"403S4","gid":"65"},{"name":"403A1","gid":"66"},{"name":"403A2","gid":"67"},{"name":"403F1","gid":"68"},{"name":"403F2","gid":"69"},{"name":"634S1","gid":"70"},{"name":"634S2","gid":"71"},{"name":"408DP","gid":"72"},{"name":"408JC","gid":"73"},{"name":"404ICB1","gid":"74"},{"name":"404ICB2","gid":"75"},{"name":"404ICB3","gid":"76"},{"name":"404ICT1","gid":"77"},{"name":"404ICT2","gid":"78"},{"name":"404ICT3","gid":"79"},{"name":"634PCS1","gid":"80"},{"name":"634PCS2","gid":"81"},{"name":"634PCS3","gid":"82"},{"name":"634PCS4","gid":"83"},{"name":"700QCV","gid":"84"},{"name":"811FD","gid":"85"},{"name":"812EST1","gid":"86"},{"name":"812EST2","gid":"87"},{"name":"404DV1","gid":"88"},{"name":"404DV2","gid":"89"},{"name":"404DV3","gid":"90"},{"name":"TR1","gid":"91"},{"name":"TR2","gid":"92"},{"name":"ETR1","gid":"93"},{"name":"ETR2","gid":"94"},{"name":"SCTR","gid":"95"},{"name":"517AC1&2","gid":"96"},{"name":"517AC3&5","gid":"97"},{"name":"517AC4","gid":"98"},{"name":"278AF","gid":"99"},{"name":"405SR-1","gid":"100"},{"name":"405SR-2","gid":"101"},{"name":"425PA-A","gid":"102"},{"name":"425PA-B","gid":"103"},{"name":"432WL","gid":"104"},{"name":"437TW","gid":"105"},{"name":"815WM","gid":"106"},{"name":"815CO2.1","gid":"107"},{"name":"815CO2.2","gid":"108"},{"name":"814FF","gid":"109"},{"name":"822LA","gid":"110"},{"name":"574FD1","gid":"111"},{"name":"574FD2","gid":"112"},{"name":"514WW","gid":"113"},{"name":"544CR","gid":"114"},{"name":"544MR","gid":"115"},{"name":"437TW1","gid":"116"},{"name":"437TW2","gid":"117"},{"name":"437TW3","gid":"118"},{"name":"437MW1.1","gid":"119"},{"name":"437MW1.2","gid":"120"},{"name":"437MW1.3","gid":"121"},{"name":"437MW2.1","gid":"122"},{"name":"437MW2.2","gid":"123"},{"name":"437MW2.3","gid":"124"},{"name":"822BFS","gid":"125"},{"name":"517AC-P","gid":"126"},{"name":"515WW","gid":"127"},{"name":"791ECRC","gid":"128"},{"name":"WH-S1","gid":"129"},{"name":"WH-S2","gid":"130"},{"name":"WH-S3","gid":"131"},{"name":"WH-S4","gid":"132"},{"name":"WH-S5","gid":"133"},{"name":"WH-S6","gid":"134"},{"name":"WH-S7","gid":"135"},{"name":"WH-S8","gid":"136"},{"name":"WH-S9","gid":"137"},{"name":"WH-S10","gid":"138"},{"name":"WH-S11","gid":"139"},{"name":"WH-S12","gid":"140"},{"name":"WH-GMDSS","gid":"141"},{"name":"WH-CHARTTABLE","gid":"142"}],"counts":{"87P0":202,"87P1":76,"87P2":27,"87P3":45,"87P31":3,"87P4":7,"87P41":9,"87P5":3,"87P6":6,"87P61":5,"87P7":18,"87P8":10,"87P9":30,"89P10":31,"89P1":14,"89P2":14,"86SC":5,"89L0":49,"89L1":11,"89L2":17,"89L3":19,"89L4":23,"89L5":16,"89L6":21,"89L7":12,"89L9":14,"89L10":12,"89P3":8,"87EP0":41,"89EL0":28,"89EL1":16,"89EL2":12,"89EL3":9,"89EL4":14,"86EF1":4,"86EF2":4,"87UP1":9,"87UP2":10,"86E1":40,"86E2":43,"86E3":60,"86E4":17,"86E5":18,"86E6":18,"87NA":25,"50HE":5,"87TP":2,"574S1":8,"574S2":8,"801S":5,"803S1":6,"803S2":6,"813S1":5,"813S3":5,"813S2":9,"79A0":190,"79A1":127,"79A2":34,"79A3":34,"811SP":32,"571S1":9,"403S1":15,"403S2":14,"403S3":15,"403S4":14,"403A1":10,"403A2":10,"403F1":11,"403F2":11,"634S1":5,"634S2":5,"408DP":18,"408JC":8,"404ICB1":9,"404ICB2":9,"404ICB3":9,"404ICT1":10,"404ICT2":10,"404ICT3":10,"634PCS1":29,"634PCS2":30,"634PCS3":3,"634PCS4":2,"700QCV":16,"811FD":23,"812EST1":20,"812EST2":21,"404DV1":17,"404DV2":17,"404DV3":17,"TR1":4,"TR2":4,"ETR1":3,"ETR2":3,"SCTR":0,"517AC1&2":3,"517AC3&5":3,"517AC4":2,"278AF":8,"405SR-1":6,"405SR-2":3,"425PA-A":15,"425PA-B":8,"432WL":5,"437TW":16,"815WM":28,"815CO2.1":0,"815CO2.2":1,"814FF":10,"822LA":8,"574FD1":11,"574FD2":6,"514WW":12,"544CR":0,"544MR":0,"437TW1":9,"437TW2":3,"437TW3":2,"437MW1.1":0,"437MW1.2":0,"437MW1.3":0,"437MW2.1":0,"437MW2.2":0,"437MW2.3":0,"822BFS":5,"517AC-P":0,"515WW":12,"791ECRC":30,"WH-S1":15,"WH-S2":5,"WH-S3":27,"WH-S4":27,"WH-S5":18,"WH-S6":64,"WH-S7":13,"WH-S8":16,"WH-S9":7,"WH-S10":31,"WH-S11":36,"WH-S12":7,"WH-GMDSS":29,"WH-CHARTTABLE":1}};
@@ -2746,11 +2747,15 @@ function updateWireEditUI(){
   const lockBtn=$("wireLockBtn");
   if(input){
     input.readOnly=!EDIT;
-    input.style.background=EDIT?"#fff":"#f9f8f6";
-    input.style.cursor=EDIT?"text":"not-allowed";
+    input.style.background=EDIT?"#fff":"#f8fafc";
+    input.style.cursor=EDIT?"text":"default";
+    input.title=EDIT?"Dán link OneDrive mới để cập nhật cho toàn bộ hệ thống":"Link dữ liệu OneDrive (Bấm 🔒 để mở khoá sửa link)";
   }
   if(applyBtn){
-    applyBtn.style.opacity=EDIT?"1":"0.6";
+    applyBtn.style.opacity="1";
+    applyBtn.style.cursor="pointer";
+    applyBtn.disabled=false;
+    applyBtn.title="Cập nhật dữ liệu dây điện mới nhất từ file OneDrive";
   }
   if(excelBtn){
     excelBtn.style.opacity=EDIT?"1":"0.6";
@@ -2758,7 +2763,7 @@ function updateWireEditUI(){
   if(lockBtn){
     lockBtn.textContent=EDIT?"🔓":"🔒";
     lockBtn.className="wire-btn-lock"+(EDIT?" unlocked":"");
-    lockBtn.title=EDIT?"Đang mở khoá (bấm để khoá lại)":"Cần mở khoá để sửa link dữ liệu";
+    lockBtn.title=EDIT?"Đang mở khoá sửa link (bấm để khoá lại)":"Cần mở khoá để sửa link dữ liệu";
   }
 }
 window.updateWireEditUI=updateWireEditUI;
@@ -2994,11 +2999,17 @@ async function applyCustomSheetLink(){
 
 async function resetWireSpreadsheetSource(){
   if(!EDIT){
-    setWireStatus("🔒 Vui lòng mở khoá chế độ sửa để khôi phục dữ liệu mặc định.",true);
+    setWireStatus("🔒 Vui lòng mở khoá để khôi phục link mặc định.",true);
     showPasswordModal();
     return;
   }
-  if(!confirm("Khôi phục về bảng tính mặc định của ứng dụng (dữ liệu mới nhất checklist finall)?"))return;
+  if(!confirm("Khôi phục về link dữ liệu mặc định ban đầu?"))return;
+  OV.wireUrl=DEFAULT_ONEDRIVE_URL;
+  OV.updated=new Date().toISOString();
+  OV.dirty=true;
+  updStatus();
+  if(CFG.auto&&CFG.token&&CFG.repo)schedulePush();
+
   WIRE_SPREADSHEET_ID=DEFAULT_WIRE_SPREADSHEET_ID;
   try{
     localStorage.removeItem(WIRE_STORAGE_KEY_SHEET_ID);
@@ -3028,9 +3039,8 @@ async function resetWireSpreadsheetSource(){
   loadDeckWireCounts();
 
   if(WIRE_SHEETS.length>0)await loadWireSheet(WIRE_SHEETS[0]);
-  setWireStatus("Đã khôi phục về bảng tính mặc định (checklist finall).");
+  setWireStatus("✔ Đã khôi phục về link mặc định ban đầu và đồng bộ sang app của mọi người.");
 }
-
 
 function initWireManager(){
   loadWireCache();
@@ -3074,19 +3084,24 @@ function initWireManager(){
   updateWireEditUI();
   if($("wireLockBtn"))$("wireLockBtn").addEventListener("click",toggleWireLock);
   if($("wireLockHint"))$("wireLockHint").addEventListener("click",showPasswordModal);
-  if($("wireSheetUrl"))$("wireSheetUrl").addEventListener("click",()=>{
-    if(!EDIT)showPasswordModal();
-  });
-  if($("wireApplyLink"))$("wireApplyLink").addEventListener("click",applyCustomSheetLink);
-  if($("wireResetLink"))$("wireResetLink").addEventListener("click",resetWireSpreadsheetSource);
   if($("wireSheetUrl")){
+    $("wireSheetUrl").addEventListener("click",()=>{
+      if(!EDIT){
+        setWireStatus("🔒 Chỉ quản trị viên mới có quyền sửa link. Bấm biểu tượng 🔒 để mở khoá.");
+      }
+    });
     $("wireSheetUrl").addEventListener("keydown",e=>{
+      if(!EDIT&&e.key!=="Tab"&&e.key!=="Escape"&&!e.ctrlKey&&!e.metaKey){
+        setWireStatus("🔒 Vui lòng mở khoá (bấm 🔒) để chỉnh sửa link dữ liệu.",true);
+      }
       if(e.key==="Enter"){
         e.preventDefault();
         applyCustomSheetLink();
       }
     });
   }
+  if($("wireApplyLink"))$("wireApplyLink").addEventListener("click",applyCustomSheetLink);
+  if($("wireResetLink"))$("wireResetLink").addEventListener("click",resetWireSpreadsheetSource);
   if($("wireRefresh"))$("wireRefresh").addEventListener("click",()=>{
     const input=$("wireSheetUrl");
     const raw=input?input.value.trim():"";
@@ -3241,7 +3256,12 @@ async function boot(){
       if(r.ok){
         const txt=await r.text();
         const o=JSON.parse(txt);
-        if(o&&o.v)remote=o;
+        if(o&&o.v){
+          remote=o;
+          if(o.wireUrl){
+            OV.wireUrl=o.wireUrl;
+          }
+        }
       }
     }catch(e){}
   }

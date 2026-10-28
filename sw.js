@@ -1,4 +1,4 @@
-const CACHE_NAME = '80serv-v18';
+const CACHE_NAME = '80serv-v19';
 const ASSETS = [
   './',
   './index.html',
